@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Plain Weird: games, retro teardowns, and weird web experiments by Jason O'Connell. Play most of them right in your browser.">
+<meta property="og:title" content="Plain Weird by Jason O'Connell">
+<meta property="og:description" content="Games, retro teardowns, and weird web experiments. Play them right in your browser.">
+<meta property="og:image" content="https://jasonoconnell.com/img/og.jpg">
+<meta property="og:url" content="https://jasonoconnell.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/plain-weird-logo.png">
+<meta charset="utf-8">
+<title>Plain Weird</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap">
+<style>
+/* Layout: Iowa night sky. Water tower logo and wordmark up top, six big playable screens, sticky tag filter, then drawers of compact rows. Any game opens in a full screen player over the page. Single deliberate dark theme. */
+:root{
+  --sky:#0a2f5c; --sky2:#0d3a70; --row:#0f4687; --rowh:#14549f; --sec:#082a52; --ink:#f3f6fb; --mute:#a8c0e2; --dim:#7e9cc6; --orange:#ff8a1f; --gold:#ffd23c; --black:#04101f;
+  --line:rgba(255,255,255,.14);
+  --t-live:#63d68f; --t-orig:#ff8a1f; --t-retro:#ff6fb5; --t-emu:#4fd6e8; --t-tear:#ffd34d; --t-multi:#b99aff; --t-talk:#5ee0b5; --t-ios:#dfe8f5; --t-hw:#ffb35c; --t-idea:#9fb3cc; --t-yt:#ff4d4d;
+  --brand:"Bungee",Impact,"Arial Black",sans-serif; --display:"VT323",ui-monospace,monospace; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:linear-gradient(180deg,#061d3b 0,var(--sky) 380px,var(--sky) 100%);color:var(--ink);font:14px/1.45 var(--body);margin:0}
+.wrap{max-width:1140px;margin:0 auto;padding-inline:16px;padding-block:20px 60px}
+a{color:var(--ink)}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px;align-items:center;padding-bottom:16px;border-bottom:2px solid var(--ink)}
+.mark{width:118px;height:auto;display:block}
+.word h1{font:clamp(40px,8vw,84px)/.9 var(--brand);margin:0;letter-spacing:.01em;color:var(--ink)}
+.word h1 span{color:var(--orange)}
+.by{font:16px var(--body);color:var(--mute);margin-top:6px}
+.by a{color:var(--gold);text-decoration:none;border-bottom:1px solid currentColor}
+.intro{grid-column:1/-1;max-width:72ch;color:var(--mute);margin:6px 0 0;font-size:15px}
+.intro a{color:var(--orange)}
+.stats{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 20px;font:22px var(--display)}
+.stats b{color:var(--orange);font-weight:400}
+.drawer.big .feat{margin-top:10px}
+.feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.fc{position:relative;display:block;border:2px solid var(--ink);background:var(--black);overflow:hidden;aspect-ratio:16/9;max-width:100%;cursor:pointer;padding:0;color:var(--ink);text-align:left;font:inherit}
+.fc img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.fc:hover img,.fc:focus-visible img{transform:scale(1.05)}
+.fc .cap{position:absolute;inset:auto 0 0 0;padding:30px 12px 10px;background:linear-gradient(transparent,rgba(3,12,28,.94) 55%);display:grid;gap:3px}
+.fc .cap b{font:30px/.9 var(--display);font-weight:400}
+.fc .cap p{margin:0;color:var(--mute);font-size:12.5px;line-height:1.35}
+.fc .row1{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fc .go{position:absolute;top:10px;right:10px;font:13px var(--body);font-weight:600;background:var(--orange);color:#1b1b1b;padding:5px 11px;border-radius:2px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--sky);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding-block:10px;margin-top:18px;border-bottom:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font:13px var(--body);background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:4px 9px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--sky);border-color:var(--ink)}
+#q{font:14px var(--body);background:var(--row);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:6px 10px;width:min(100%,220px);margin-left:auto}
+#q::placeholder{color:var(--dim)}
+.drawer{margin-top:24px}
+.dh{display:flex;align-items:baseline;gap:10px;padding:4px 8px;background:repeating-linear-gradient(180deg,var(--ink) 0 1px,transparent 1px 3px);border:2px solid var(--ink);border-bottom:0}
+.dh b{background:var(--sky);padding:0 6px;font:28px/1 var(--display);font-weight:400}
+.dh span{background:var(--sky);padding:0 6px;color:var(--mute);font:12px var(--mono)}
+.list{border:2px solid var(--ink);background:var(--sec)}
+.r{display:grid;grid-template-columns:112px minmax(0,1fr) auto;gap:12px;align-items:center;padding:6px 10px 6px 6px;border-top:1px solid var(--line);background:var(--row)}
+.r:first-child{border-top:0}
+.r:hover{background:var(--rowh)}
+.th{width:112px;height:63px;display:block;border:1px solid rgba(255,255,255,.35);background:var(--black);overflow:hidden;padding:0;cursor:pointer}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.mid{min-width:0;display:grid;gap:2px}
+.nm{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;min-width:0}
+.nm b{font-weight:600;font-size:15px}
+.tag{font:11px/1 var(--mono);padding:3px 6px;border-radius:2px;border:1px solid currentColor;background:rgba(0,0,0,.18);white-space:nowrap}
+.ds{color:var(--mute);font-size:13px}
+.mw{color:var(--dim);font:11px var(--mono)}
+.links{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.btn{font:12px var(--body);font-weight:600;text-decoration:none;background:var(--ink);color:var(--sky);padding:5px 10px;border-radius:2px;white-space:nowrap;border:0;cursor:pointer}
+.btn.play{background:var(--orange);color:#1b1b1b}
+.btn:hover{background:var(--gold);color:#1b1b1b}
+.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#pv{position:fixed;z-index:20;pointer-events:none;width:360px;border:2px solid var(--ink);background:var(--black);box-shadow:6px 6px 0 rgba(0,0,0,.4)}
+#pv img{display:block;width:100%;height:auto}
+#player{position:fixed;inset:0;z-index:50;background:rgba(2,8,18,.96);display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#player .pb{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:2px solid var(--ink);background:var(--sky)}
+#player .pb b{font:28px/1 var(--display);font-weight:400;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#player iframe{flex:1;width:100%;border:0;background:#000}
+.none{padding:14px;color:var(--dim)}
+footer{margin-top:26px;color:var(--dim);font-size:12.5px;border-top:1px solid var(--line);padding-top:10px}
+footer a{color:var(--gold)}
+@media (max-width:860px){.feat{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){
+  header{grid-template-columns:1fr}.mark{width:84px}
+  .feat{grid-template-columns:1fr}
+  .r{grid-template-columns:88px minmax(0,1fr)}
+  .th{width:88px;height:50px}
+  .links{grid-column:1/-1;justify-content:flex-start}
+  #q{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){.fc img{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <svg class="mark" viewBox="0 0 200 260" role="img" aria-label="Plain Weird logo: an Iowa water tower standing on bird legs">
+    <circle cx="100" cy="16" r="6" fill="#ffd23c"/>
+    <path d="M100 20 L58 58 H142 Z" fill="#ff8a1f"/>
+    <path d="M44 62 H156 Q172 62 172 96 Q172 136 100 142 Q28 136 28 96 Q28 62 44 62 Z" fill="#ff8a1f"/>
+    <rect x="28" y="84" width="144" height="24" fill="#0a2f5c"/>
+    <text x="100" y="101" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="15" fill="#fff">PLAIN WEIRD</text>
+    <g fill="none" stroke="#ffd23c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M78 140 L66 192 L84 236"/><path d="M84 236 L62 252 M84 236 L84 256 M84 236 L104 252"/>
+      <path d="M122 140 L134 192 L116 236"/><path d="M116 236 L96 252 M116 236 L116 256 M116 236 L138 252"/>
+    </g>
+  </svg>
+  <div class="word"><h1>Plain <span>Weird</span></h1><div class="by">Games, teardowns, and strange machines by <a href="https://github.com/hurtz" target="_blank" rel="noopener">Jason O'Connell</a></div></div>
+  <p class="intro">I've been in IT for 32 years, starting at a Phoenix computer store in 1994. Now I build at night with AI: remakes of the games I grew up on, teardowns of their code, a TV I can swear at, a radio scanner that writes the news, and an AI that phones businesses for me. Most of the games below run right here in your browser. Hit play.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+
+<div class="bar">
+  <div class="chips" id="tags"></div>
+  <input id="q" type="search" placeholder="Search" aria-label="Search projects">
+</div>
+
+<main id="main"></main>
+<div id="pv" hidden><img alt=""></div>
+<div id="player" hidden role="dialog" aria-modal="true" aria-labelledby="pname">
+  <div class="pb"><b id="pname"></b><a class="btn alt" id="ptab" href="#" target="_blank" rel="noopener">Open in its own tab</a><button class="btn" id="pclose" type="button">Close</button></div>
+  <iframe id="pframe" title="Game" allow="autoplay; fullscreen; gamepad"></iframe>
+</div>
+
+<footer>Made in Des Moines, Iowa. Built with Claude, ChatGPT and Codex, Cursor, Gemini, and Suno. Pictures are real screens, boxes and disks from my own archive. A few are drawn: the video labels, the phone call card, the Amiga boot diagram, the demo scroller, the Pod window, and the tracker screen (the notes are real, from the song). Code lives at <a href="https://github.com/hurtz" target="_blank" rel="noopener">github.com/hurtz</a>.</footer>
+</div>
+
+<script>
+const A=id=>"https://claude.ai/artifact/"+id;
+const YT=id=>"https://www.youtube.com/watch?v="+id;
+const AI={C:"Claude",X:"Codex",U:"Cursor",S:"Suno",G:"Gemini",E:"ElevenLabs"};
+const TAG={L:["Play here","--t-live"],O:["Original","--t-orig"],R:["Retro remake","--t-retro"],E:["Emulation","--t-emu"],T:["Teardown","--t-tear"],M:["Multiplayer","--t-multi"],V:["Talks back","--t-talk"],I:["iPhone","--t-ios"],H:["Hardware","--t-hw"],C:["Concept","--t-idea"],Y:["YouTube","--t-yt"]};
+const SEC=["Games","Halloween beta","File system lab","Retro, emulation and teardowns","AI and apps","Watch: videos I made","Music","Weird web","Hardware"];
+const FEAT=["vine-runner","going-down","hot-aisle","catbird","life-simulator","plumbing"];
+const PLAY={"modem-lab":"play/modem-lab.html","vid-hotaisle":"play/vid-hotaisle.html","vid-catbird":"play/vid-catbird.html","vid-platter":"play/vid-platter.html","vine-runner":"play/vine-runner.html","going-down":"play/going-down.html","hot-aisle":"play/hot-aisle.html","catbird":"play/catbird.html","life-simulator":"play/life-simulator.html","plumbing":"play/plumbing.html","clauderooms":"play/clauderooms.html","tinpot":"play/tinpot.html","trick-or-steal":"play/trick-or-steal.html","trick-or-eaten":"play/trick-or-eaten.html","take-one":"play/take-one.html","play-with-me":"play/play-with-me.html","inode-rush":"play/inode-rush.html","inode-bonsai":"play/inode-bonsai.html","fsgolf":"play/fsgolf.html","w0725b":"play/uwu-skystrike.html","uber-ride":"play/uber-ride/index.html","loud-japan":"play/loud-japan/index.html","contra-crt":"play/contra-crt/index.html","rusty-raid":"play/rusty-raid.html"};
+// [key, name, section, tags, ai, one line, links]
+const P=[
+["vine-runner","Vine Runner",0,"R","C","Pitfall, rebuilt. Swing on vines and jump the pits, all on a wood grain TV in an 80s living room.",[]],
+["going-down","Going Down",0,"R","C","Elevator Action, rebuilt in 3D. Four spies, red doors, secret files, and a getaway car in the basement.",[]],
+["hot-aisle","Hot Aisle",0,"O","C","Night shift at the server farm with your crew of tiny techs. Racks break, robots close tickets they never fixed, and the facility AI keeps offering you a chainsaw.",[]],
+["catbird","Catbird Over Des Moines",0,"OM","CX","Fly over Des Moines, past the Capitol's gold dome, and poop on whoever walks below. Multiplayer, and on Reddit.",[["Trailer","https://youtu.be/xJUn_r5CFmg"],["Live server","https://catbird-dsm.fly.dev/"],["Reddit","https://www.reddit.com/r/CatbirdDSM/"]]],
+["life-simulator","Life Simulator",0,"OV","CE","The game I want to change the world with. Everyday moments you can practice, starting with boarding a packed flight in seat 27B.",[]],
+["plumbing","Totally Legit Plumbing and Stuff",0,"O","C","Pull the van up, break in at night, grab the loot. Don't wake Gary. Don't get eaten by the dog.",[]],
+["choppricer","CHOP PRICER",0,"O","CX","Grocery store loss prevention cop. Spot the shoplifter and run them down.",[["Play","https://hurtz.github.io/choppricer-play/"]]],
+["they-saw-us","They Saw Us",0,"OI","XC","Alien flight over New Mexico, now an iPhone game with camera hunts, dust swarms, and a six mission campaign.",[["Browser demo","https://airplane-flight-adventure.hurtz.chatgpt.site/"]]],
+["clauderooms","Clauderooms",0,"O","C","The Backrooms, recorded on a worn out camcorder in 1987.",[]],
+["w0725b","UwU SkyStrike",0,"R","X","A 1942 style shooter, but extremely pink. I love you!!",[]],
+["uber-ride","Uber Ride",0,"O","X","Drive Trent to the hotel before the clock runs out. Trent is not impressed with the car.",[]],
+["contra-crt","Contra CRT",0,"R","X","A Contra style jungle on a CRT, built to flip between flat 2D and full 3D.",[]],
+["nice-truck","Nice Truck",0,"O","XC","A driving game about oversized trucks and the financing that comes with them.",[["Play","https://hurtz.github.io/nice-truck-play/"]]],
+["cascade","Cascade",0,"R","CX","A Marble Madness style roller with six courses and synth audio.",[["Play","cascade/"]]],
+["little-tempest","Little Tempest",0,"O","X","Grow a tornado across Des Moines.",[["Play","https://little-tempest-des-moines.hurtz.chatgpt.site"]]],
+["ascii-cat","ASCII Cat",0,"OM","C","A chaotic ASCII cat that bounces around your terminal. Play with friends.",[["Play","https://hurtz.github.io/cat/"]]],
+["trick-or-steal","Trick or Steal",1,"O","C","A Halloween candy heist before midnight.",[]],
+["trick-or-eaten","Trick or Eaten",1,"O","C","Halloween survival. Be the candy, not the snack.",[]],
+["take-one","Take One",1,"O","C","Please take one. The decoration might be a real guy.",[]],
+["play-with-me","Play With Me",0,"O","C","She just wants to play forever.",[]],
+["tinpot","Sir Tinpot and the Wax Baron",0,"O","C","A knight in a bucket helmet takes on the Wax Baron's castle.",[]],
+["inode-rush","Inode Rush",2,"O","C","A file system game, the inode way.",[]],
+["inode-bonsai","Inode Bonsai",2,"O","C","Grow a file system like a bonsai tree.",[]],
+["fsgolf","fsgolf",2,"O","C","Golf, played through a file system.",[]],
+["crazy-cats","Crazy Cats",0,"O","X","Nine lives. One wild night.",[]],
+["loud-japan","Loud Japan",0,"O","X","Japan turned way past eleven, as pinball chaos.",[]],
+["kitten-ball","Kitten Ball",0,"OI","X","A realistic kitten ball game for iPhone.",[]],
+["joyful-sin","Joyful Sin",0,"OI","X","An iPhone game of invitations, rituals, and a burning reveal.",[]],
+["plain-sight","Plain Sight",0,"OI","X","A horror world for iPhone and web, with its own lore.",[]],
+["fakemonkey","Fakemonkey",0,"OI","X","An iPhone jumping game. The first iOS game I made.",[]],
+["raise","To Raise a King",0,"O","X","A medieval production of 1,442 images and 1,264 voice clips.",[]],
+["dead-air","Twilight Zone Game",0,"OC","X","A Twilight Zone style story game. Concept art from the night diner.",[]],
+
+["modem-lab","Modem Lab",3,"OE","C","Dial up, slowed down. Pick two real modems, pick a bad phone line, and hear every stage of the handshake explained. Mom picks up the phone included.",[]],
+["rusty-raid","Raid Night at Rusty n Edie's",3,"R","C","Dial into the biggest BBS in America on January 30, 1993, the day the FBI showed up. Then find out where everyone went.",[]],
+["pod","Pod on Windows 98",3,"E","X","My favorite Windows 98 racer, backed up and coming back to life in a VM.",[]],
+["raiders","Raiders of the Lost Ark",3,"T","C","Atari 2600 ROM teardown. Every sprite pulled straight from the cartridge bytes.",[["Read","https://raiders-deploy.vercel.app"]]],
+["contra","Inside Contra (NES, 1988)",3,"T","C","Compressed graphics, sprite extraction, and 6502 code from an annotated disassembly.",[["Read","https://site-contra.vercel.app"]]],
+["kq1","Inside King's Quest (1984)",3,"T","C","Sierra's AGI engine pulled apart: vector backgrounds, animation, and bytecode, straight off the floppy.",[["Read","https://site-theta-seven-64.vercel.app"]]],
+["skate-or-die","Skate or Die Music",3,"T","C","Examining the TI SN76489 sound chip, and how three square waves and a noise channel made the Tandy 1000 sing.",[["Read","https://skate-or-die-music.vercel.app"]]],
+["yars","Yars' Revenge",3,"T","X","A static disassembly of the Atari 2600 classic. That rainbow Neutral Zone is the game drawing its own code on screen.",[]],
+["amiga-mod","Amiga MOD Player",3,"E","C","A web player I built for classic Amiga tracker music, like Lotus 2, Chaos Engine, and Agony, straight from the original module files.",[["Listen","https://amiga-mod-player.vercel.app"]]],
+["faery-tale","Faery Tale Adventure Soundtrack",3,"E","C","The Amiga soundtrack, rebuilt into MIDI and audio.",[["Listen","https://fairytale-red.vercel.app"]]],
+["super-metroid","Super Metroid Soundtrack",3,"E","C","A soundtrack player built from the original SNES SPC files.",[["Listen","https://supermetroid.vercel.app"]]],
+["amiga-scene","The Floppy Disk Underground",3,"T","C","The Amiga piracy and demo scene, told as an essay.",[["Read","https://amiga-scene.vercel.app"]]],
+["amiga-boot","Amiga A1000 vs A500 Boot",3,"T","C","The two boot sequences, side by side.",[["Read","https://amiga-boot-comparison.vercel.app"]]],
+["sierra-crack","Sierra Copy Protection",3,"T","C","How Sierra copy protection worked, and how it got cracked.",[["Read","https://sierra-crack.vercel.app"]]],
+["rusty","Rusty n Edie's Tribute",3,"R","C","The legendary Ohio BBS, rebuilt as a tribute site.",[["Visit","https://rusty-edies-bbs.vercel.app"]]],
+["launch1980","Alley Cat",3,"E","X","The original 1983 Atari Alley Cat, pulled off the disk and running in RetroArch.",[]],
+["dragons-lair","Dragon's Lair Hardware Manual",3,"T","G","A technical manual for the Dragon's Lair arcade hardware.",[]],
+["nes-ai","Self Learning NES",3,"E","C","An AI that teaches itself to play NES games.",[]],
+["max-headroom","Max Headroom Reconstruction",3,"RV","C","Rebuilding the Max Headroom voice from old audio.",[]],
+["demoscene","Demoscene Viz",3,"R","G","A demoscene style visualizer.",[]],
+["dos","DOS Game Automation",3,"E","C","One command setup for classic DOS games.",[]],
+["gamebeater","Gamebeater",3,"E","X","A ROM archive deduped across three clouds and a NAS.",[]],
+
+["phone-caller","Sarah, My AI Phone Caller",4,"OV","CE","I ask Claude a question. Sarah, my AI caller, phones the business, asks it, and reports back. Nineteen calls and counting.",[]],
+["platter","Platter",4,"O","C","A menu bar app that makes your silent Mac sound like a 1990s hard drive again. Floppy, SCSI, IDE. Free and open source.",[["Get it","https://hurtz.github.io/platter/"],["Code","https://github.com/hurtz/platter"]]],
+["scanmoines","ScanMoines / DSMRadar",4,"OV","XC","Des Moines public safety radio, turned into readable stories with the original audio.",[["Open","https://dsmradar.com/"]]],
+["radio-listener","Radio Scanner Listener",4,"O","X","A live P25 radio listener on my own subdomain.",[["Open","https://scanner.jasonoconnell.com/"]]],
+["breakaway","Breakaway",4,"O","C","A map of Flock cameras, with routes that avoid them.",[]],
+["w0723","Jason HQ",4,"O","X","A second brain with a front door.",[]],
+["homebase","Homebase",4,"O","X","Project memory and a launchpad for everything at home.",[]],
+["w0727","Parallel",4,"O","X","Explore the futures before you choose.",[]],
+["w0809","Receipts",4,"O","X","Find the best thing, with receipts from Reddit, YouTube, and forums.",[]],
+["reddit","Reddit's Best",4,"O","X","Find the thing Reddit actually loves.",[]],
+["lpc","License Plate Comms",4,"OC","X","Talk to other drivers through your license plate.",[]],
+["tabzam","TabZam",4,"OI","X","Shazam for guitar tabs.",[]],
+["returnability","Returnability",4,"O","X","Tracks purchases, return deadlines, and refunds.",[]],
+["idea-forge","Idea Forge",4,"O","X","Text an idea from your phone and a coding model builds it.",[]],
+["vmt","Voice Memo Transcriber",4,"OV","C","Transcribed and analyzed 2,500 voice memos.",[]],
+["2600","2600 AI Phone System",4,"OV","C","An AI phone system with a Swift telephony app.",[]],
+["birdshow","Birdshow",4,"O","C","A Des Moines event aggregator.",[]],
+["flight","Flight Tracker",4,"O","U","Live flight tracking.",[]],
+["hourledger","Hour Ledger",4,"O","X","Where did all 168 hours of the week go.",[]],
+["i2y","iCloud to YouTube",4,"O","X","Moves giant iCloud videos to YouTube.",[]],
+["trendhunter","Trendhunter",4,"O","C","Trends from Hacker News, Reddit, and Google in one place.",[]],
+["valheim","Valheim Connect",4,"OM","C","A companion site for our Valheim server.",[["Open","https://valheim-connect.vercel.app"]]],
+["swipesort","SwipeSort",4,"O","C","Keep or donate: swipe through your photos.",[]],
+["airhorn","Antigravity Showcase",4,"O","G","An early AI agent showcase.",[]],
+["blues","Blues Improv",4,"OI","X","A blues improvisation practice app.",[]],
+
+["vid-hotaisle","Hot Aisle Trailer",5,"O","C","Made off the clock by a data center tech. Racks break, robots lie, somebody left Jolly Ranchers on a rack again.",[]],
+["vid-catbird","Catbird Over Des Moines Trailer",5,"OY","CX","A cute little bird with big, messy plans. The newest trailer. Free on Reddit at r/CatbirdDSM.",[["YouTube","https://youtu.be/xJUn_r5CFmg"],["Reddit","https://www.reddit.com/r/CatbirdDSM/"]]],
+["vid-platter","Platter: Do You Miss Hard Drive Sounds?",5,"O","C","The promo for Platter. Your Mac is silent. It doesn't have to be.",[["Get Platter","https://hurtz.github.io/platter/"]]],
+["tape","The Tape That Loaded Again",5,"EY","X","A documentary about recovering 40 year old Commodore 64 programs from cassette with AI.",[["Watch",YT("TLCCnDBVDiY")]]],
+["denise","DeniseITX Quick Overview",5,"HY","",  "A quick look at the DeniseITX Amiga board.",[["Watch",YT("nQnLxcAOYGY")]]],
+["yt-floppies","My Box of 5 1/4 Floppies",5,"EY","","A haul of Commodore 64 and IBM floppies from Vintage Computer Festival Midwest 19.",[["Watch",YT("YQXh7Rrq9Xk")]]],
+["yt-shadow","Cloud Gaming on a Raspberry Pi",5,"HY","","Streaming Cyberpunk and Flight Simulator from a Shadow.tech cloud PC to a Raspberry Pi.",[["Watch",YT("9cD6Mg559B4")]]],
+["yt-waymo","Riding in a Waymo",5,"Y","","No driver, Tempe, Arizona, by ASU and Mill Ave.",[["Watch",YT("6qIPm0rRoWE")]]],
+["yt-derecho","Calm to Chaos",5,"Y","","The moments before the August 10, 2020 derecho hit Ankeny, Iowa.",[["Watch",YT("rN-ucplIjZc")]]],
+
+["quick-thrills","Suno Originals",6,"O","S","Quick Thrills, plus a three song glam metal trilogy.",[["Quick Thrills","https://suno.com/song/7b67acb7-ee22-474d-83bd-6055df0cfb09"],["Glam 1","https://suno.com/song/293588a0-b16b-44d3-96ea-7da9df0554dd"],["Glam 2","https://suno.com/song/ba44de9d-f6e1-438d-813f-b919ac2012c7"],["Glam 3","https://suno.com/song/cef84227-9623-445f-9c98-6cdfa0106d83"]]],
+["radio-station","Dead Air Live",6,"OV","X","An AI radio station for people who are still awake.",[]],
+["fm3","FM3 Presets",6,"O","XC","Guitar tones for the Fractal FM3: War Pigs, Tom Petty, and the Jerry Cantrell Dirt chain.",[]],
+["arena","80s Arena Drum Kit",6,"O","X","Huge 80s arena drums, built as a Logic project.",[]],
+["voice-lab","Voice Lab",6,"V","X","Authorized voice clones, like the Nice Truck bro.",[]],
+
+["hourly-absurdity","Hourly Absurdity",7,"O","X","An Instagram account that turns absurd ideas into pictures.",[["Instagram","https://www.instagram.com/hourlyabsurdity/"],["Gallery","https://hourly-absurdity.hurtz.chatgpt.site/"]]],
+["billy","Billy Mays Nightmare",7,"O","X","A nightmare infomercial.",[]],
+["absurd-howto","Absurd How-To",7,"O","X","A how-to site full of illustrated nonsense.",[]],
+["newspaper","Raunchy Newspaper",7,"O","X","Straight faced local news with very bad headlines.",[]],
+["uwu","UwU",7,"O","X","A horrific interactive UwU website.",[]],
+["w0725a","Halloween Scare Site",7,"O","X","A website built to scare you.",[]],
+["box198","House in 3D",7,"O","XC","A whole house rebuilt in 3D with Gaussian splatting.",[]],
+
+["tvargenta","TVArgenta",8,"HV","XC","A 3D printed retro TV. Swear at the AI and it puts Johnny Carson, cartoons, or the news on.",[]],
+["radiohub","DSM Radio Hub",8,"H","X","A Raspberry Pi with two radios that feeds ScanMoines.",[]],
+["local-llm","Local AI Stack",8,"H","X","Private AI models running on my own Mac.",[]],
+["garage","Garage Server",8,"H","X","A GPU box for local transcription, with an energy cost tracker.",[]],
+["media","Media Stack",8,"H","X","A Mac mini runs the apps and the NAS holds the data.",[]],
+["h4","H4 Capture",8,"H","X","Auto import for my Zoom H4essential recorder.",[]],
+["airwave","Airwave",8,"H","C","A radio frequency monitor that hops bands and logs what it hears.",[]]
+];
+const BY=Object.fromEntries(P.map(p=>[p[0],p]));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const WATCH=k=>k.startsWith("vid-");
+const tagsOf=p=>(PLAY[p[0]]&&!WATCH(p[0])?"L":"")+p[3];
+const chip=t=>`<span class="tag" style="color:var(${TAG[t][1]})">${TAG[t][0]}</span>`;
+let tag="All",q="";
+try{tag=localStorage.getItem("pw.tag")||tag}catch(e){}
+// player
+const player=$("#player"),pframe=$("#pframe");
+function openGame(k){const p=BY[k];$("#pname").textContent=p[1];$("#ptab").href=PLAY[k];pframe.src=PLAY[k];player.hidden=false;document.body.style.overflow="hidden";pframe.onload=()=>{try{pframe.focus()}catch(e){}};$("#pclose").focus()}
+function closeGame(){player.hidden=true;pframe.src="about:blank";document.body.style.overflow=""}
+$("#pclose").onclick=closeGame;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!player.hidden)closeGame()});
+// featured
+// featured strip replaced by big cards in render()
+const playable=P.filter(p=>PLAY[p[0]]||p[6].some(l=>/^Play|demo/i.test(l[0]))).length;
+$("#stats").innerHTML=`<span><b>${P.length}</b> projects</span><span><b>${playable}</b> you can play</span><span><b>${P.filter(p=>p[3].includes("T")).length}</b> teardowns</span><span><b>${P.filter(p=>p[2]===5).length}</b> videos</span>`;
+function row(p){const[k,n,,,ai,d,l]=p;const pl=PLAY[k];return `<div class="r"><button class="th" type="button" ${pl?`data-play="${k}"`:`data-open="${k}"`} aria-label="${pl?(WATCH(k)?"Watch ":"Play "):""}${esc(n)}"><img src="img/${k}.jpg" alt="" loading="lazy" width="112" height="63" data-k="${k}"></button><div class="mid"><div class="nm"><b>${esc(n)}</b>${[...tagsOf(p)].map(chip).join("")}</div><div class="ds">${esc(d)}</div>${ai?`<div class="mw">made with ${[...ai].map(x=>AI[x]).join(" + ")}</div>`:""}</div><div class="links">${pl?`<button class="btn play" type="button" data-play="${k}">${WATCH(k)?"Watch here":"Play here"}</button>`:""}${l.map(([t,u],i)=>`<a class="btn${pl||i?" alt":""}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div></div>`}
+const BIG=new Set([0,5]);const ORDER=[5,0,1,2,3,4,6,7,8];
+const GFIRST=["vine-runner","going-down","hot-aisle","catbird","life-simulator","plumbing","choppricer","they-saw-us","nice-truck","clauderooms","play-with-me","cascade","little-tempest"];
+const VFIRST=["tape","vid-catbird","vid-hotaisle","vid-platter"];
+const rank=(arr,k)=>{const i=arr.indexOf(k);return i<0?99:i};
+function card(p){const[k,n,,,ai,d,l]=p;const pl=PLAY[k];const attr=pl?`data-play="${k}"`:`data-open="${k}"`;const lab=pl?(WATCH(k)?"Watch here":"Play here"):(l[0]?l[0][0]:"Open");
+  return `<button class="fc" type="button" ${attr}><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360"><span class="go">${esc(lab)}</span><span class="cap"><span class="row1"><b>${esc(n)}</b>${[...p[3]].map(chip).join("")}</span><p>${esc(d)}</p></span></button>`}
+function render(){
+  $("#tags").innerHTML=["All",...Object.keys(TAG)].map(t=>`<button class="chip" type="button" data-t="${t}" aria-pressed="${t===tag}">${t==="All"?"All":`<i style="background:var(${TAG[t][1]})"></i>${TAG[t][0]}`}</button>`).join("");
+  const m=p=>(tag==="All"||tagsOf(p).includes(tag))&&(!q||(p[1]+" "+p[5]).toLowerCase().includes(q));
+  const filtering=tag!=="All"||q;
+  const html=ORDER.map(i=>{const s=SEC[i];let rows=P.filter(p=>p[2]===i&&m(p));
+    if(i===0)rows=rows.slice().sort((a,b)=>rank(GFIRST,a[0])-rank(GFIRST,b[0]));
+    if(i===5)rows=rows.slice().sort((a,b)=>rank(VFIRST,a[0])-rank(VFIRST,b[0]));
+    if(!rows.length)return "";
+    return BIG.has(i)?`<section class="drawer big"><div class="dh"><b>${s}</b><span>${rows.length}</span></div><div class="feat">${rows.map(card).join("")}</div></section>`
+      :`<section class="drawer"><div class="dh"><b>${s}</b><span>${rows.length}</span></div><div class="list">${rows.map(row).join("")}</div></section>`}).join("");
+  $("#main").innerHTML=html||'<p class="none">Nothing matches.</p>';
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-play]");if(b){openGame(b.dataset.play);return}const o=e.target.closest("[data-open]");if(o){const l=BY[o.dataset.open][6][0];if(l)window.open(l[1],"_blank","noopener")}});
+$("#tags").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;tag=b.dataset.t;try{localStorage.setItem("pw.tag",tag)}catch(_){}render()};
+$("#q").oninput=e=>{q=e.target.value.trim().toLowerCase();render()};
+const pv=$("#pv");
+if(matchMedia("(hover:hover) and (pointer:fine)").matches){
+  $("#main").addEventListener("mousemove",e=>{const im=e.target.closest(".th img");if(!im){pv.hidden=true;return}
+    const src=`img/${im.dataset.k}.jpg`;if(pv.firstChild.getAttribute("src")!==src)pv.firstChild.src=src;
+    pv.hidden=false;pv.style.left=Math.min(e.clientX+18,innerWidth-370)+"px";pv.style.top=Math.min(e.clientY+12,innerHeight-220)+"px"});
+  $("#main").addEventListener("mouseleave",()=>pv.hidden=true);
+}
+render();
+</script>
+
+</html>

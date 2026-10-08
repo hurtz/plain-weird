@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Raid Night at Rusty n Edie's</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&display=swap">
+<style>
+/* Layout: one CRT. A bezel holds an 80 column terminal; under it a strip of big touch keys for the current menu. Single dark world. */
+:root{--bg:#06070a;--crt:#020402;--fg:#c8c8c8;--hi:#ffffff;--amber:#ffb347;--cyan:#55ffff;--green:#55ff55;--red:#ff5555;--mag:#ff55ff;--blue:#5555ff;--yel:#ffff55;--dim:#7a7a7a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(ellipse at 50% 30%,#1a1c22,var(--bg) 70%);color:var(--fg);font:20px/1.12 "VT323",ui-monospace,monospace;display:flex;flex-direction:column;align-items:center;padding:16px;padding-block:14px 18px;gap:10px}
+.bezel{width:min(100%,980px);background:linear-gradient(#2a2b2f,#17181b);border-radius:22px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)}
+.crt{position:relative;background:var(--crt);border-radius:14px;overflow:hidden;aspect-ratio:4/3;max-height:72vh;width:100%}
+.crt::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.55));}
+#scr{position:absolute;inset:0;padding:14px 18px;overflow:hidden;white-space:pre-wrap;word-break:break-word;font-size:clamp(13px,2.15vw,22px);text-shadow:0 0 6px rgba(255,255,255,.18)}
+#scr .c{display:inline-block;width:.55em;height:1em;background:var(--fg);vertical-align:-.12em;animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+.keys{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:min(100%,980px)}
+.keys button{font:18px "VT323",monospace;background:#15171c;color:var(--amber);border:1px solid #3a3d45;border-radius:4px;padding:6px 12px;cursor:pointer}
+.keys button:hover,.keys button:focus-visible{background:var(--amber);color:#111;outline:none}
+.note{width:min(100%,980px);color:#8c909a;font:14px/1.45 system-ui,sans-serif}
+.note a{color:var(--amber)}
+.k-red{color:var(--red)}.k-cy{color:var(--cyan)}.k-gr{color:var(--green)}.k-ye{color:var(--yel)}.k-mg{color:var(--mag)}.k-bl{color:var(--blue)}.k-wh{color:var(--hi)}.k-am{color:var(--amber)}.k-dm{color:var(--dim)}
+.glitch{animation:g .12s steps(2) 6}
+@keyframes g{50%{transform:translateX(3px);filter:brightness(1.6)}}
+@media (prefers-reduced-motion:reduce){#scr .c,.glitch{animation:none}}
+</style></head><body>
+<div class="bezel"><div class="crt" id="crt"><div id="scr" aria-live="polite"></div></div></div>
+<div class="keys" id="keys"></div>
+<div class="note">A dramatization of Saturday, January 30, 1993. The menus, handles and messages on the board are invented. The raid, the numbers, and the aftermath come from the public record: the SPA press release reprinted in <a href="https://bbs.idefix.net/textfiles/rne_bust" target="_blank" rel="noopener">Telecom Digest</a>, <a href="https://mirror.cyberbits.eu/textfiles.com/news/boardwat.txt" target="_blank" rel="noopener">Boardwatch Magazine</a>, and <a href="https://en.wikipedia.org/wiki/Rusty_n_Edie%27s_BBS" target="_blank" rel="noopener">Wikipedia</a>.</div>
+<script>
+(()=>{
+const scr=document.getElementById('scr'),keys=document.getElementById('keys'),crt=document.getElementById('crt');
+let ac=null,speed=2,busy=false,choices={},raided=false,visits=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function snd(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){ac=null}}
+function tone(fs,dur,vol=.05,type='sine'){if(!ac)return;const g=ac.createGain();g.gain.value=vol;g.connect(ac.destination);fs.forEach(f=>{const o=ac.createOscillator();o.type=type;o.frequency.value=f;o.connect(g);o.start();o.stop(ac.currentTime+dur)});g.gain.setValueAtTime(vol,ac.currentTime+dur-.02);g.gain.linearRampToValueAtTime(0,ac.currentTime+dur)}
+function noise(dur,vol=.04){if(!ac)return;const n=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate),d=n.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=ac.createBufferSource(),g=ac.createGain(),f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=1800;s.buffer=n;g.gain.value=vol;s.connect(f).connect(g).connect(ac.destination);s.start()}
+const DTMF={0:[941,1336],1:[697,1209],2:[697,1336],3:[697,1477],4:[770,1209],5:[770,1336],6:[770,1477],7:[852,1209],8:[852,1336],9:[852,1477]};
+function clear(){scr.innerHTML=''}
+function cursor(on){scr.querySelectorAll('.c').forEach(c=>c.remove());if(on)scr.insertAdjacentHTML('beforeend','<span class="c"></span>')}
+// markup: {red}text{/} style tags
+function parse(t){const out=[];const re=/\{(\w+)\}|\{\/\}/g;let m,last=0,cls=null;while((m=re.exec(t))){if(m.index>last)out.push([t.slice(last,m.index),cls]);cls=m[1]||null;last=re.lastIndex}if(last<t.length)out.push([t.slice(last),cls]);return out}
+async function type(t,cps){cursor(false);const per=cps?1000/cps:0;for(const[s,cls]of parse(t)){const span=document.createElement('span');if(cls)span.className='k-'+cls;scr.appendChild(span);if(!per||speed>4){span.textContent=s;continue}for(let i=0;i<s.length;i+=speed){span.textContent+=s.slice(i,i+speed);scr.scrollTop=scr.scrollHeight;await sleep(per*speed)}}scr.scrollTop=scr.scrollHeight;cursor(true)}
+const BAUD=420;
+function menu(opts){keys.innerHTML='';choices={};opts.forEach(([k,label,fn])=>{choices[k.toLowerCase()]=fn;const b=document.createElement('button');b.type='button';b.textContent=`[${k}] ${label}`;b.onclick=()=>go(k);keys.appendChild(b)})}
+async function go(k){const fn=choices[String(k).toLowerCase()];if(!fn||busy)return;busy=true;keys.innerHTML='';await fn();busy=false}
+document.addEventListener('keydown',e=>{if(e.key===' '&&choices[' ']){e.preventDefault();go(' ');return}if(e.key==='Enter'&&choices['enter']){go('enter');return}if(e.key.length===1)go(e.key)});
+const NODES=[["Node 1","Rusty","Sysop console"],["Node 2","Edie","Checking new users"],["Node 9","Night Owl","Downloading DOOMTOOL.ZIP"],["Node 14","Big Ed","Playing Legend of the Red Dragon"],["Node 22","Kilobyte","Reading Ohio Chatter"],["Node 31","Copper","Uploading MODS4.ZIP"],["Node 38","Wrench","Browsing PROGRAMS area"],["Node 47","YOU","Main menu"],["Node 53","Teletype","Downloading GIF pack"],["Node 66","Aunt Bea","In the chat room"],["Node 71","Mainframe","Downloading WIN31UPD.ZIP"],["Node 88","Lurk","Idle"],["Node 102","Byte Me","Playing Tradewars 2002"],["Node 117","Sockeye","Reading E-mail"]];
+async function title(){
+  clear();
+  await type(`{am}RAID NIGHT{/}\n{dm}Saturday, January 30, 1993 · Boardman, Ohio{/}\n\n`);
+  await type(`Rusty n Edie's is the biggest BBS you can dial.\n{wh}124{/} phone lines. {wh}14,000{/} subscribers in the US and overseas.\n{wh}$89{/} a year. Over {wh}100,000{/} files on {wh}19 GB{/} of disks.\nAbout {wh}4,000{/} calls a day.\n\nYou have a 14.4 modem and a long Saturday ahead of you.\n\n`,0);
+  await type(`{ye}Press D to dial in.{/} {dm}(Sound on. S changes typing speed.){/}`,0);
+  menu([["D","Dial in",dial],["S","Typing speed",async()=>{speed=speed>4?2:8;await title()}]]);
+}
+async function dial(){
+  snd();clear();await type('{dm}ATZ{/}\nOK\n{dm}ATDT 1-216-555-0187{/}\n',0);
+  for(const d of "12165550187"){tone(DTMF[d],.09,.06);await sleep(120)}
+  await sleep(500);tone([2100],.9,.03);await sleep(950);noise(1.4,.05);tone([1200,2400],1.2,.02,'square');await sleep(1500);
+  await type('\n{gr}CONNECT 14400/ARQ/V32/LAPM{/}\n\n',0);await sleep(300);
+  await type(`{mg}  ____            _           {cy} _   _    {mg} _____    _ _      _
+ |  _ \\ _   _ ___| |_ _   _  {cy}| \\ | |   {mg}| ____|__| (_) ___( )___
+ | |_) | | | / __| __| | | | {cy}|  \\| |   {mg}|  _| / _\` | |/ _ \\// __|
+ |  _ <| |_| \\__ \\ |_| |_| | {cy}| |\\  |   {mg}| |__| (_| | |  __/ \\__ \\
+ |_| \\_\\\\__,_|___/\\__|\\__, | {cy}|_| \\_|   {mg}|_____\\__,_|_|\\___| |___/
+                     |___/{/}
+{wh}        124 NODES  ·  BOARDMAN, OHIO  ·  EST. MAY 11, 1987{/}\n\n`,BAUD*4);
+  await type(`{cy}Enter your handle:{/} {wh}MODEM_KID{/}\n{cy}Password:{/} ********\n\n{gr}Welcome back, MODEM_KID.{/} You are on {ye}node 47{/}.\nTotal calls to this system: {wh}3,412,907{/}\n`,BAUD);
+  await mainMenu();
+}
+async function mainMenu(){
+  visits++;
+  if(raided)return;
+  if(visits>=4){await raid();return}
+  await type(`\n{am}[ MAIN MENU ]{/}  {dm}time left: ${60-visits*7} min{/}\n {ye}F{/}iles   {ye}M{/}essages   {ye}D{/}oor games   {ye}W{/}ho's online   {ye}B{/}ulletins   {ye}G{/}oodbye\n{cy}Command:{/} `,0);
+  menu([["F","Files",files],["M","Messages",messages],["D","Doors",doors],["W","Who's online",who],["B","Bulletins",bulletins],["G","Goodbye",goodbye]]);
+}
+async function files(){clear();await type(`{am}FILE AREAS{/}  {dm}100,000+ files online{/}\n\n  1  Shareware games          12,904 files\n  2  Utilities                 9,377 files\n  3  Windows 3.1 add-ons       6,210 files\n  4  Graphics                 31,055 files\n  5  Sound and MOD music       4,802 files\n  6  New uploads (today)         418 files\n\n{dm}Every area is open. The house rules say have fun.{/}\n`,BAUD);await mainMenu()}
+async function messages(){clear();await type(`{am}OHIO CHATTER{/} · 3 new\n\n{wh}From:{/} Big Ed     {wh}Subj:{/} Lines busy all morning\n  Took me 40 redials to get in today. Worth it.\n\n{wh}From:{/} Kilobyte  {wh}Subj:{/} New drives?\n  Rusty says more disk is coming next month. 19 gigs and full.\n\n{wh}From:{/} Lurk      {wh}Subj:{/} Weird cars outside?\n  {dm}No message body.{/}\n`,BAUD);await mainMenu()}
+async function doors(){clear();await type(`{am}DOOR GAMES{/}\n\n  Legend of the Red Dragon   {dm}43 playing{/}\n  Tradewars 2002             {dm}17 playing{/}\n  Barren Realms Elite        {dm}12 playing{/}\n\n{dm}Door is busy. Try again later.{/}\n`,BAUD);await mainMenu()}
+async function who(){clear();await type(`{am}WHO'S ONLINE{/}  {dm}${NODES.length} of 124 nodes shown{/}\n\n`,0);for(const[n,h,a]of NODES)await type(`  ${n.padEnd(9)} ${h.padEnd(11)} {dm}${a}{/}\n`,BAUD*2);await mainMenu()}
+async function bulletins(){clear();await type(`{am}BULLETIN #1 from the sysops{/}\n\n  New lines are being installed this month.\n  Renewals are still $89 a year.\n  Have fun. Please be nice to the new users.\n\n{dm}End of bulletins.{/}\n`,BAUD);await mainMenu()}
+async function goodbye(){clear();await type(`{ye}Leaving so soon?{/} The board is too good to log off.\n`,0);await mainMenu()}
+async function raid(){
+  raided=true;clear();
+  await type(`{am}WHO'S ONLINE{/}\n\n`,0);
+  const gone=[];
+  for(let i=0;i<NODES.length;i++){const[n,h]=NODES[i];if(h==='YOU'){await type(`  ${n.padEnd(9)} ${h.padEnd(11)} {ye}still here{/}\n`,BAUD*2);continue}await type(`  ${n.padEnd(9)} ${h.padEnd(11)} {red}carrier lost{/}\n`,BAUD*2);noise(.08,.02)}
+  await sleep(600);
+  await type(`\n{wh}*** Message from SYSOP on node 1 ***{/}\n{red}something is happening at the house. we have to{/}`,BAUD/2);
+  crt.classList.add('glitch');noise(1.2,.08);await sleep(900);crt.classList.remove('glitch');
+  await type(`\n\n{wh}NO CARRIER{/}\n`,0);tone([480,620],.5,.04);
+  await sleep(800);
+  menu([["R","Redial",redial]]);
+}
+async function redial(){
+  clear();
+  for(let i=1;i<=3;i++){
+    await type(`{dm}ATDT 1-216-555-0187{/}\n`,0);for(const d of "2165550187"){tone(DTMF[d],.06,.04);await sleep(80)}
+    await sleep(500);
+    if(i<3){for(let k=0;k<3;k++){tone([480,620],.45,.04);await sleep(900)}await type(`{red}BUSY{/}\n\n`,0)}
+    else{await sleep(2200);await type(`{red}NO ANSWER{/}\n\n`,0)}
+  }
+  await type(`All 124 lines go quiet. They stay quiet.\n\n{ye}Press N to find out what happened.{/}`,0);
+  menu([["N","Find out",after1]]);
+}
+async function after1(){
+  clear();
+  await type(`{am}EXEC-PC BBS · Wisconsin{/} · message base\n\n{wh}From:{/} Teletype   {wh}Subj:{/} R&E is down???\n  All lines busy then dead since Saturday. Anyone know?\n\n{wh}From:{/} Copper     {wh}Subj:{/} Re: R&E is down???\n  Heard the FBI took everything. Computers, modems,\n  even the subscriber list. Check Usenet.\n`,BAUD);
+  menu([["N","Next",after2]]);
+}
+async function after2(){
+  clear();
+  await type(`{am}USENET · comp.dcom.telecom{/}\n{dm}Telecom Digest, Friday, February 5, 1993{/}\n\n{wh}Subject:{/} FBI raids major Ohio bulletin board\n\n  On January 30 the FBI, working with the Software\n  Publishers Association, served a search warrant on\n  Rusty & Edie's in Boardman, Ohio. Agents seized\n  computers, hard drives, telecom gear, and financial\n  and subscriber records.\n\n  The SPA says it spent months investigating after\n  complaints from its members, and that its staff\n  downloaded copyrighted programs from the board.\n  It says more raids on other boards are coming.\n\n{dm}(Summarized from the SPA press release.){/}\n`,BAUD*1.5);
+  menu([["N","Next",after3]]);
+}
+async function after3(){
+  clear();
+  await type(`{am}BOARDWATCH MAGAZINE{/} · the BBS trade magazine\n\n  About 130 computers were hauled out of the Hardenburghs'\n  home. No charges filed yet. The 124 line board is dark.\n\n  Rusty says he is stunned this could happen in America,\n  and vows to be back on new equipment by March 1.\n\n  Rival sysops are not shocked. One in Chicago calls the\n  board an open secret in the industry. Another warns\n  that honest sysops lose when boards like this thrive.\n`,BAUD*1.5);
+  menu([["N","Next",after4]]);
+}
+async function after4(){
+  clear();
+  await type(`{am}WHAT CAME NEXT{/}\n\n {wh}Mar 11, 1993{/}  Playboy sues over 412 scanned magazine images\n                found on the board.\n {wh}May 11, 1993{/}  John C. Dvorak, in PC Magazine, argues the SPA\n                should not be able to get a sysop's equipment\n                seized on a tip.\n {wh}Feb 3, 1998{/}   The Playboy suit is dismissed after a settlement.\n\nFor a lot of callers it was the first time the online\nworld they lived in got raided. Some learned it from a\nrival board. Some from Usenet. Most just got a busy signal.\n\n{ye}Press A to dial in again.{/}`,BAUD*1.5);
+  menu([["A","Start over",()=>{raided=false;visits=0;return title()}]]);
+}
+title();
+})();
+</script>
+</body></html>

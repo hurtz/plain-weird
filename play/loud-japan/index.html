@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a070b" />
+    <title>Loud Japan — Culture Shock Pinball</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="grain" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <div class="brand-lockup">
+          <p class="eyebrow">文化ショック // CULTURE SHOCK</p>
+          <h1>LOUD <span>JAPAN</span></h1>
+        </div>
+        <div class="topbar-meta">
+          <span class="status-dot"><i></i> TABLE ONLINE</span>
+          <span class="version-tag">V.01 // 99¢ CHAOS</span>
+        </div>
+      </header>
+
+      <main class="game-layout">
+        <section class="game-stage" aria-label="Loud Japan pinball table">
+          <div class="stage-caption">
+            <div>
+              <span class="section-index">01</span>
+              <span>THE CULTURE SHOCK MACHINE</span>
+            </div>
+            <span class="caption-rule"></span>
+            <span class="caption-right">NO EXPLANATION PROVIDED</span>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-glow" aria-hidden="true"></div>
+            <canvas id="gameCanvas" width="540" height="900" aria-label="Playable Loud Japan pinball table"></canvas>
+            <div class="shock-burst" id="shockBurst" aria-hidden="true"><span class="shock-kana">爆</span><span class="shock-word">KAWAII!!!</span></div>
+            <div class="cabinet-warning">WARNING: CULTURAL<br /><b>OVERLOAD IMMINENT</b></div>
+            <div class="table-callout callout-left">KAWAII<br /><b>OVERDRIVE</b></div>
+            <div class="table-callout callout-right">注意<br /><b>LOUD</b></div>
+          </div>
+
+          <div class="touch-controls" aria-label="Touch controls">
+            <button class="flipper-button left" data-flipper="left" aria-label="Left flipper">◀ FLIP</button>
+            <button class="launch-button" id="launchButton">LAUNCH <span>↗</span></button>
+            <button class="flipper-button right" data-flipper="right" aria-label="Right flipper">FLIP ▶</button>
+          </div>
+          <p class="control-hint">A / ← left flipper <span>•</span> D / → right flipper <span>•</span> SPACE launch</p>
+        </section>
+
+        <aside class="side-panel">
+          <div class="manifesto">
+            <p class="eyebrow hot">PINBALL CULTURE SHOCK</p>
+            <h2>NO QUIET<br /><em>JAPAN ZONE.</em></h2>
+            <p class="manifesto-copy">Cats. Pandas. Anime. One thousand years of tradition, compressed into one ball and launched directly at your face.</p>
+          </div>
+
+          <div class="warning-strip"><span>音量 MAX</span><b>UNDERSTANDING OPTIONAL</b><span>音量 MAX</span></div>
+
+          <div class="score-card">
+            <div class="card-topline"><span>PLAYER ONE</span><span class="live-pill">LIVE</span></div>
+            <div class="score-value" id="scoreValue">0000000</div>
+            <div class="score-bottomline">
+              <span>COMBO <b id="comboValue">x00</b></span>
+              <span>BALL <b id="ballValue">01</b> / 03</span>
+            </div>
+          </div>
+
+          <div class="event-card">
+            <div class="card-topline"><span>LOUD-O-METER</span><span class="meter-label" id="meterLabel">WAITING</span></div>
+            <div class="meter"><span id="meterBar"></span></div>
+            <div class="announcer" id="announcer" aria-live="polite">INSERT BALL. EMBRACE CONFUSION.</div>
+            <div class="event-log" id="eventLog" aria-live="polite">
+              <p><span>00:00</span> TABLE ARMED <b>✓</b></p>
+              <p><span>00:00</span> EXPLANATION NOT FOUND <b>!</b></p>
+            </div>
+          </div>
+
+          <div class="side-actions">
+            <button class="voice-button" id="voiceButton"><span class="speaker-icon">◖</span> ENABLE ANNOUNCER VOICE</button>
+            <button class="reset-button" id="resetButton">RESET TABLE ↻</button>
+          </div>
+
+          <div class="side-note">
+            <span class="stamp">JPN // ???</span>
+            <p>Designed for maximum cultural whiplash. Skill is optional. Volume is not.</p>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="footer-line">
+        <span>LOUD JAPAN™</span><span>MADE WITH TOO MUCH ENERGY</span><span>© 2026 // PLAY LOUD</span>
+      </footer>
+    </div>
+    <script src="game.js"></script>
+  </body>
+</html>

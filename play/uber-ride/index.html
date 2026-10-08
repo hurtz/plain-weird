@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An arcade driving game about keeping your passenger alive despite everything he says."
+    />
+    <title>Do Not Kill the Passenger — Driving Prototype</title>
+    <link rel="stylesheet" href="styles.css?v=2" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <section class="start-screen" id="startScreen" aria-labelledby="startTitle">
+      <div class="start-copy">
+        <p class="kicker">One fare. Three lanes. Zero patience.</p>
+        <h1 id="startTitle">Keep it<br /><span>together.</span></h1>
+        <p>
+          Get Trent to the hotel before the clock runs out. Dodge traffic,
+          follow GPS, and hold <strong>Brake</strong> when your nerves climb.
+          Or hold the red button and inherit a much worse problem.
+        </p>
+        <div class="control-strip" aria-label="Controls">
+          <span><kbd>A</kbd><kbd>D</kbd> steer</span>
+          <span><kbd>W</kbd> hurry</span>
+          <span><kbd>Space</kbd> breathe</span>
+          <span><kbd>K</kbd> absolutely do not</span>
+        </div>
+        <button class="primary-button" id="startButton" type="button">
+          Start driving <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <div class="start-trent" aria-hidden="true"></div>
+    </section>
+
+    <main class="game" id="game" hidden>
+      <header class="hud">
+        <div class="brand"><span>Night</span><strong>Shift</strong></div>
+
+        <div class="hud-stat">
+          <span>Projected fare</span>
+          <strong id="fareValue">$18.40</strong>
+        </div>
+        <div class="hud-stat">
+          <span id="distanceLabel">Hotel</span>
+          <strong id="distanceValue">950 m</strong>
+        </div>
+        <div class="hud-stat">
+          <span id="timerLabel">ETA</span>
+          <strong id="timerValue">1:18</strong>
+        </div>
+        <div class="hud-stat hud-health">
+          <span>Car</span>
+          <strong id="healthValue" aria-label="Five health remaining">● ● ● ● ●</strong>
+        </div>
+
+        <div class="pressure-wrap">
+          <div class="pressure-label">
+            <span id="pressureName">Nerves</span>
+            <strong id="pressureValue">0%</strong>
+          </div>
+          <div
+            class="pressure-track"
+            id="pressureTrack"
+            role="progressbar"
+            aria-label="Nerves"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="0"
+          >
+            <i id="pressureFill"></i>
+          </div>
+        </div>
+
+        <button
+          class="sound-button"
+          id="soundButton"
+          type="button"
+          aria-pressed="true"
+        >
+          <span aria-hidden="true">▥</span>
+          <span id="soundLabel">Sound on</span>
+        </button>
+      </header>
+
+      <section class="game-stage" id="gameStage">
+        <canvas id="roadCanvas" aria-label="Three-lane night road"></canvas>
+
+        <div class="route-card" id="routeCard">
+          <span id="routeKicker">GPS</span>
+          <strong id="routeInstruction">Stay on route</strong>
+          <small id="routeSubtext">Hotel · 950 m</small>
+        </div>
+
+        <div class="mirror-shell" id="mirrorShell">
+          <div class="mirror">
+            <img
+              src="assets/trent-rearview.png"
+              alt="Trent in the back seat holding his phone and drink"
+            />
+            <i aria-hidden="true"></i>
+          </div>
+          <div class="passenger-label">
+            <span id="passengerState">Trent · 4.92 ★</span>
+          </div>
+        </div>
+
+        <div class="bark" id="bark" aria-live="polite" hidden>
+          <span id="barkSpeaker">TRENT</span>
+          <strong id="barkText">This is the premium car?</strong>
+        </div>
+
+        <div class="phone-sos" id="phoneSos" hidden>
+          <span>PHONE SOS</span>
+          <strong id="phoneTimer">CONNECTING</strong>
+        </div>
+
+        <div class="event-flash" id="eventFlash" aria-live="polite"></div>
+
+        <aside class="kill-control">
+          <p id="killWarning">You need the fare.</p>
+          <button
+            class="kill-button"
+            id="killButton"
+            type="button"
+            aria-label="Hold to kill Trent"
+          >
+            <i class="hold-progress" aria-hidden="true"></i>
+            <span><small id="killSmall">Do not hold</small><strong id="killText">Kill Trent</strong></span>
+          </button>
+          <small>Hold <kbd>K</kbd> or the button</small>
+        </aside>
+
+        <div class="desktop-controls">
+          <span><kbd>A</kbd><kbd>D</kbd> steer</span>
+          <span><kbd>W</kbd> hurry</span>
+          <span><kbd>Space</kbd> brake + breathe</span>
+        </div>
+
+        <div class="touch-controls" aria-label="Touch driving controls">
+          <button type="button" data-control="left" aria-label="Steer left">←</button>
+          <button type="button" data-control="brake" aria-label="Brake and breathe">BRAKE</button>
+          <button type="button" data-control="boost" aria-label="Hurry">HURRY</button>
+          <button type="button" data-control="right" aria-label="Steer right">→</button>
+        </div>
+
+        <div class="countdown" id="countdown">3</div>
+      </section>
+    </main>
+
+    <section class="outcome" id="outcome" hidden aria-labelledby="outcomeTitle">
+      <div class="outcome-card" id="outcomeCard">
+        <p class="kicker" id="outcomeKicker">Shift complete</p>
+        <h2 id="outcomeTitle">You kept it together.</h2>
+        <p id="outcomeCopy"></p>
+        <div class="results" id="results"></div>
+        <button class="primary-button" id="restartButton" type="button">
+          Drive again <span aria-hidden="true">↻</span>
+        </button>
+      </div>
+    </section>
+
+    <noscript>
+      <p class="noscript">This driving prototype needs JavaScript enabled.</p>
+    </noscript>
+    <script src="game.js?v=5"></script>
+  </body>
+</html>

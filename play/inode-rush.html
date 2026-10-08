@@ -1,0 +1,324 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Inode Rush</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<style>
+/* Layout: an operator console. LCD stat strip on top; the file preview fills the left; keycap bins and actions on the right; the commit queue runs along the bottom. One deliberate look: dark console with a red handheld accent. */
+:root{
+  color-scheme:dark;
+  --bg:#18191d; --panel:#212328; --panel-2:#2a2d33; --line:#363a42; --ink:#eef0f3; --ink-2:#a9afb9; --ink-3:#7c838e;
+  --lcd:#b8c1a3; --seg:#20251c; --red:#e0412f; --red-dk:#9e2219; --amber:#f2b23a; --good:#5cc46a; --cap:#d9dce1; --cap-ink:#24262b;
+  --f-lcd:"Silkscreen", "Courier New", monospace; --f-ui:"Chakra Petch", "Arial Narrow", system-ui, sans-serif; --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-ui);padding-inline:16px;padding-block:18px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;gap:14px}
+.top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:stretch}
+.logo{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;display:grid;align-content:center}
+.logo h1{margin:0;font:700 24px/1 var(--f-lcd);color:var(--red);letter-spacing:.04em}
+.logo span{font:600 10.5px var(--f-ui);letter-spacing:.2em;color:var(--ink-3)}
+.lcd{background:var(--lcd);color:var(--seg);border-radius:10px;box-shadow:inset 0 2px 8px #0007;padding:8px 14px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;font-family:var(--f-lcd);align-items:center}
+.lcd div{font-size:11px;min-width:0}
+.lcd b{display:block;font-size:20px;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{grid-column:1/-1;height:8px;border:2px solid var(--seg);border-radius:3px;position:relative}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--seg);width:0}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:560px;overflow:hidden;min-width:0}
+.head{padding:14px 16px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px;min-width:0}
+.title{font:600 22px/1.2 var(--f-ui);overflow-wrap:anywhere;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font:12.5px var(--f-mono);color:var(--ink-2)}
+.meta a{color:var(--amber)}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font:600 11px var(--f-ui);letter-spacing:.06em;padding:2px 8px;border-radius:999px;background:var(--panel-2);color:var(--ink-2)}
+.badge.warn{background:#f2b23a22;color:var(--amber)} .badge.hot{background:#e0412f26;color:#ff8a7c}
+.view{position:relative;display:grid;place-items:center;background:#111215;min-height:380px;overflow:auto;padding:14px}
+.view canvas,.view img{max-width:100%;max-height:70vh;box-shadow:0 6px 24px #000a;background:#fff}
+.view pre{margin:0;align-self:start;justify-self:stretch;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 var(--f-mono);color:#dfe3ea;background:#1b1d22;border:1px solid var(--line);border-radius:8px;padding:14px;max-height:66vh;overflow:auto}
+.view .none{color:var(--ink-3);text-align:center;font-size:14px;max-width:46ch}
+.view video,.view audio{max-width:100%}
+.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ai{border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;align-items:flex-start;min-height:52px}
+.ai p{margin:0;flex:1;min-width:0;color:var(--ink-2);font-size:14px}
+.ai p b{color:var(--ink)}
+.side{display:grid;gap:12px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px;min-width:0}
+.panel h2{margin:0;font:600 12px var(--f-ui);letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.bins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.key{position:relative;text-align:left;background:linear-gradient(#e6e8ec,var(--cap));color:var(--cap-ink);border:0;border-radius:9px;padding:9px 10px 9px 40px;box-shadow:0 4px 0 #8e939b,0 6px 10px #0006;font:600 14px/1.15 var(--f-ui);cursor:pointer;min-width:0;min-height:52px}
+.key i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font:700 15px var(--f-lcd);color:var(--red);font-style:normal}
+.key small{display:block;font:500 11px var(--f-mono);color:#5d626b;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.key span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.key:active,.key.press{transform:translateY(3px);box-shadow:0 1px 0 #8e939b}
+.key.trash{background:linear-gradient(#ff6b5c,var(--red));color:#fff;box-shadow:0 4px 0 var(--red-dk),0 6px 10px #0006}
+.key.trash small{color:#ffe1dc}.key.trash i{color:#fff}
+.key.sug{outline:3px solid var(--amber);outline-offset:2px}
+.key .edit{position:absolute;right:6px;top:5px;font:600 10px var(--f-ui);color:#6b7079;background:transparent;border:0;cursor:pointer;padding:2px 4px}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.act{background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 6px;font:600 13px var(--f-ui);cursor:pointer}
+.act kbd{display:block;font:500 10.5px var(--f-mono);color:var(--ink-3)}
+.act:hover{border-color:var(--ink-3)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.editor{display:grid;gap:8px;background:var(--panel-2);border-radius:9px;padding:10px}
+.editor select,.editor input{width:100%;font:14px var(--f-ui);background:#16181c;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--red);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:700 13px var(--f-ui);letter-spacing:.04em;cursor:pointer}
+.btn.alt{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.queue{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:10px}
+.qhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center}
+.qhead h2{margin:0;font:700 15px var(--f-ui)}
+.qlist{display:grid;gap:4px;max-height:220px;overflow:auto;font:12.5px var(--f-mono)}
+.qi{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:4px 6px;border-radius:6px;background:var(--panel-2)}
+.qi span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qi em{font-style:normal;color:var(--amber)}
+.qi.err{outline:1px solid var(--red)} .qi.done{opacity:.55}
+.qi button{background:transparent;border:0;color:var(--ink-3);cursor:pointer;font:12px var(--f-ui)}
+.muted{color:var(--ink-3);font-size:13px}
+.banner{background:#f2b23a1a;border:1px solid #f2b23a55;color:#ffd892;border-radius:10px;padding:10px 14px;font-size:14px}
+.banner.bad{background:#e0412f1a;border-color:#e0412f66;color:#ffb3aa}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--lcd);color:var(--seg);font:700 13px var(--f-lcd);padding:10px 16px;border-radius:8px;box-shadow:0 8px 24px #000a;z-index:20}
+.toggle{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-2)}
+select.sort{font:13px var(--f-ui);background:var(--panel-2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+@media (max-width:980px){.main{grid-template-columns:minmax(0,1fr)}.card{min-height:0}.bins{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.top{grid-template-columns:minmax(0,1fr)}.lcd{grid-template-columns:repeat(3,minmax(0,1fr))}.title{font-size:18px}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}.key:active{transform:none}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="logo"><h1>INODE RUSH</h1><span>VFS-02 · NO CLOCK, NO MERCY</span></div>
+    <div class="lcd" aria-live="polite">
+      <div>LOOSE<b id="sLeft">---</b></div><div>FILED<b id="sDone">0</b></div><div>STREAK<b id="sStreak">0</b></div><div>SCORE<b id="sScore">0</b></div><div>FREED<b id="sFreed">0 B</b></div><div>RANK<b id="sRank">nobody</b></div>
+      <div class="bar"><i id="sBar"></i></div>
+    </div>
+  </div>
+  <div id="banner" hidden></div>
+  <div class="main">
+    <article class="card" id="card">
+      <div class="head"><h2 class="title" id="fTitle">Connecting to your Drive…</h2><div class="meta" id="fMeta"></div><div class="badges" id="fBadges"></div></div>
+      <div class="view" id="view"><div class="spin"></div></div>
+      <div class="ai"><p id="aiText">Press <b>A</b> to have Claude read this file and suggest a folder.</p><button type="button" class="btn alt" id="aiBtn">Ask Claude</button></div>
+    </article>
+    <aside class="side">
+      <div class="panel"><h2>Folders <span class="muted" id="binHint">click ✎ to change</span></h2><div class="bins" id="bins"></div><div id="editor"></div></div>
+      <div class="panel"><div class="actions">
+        <button type="button" class="act" id="skipBtn">Skip<kbd>S or →</kbd></button>
+        <button type="button" class="act" id="undoBtn">Undo<kbd>U</kbd></button>
+        <button type="button" class="act" id="openBtn">Open<kbd>O</kbd></button>
+      </div>
+      <label class="toggle"><input type="checkbox" id="autoAi"> Auto ask Claude on every file (uses your plan)</label>
+      <label class="toggle">Order <select class="sort" id="sort"><option value="old">Oldest first</option><option value="big">Biggest first</option><option value="new">Newest first</option><option value="rand">Shuffle</option></select></label>
+      </div>
+    </aside>
+  </div>
+  <section class="queue">
+    <div class="qhead"><h2>Staged moves <span class="muted" id="qCount">0</span></h2>
+      <div class="row"><span class="muted">Nothing moves in Drive until you commit. Trash is undoable in Drive.</span><button type="button" class="btn" id="commit" disabled>Commit to Drive</button></div></div>
+    <div class="qlist" id="qlist"><div class="muted">Sort a few files. They queue here like a git index.</div></div>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+var SERVER="Google Drive",FOLDER="application/vnd.google-apps.folder";
+var $=function(id){return document.getElementById(id)};
+var DEFAULT_BINS=["Home","Family","Music","Work","Cars","Projects","Photos","Archive","Money"];
+var mcp=null,sample=null,demo=false,rootFolders=[],deck=[],pos=0,staged=[],history=[],previews=new Map(),aiCache=new Map(),busy=false;
+var stats={filed:0,score:0,streak:0,best:0,freed:0,trashed:0,lifetime:0},startCount=0;
+var prefs={bins:DEFAULT_BINS.map(function(n){return {name:n}}),sort:"old",autoAi:false};
+try{var sp=JSON.parse(localStorage.getItem('inoderush2')||'null');if(sp){prefs=Object.assign(prefs,sp.prefs||{});stats.lifetime=sp.lifetime||0}}catch(e){}
+function save(){try{localStorage.setItem('inoderush2',JSON.stringify({prefs:prefs,lifetime:stats.lifetime}))}catch(e){}}
+$('sort').value=prefs.sort;$('autoAi').checked=!!prefs.autoAi;
+
+// ---------- helpers ----------
+function sz(b){b=+b||0;if(b<1024)return b+" B";if(b<1048576)return (b/1024).toFixed(0)+" KB";if(b<1073741824)return (b/1048576).toFixed(1)+" MB";return (b/1073741824).toFixed(2)+" GB"}
+function day(t){return t?String(t).slice(0,10):"?"}
+function kind(m){m=m||"";if(m==="application/pdf")return "PDF";if(m.indexOf("image/")===0)return "IMAGE";if(m.indexOf("video/")===0)return "VIDEO";if(m.indexOf("audio/")===0)return "AUDIO";if(/google-apps\.document|wordprocessing|msword|opendocument\.text/.test(m))return "DOC";if(/spreadsheet|ms-excel|csv/.test(m))return "SHEET";if(/presentation|powerpoint/.test(m))return "SLIDES";if(/zip|tar|compressed/.test(m))return "ARCHIVE";if(/^text\/|json|markdown|octet-stream/.test(m))return "TEXT";if(m.indexOf("google-apps.shortcut")>=0)return "SHORTCUT";return "FILE"}
+function toast(t){var e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){e.hidden=true},1800)}
+function words(n){return String(n).replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).map(function(w){return w.length>3&&/s$/.test(w)?w.slice(0,-1):w})}
+function banner(msg,bad){var b=$('banner');if(!msg){b.hidden=true;return}b.hidden=false;b.className="banner"+(bad?" bad":"");b.textContent=msg}
+function errText(e){var c=e&&e.code;if(c==="needs_reauth")return "Google Drive needs to be reconnected. Reconnect it in claude.ai Settings, Connectors, then reload.";
+  if(c==="server_not_connected"||c==="selection_required")return "Google Drive is not connected for this page. Add or choose it in claude.ai Settings, Connectors, then reload.";
+  if(c==="not_in_manifest")return "Google Drive access was declined for this page. Allow it from the page's Permissions menu to sort real files.";
+  if(c==="blocked_by_policy"||c==="approval_required")return "Your organization blocks this Drive action from pages.";
+  if(c==="server_unavailable")return "Google Drive did not answer. Try again in a moment.";
+  return (e&&e.message)||"Something went wrong talking to Drive."}
+function call(tool,input){return mcp.callTool(SERVER,tool,input).then(function(r){return r.payload})}
+
+// ---------- ranks ----------
+var RANKS=[[0,"nobody"],[10,"guest"],[25,"user"],[50,"staff"],[100,"wheel"],[150,"root"],[200,"dmr"]];
+function rank(){var r=RANKS[0][1];RANKS.forEach(function(x){if(stats.lifetime>=x[0])r=x[1]});if(deck.length&&remaining()===0&&!staged.some(function(s){return !s.done}))r="ken";return r}
+function remaining(){return deck.length-pos}
+function hud(){var left=deck.filter(function(f){return !f.gone}).length-staged.filter(function(s){return !s.done}).length;
+  $('sLeft').textContent=demo?remaining():left;$('sDone').textContent=stats.filed;$('sStreak').textContent=stats.streak+(stats.streak>=5?" x"+mult():"");
+  $('sScore').textContent=stats.score;$('sFreed').textContent=sz(stats.freed);$('sRank').textContent=rank();
+  $('sBar').style.width=(startCount?Math.round(100*(1-left/startCount)):0)+"%"}
+function mult(){return Math.min(5,1+Math.floor(stats.streak/5))}
+
+// ---------- bins ----------
+function matchFolder(name){var w=words(name);var hit=null;rootFolders.forEach(function(f){if(hit)return;if(f.title.toLowerCase()===name.toLowerCase())hit=f});
+  if(!hit)rootFolders.forEach(function(f){if(hit)return;var fw=words(f.title);if(w.length&&w.every(function(x){return fw.indexOf(x)>=0}))hit=f});return hit}
+function binFolder(b){if(b.id)return rootFolders.filter(function(f){return f.id===b.id})[0]||{id:b.id,title:b.name};return matchFolder(b.name)}
+function renderBins(sug){var el=$('bins');el.textContent="";
+  prefs.bins.forEach(function(b,i){var f=binFolder(b),k=document.createElement('button');k.type='button';k.className='key'+(sug===i?' sug':'');k.dataset.i=i;
+    k.innerHTML='<i></i><span></span><small></small><span class="edit" role="button" tabindex="0" aria-label="change folder">✎</span>';k.querySelector('i').textContent=i+1;k.querySelector('span').textContent=b.name;
+    k.querySelector('small').textContent=f?"→ "+f.title:(demo?"demo":"new folder on commit");el.appendChild(k)});
+  var t=document.createElement('button');t.type='button';t.className='key trash'+(sug==="trash"?' sug':'');t.dataset.i="trash";t.innerHTML='<i>0</i><span>Trash</span><small>junk, dupes, empties</small>';el.appendChild(t)}
+$('bins').addEventListener('click',function(e){var ed=e.target.closest('.edit');var k=e.target.closest('.key');if(!k)return;if(ed){e.stopPropagation();openEditor(+k.dataset.i);return}decide(k.dataset.i==="trash"?"trash":+k.dataset.i,k)});
+function openEditor(i){var b=prefs.bins[i],ed=$('editor');ed.innerHTML='<div class="editor"><b>Key '+(i+1)+'</b><select id="edSel"><option value="">Pick an existing folder…</option></select><input id="edNew" placeholder="or type a new folder name"><div class="row"><button type="button" class="btn" id="edOk">Save</button><button type="button" class="btn alt" id="edX">Cancel</button></div></div>';
+  rootFolders.slice().sort(function(a,c){return a.title.localeCompare(c.title)}).forEach(function(f){var o=document.createElement('option');o.value=f.id;o.textContent=f.title;if(binFolder(b)&&binFolder(b).id===f.id)o.selected=true;$('edSel').appendChild(o)});
+  $('edNew').value=binFolder(b)?"":b.name;
+  $('edOk').onclick=function(){var v=$('edNew').value.trim().replace(/\//g,"_"),s=$('edSel').value;if(v)prefs.bins[i]={name:v};else if(s){var f=rootFolders.filter(function(x){return x.id===s})[0];prefs.bins[i]={name:f.title,id:f.id}}save();ed.textContent="";renderBins()};
+  $('edX').onclick=function(){ed.textContent=""}}
+
+// ---------- deck ----------
+function sortDeck(){var rest=deck.slice(pos),head=deck.slice(0,pos);var s=prefs.sort;
+  rest.sort(function(a,b){if(s==="big")return (+b.fileSize||0)-(+a.fileSize||0);if(s==="new")return String(b.modifiedTime).localeCompare(String(a.modifiedTime));if(s==="old")return String(a.modifiedTime).localeCompare(String(b.modifiedTime));return 0});
+  if(s==="rand")for(var i=rest.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=rest[i];rest[i]=rest[j];rest[j]=t}
+  deck=head.concat(rest)}
+$('sort').onchange=function(){prefs.sort=this.value;save();sortDeck();show()};
+$('autoAi').onchange=function(){prefs.autoAi=this.checked;save();if(this.checked)ask()};
+function norm(t){return String(t).toLowerCase().replace(/\.[a-z0-9]{2,5}$/,"").replace(/\s*(\(\d+\)|copy|copy \d+)$/,"").replace(/[^a-z0-9]+/g," ").trim()}
+function dupOf(f){if(!(+f.fileSize))return null;var n=norm(f.title);var d=deck.filter(function(g){return g!==f&&!g.gone&&g.fileSize===f.fileSize&&norm(g.title)===n})[0];return d||null}
+function cur(){return deck[pos]}
+
+async function loadDrive(){
+  try{var rf=[],tok=null,p=0;do{var r=await call("search_files",{query:"parentId = 'root' and mimeType = '"+FOLDER+"'",pageSize:100,excludeContentSnippets:true,pageToken:tok||undefined});(r.files||[]).forEach(function(f){rf.push(f)});tok=r.nextPageToken;p++}while(tok&&p<5);rootFolders=rf;renderBins();
+    var files=[];tok=null;p=0;do{r=await call("search_files",{query:"parentId = 'root' and mimeType != '"+FOLDER+"'",pageSize:100,excludeContentSnippets:true,pageToken:tok||undefined});(r.files||[]).forEach(function(f){files.push(f)});tok=r.nextPageToken;p++;$('fTitle').textContent="Reading My Drive… "+files.length+" files"}while(tok&&p<12);
+    deck=files;startCount=files.length;sortDeck();banner(null);show();
+  }catch(e){banner(errText(e),true);startDemo()}
+}
+
+// ---------- preview ----------
+function b64bytes(b){var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
+async function buildPreview(f){
+  var k=kind(f.mimeType),size=+f.fileSize||0,out={kind:k};
+  if(demo){out.text=f.demoText||"";return out}
+  if(size===0&&f.fileSize!==undefined&&!/google-apps/.test(f.mimeType)){out.note="Empty file, 0 bytes. Almost certainly junk.";return out}
+  try{
+    if(k==="PDF"&&size<=15e6){var d=await call("download_file_content",{fileId:f.id});out.pdf=b64bytes(d.content);return out}
+    if(k==="IMAGE"&&size<=15e6&&/jpeg|jpg|png|gif|webp|bmp/.test(f.mimeType)){d=await call("download_file_content",{fileId:f.id});out.img="data:"+(d.mimeType||f.mimeType)+";base64,"+d.content;return out}
+    if((k==="AUDIO"&&size<=12e6)||(k==="VIDEO"&&size<=20e6)){d=await call("download_file_content",{fileId:f.id});out.media="data:"+(d.mimeType||f.mimeType)+";base64,"+d.content;return out}
+    if(k==="TEXT"&&size<=300e3){d=await call("download_file_content",{fileId:f.id});try{out.text=new TextDecoder().decode(b64bytes(d.content)).slice(0,6000)}catch(x){out.text=""}return out}
+    if(/DOC|SHEET|SLIDES|PDF|IMAGE/.test(k)){var c=await call("read_file_content",{fileId:f.id});out.text=String((c&&c.fileContent)||"").replace(/^Context Type:.*\n/,"").slice(0,6000);return out}
+    out.note=k==="ARCHIVE"?"Archive file. Drive cannot look inside it.":k==="SHORTCUT"?"A shortcut that points at another file.":"No preview for this type.";return out;
+  }catch(e){out.note="Preview failed: "+errText(e);return out}
+}
+function getPreview(f){if(!previews.has(f.id))previews.set(f.id,buildPreview(f));return previews.get(f.id)}
+async function renderPdf(bytes,view,f){
+  if(!window.pdfjsLib){view.innerHTML='<div class="none">PDF viewer did not load. Open the file instead.</div>';return}
+  try{pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    var doc=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise,page=await doc.getPage(1),w=Math.min(view.clientWidth-30,900),vp0=page.getViewport({scale:1}),sc=Math.max(.5,w/vp0.width),vp=page.getViewport({scale:sc*(window.devicePixelRatio||1)});
+    var cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;cv.style.width=(vp.width/(window.devicePixelRatio||1))+"px";
+    await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;if(cur()!==f)return;view.textContent="";view.appendChild(cv);
+    if(doc.numPages>1)addBadge("page 1 of "+doc.numPages);
+  }catch(e){view.innerHTML='<div class="none">This PDF would not render. Press A and Claude will read it.</div>'}
+}
+function addBadge(t,cls){var b=document.createElement('span');b.className='badge'+(cls?' '+cls:'');b.textContent=t;$('fBadges').appendChild(b)}
+
+async function show(){
+  var f=cur();$('aiText').innerHTML='Press <b>A</b> to have Claude read this file and suggest a folder.';renderBins();
+  hud();if(!f){done();return}
+  $('fTitle').textContent=f.title;var m=$('fMeta');m.textContent="";
+  [kind(f.mimeType),sz(f.fileSize),"created "+day(f.createdTime),"modified "+day(f.modifiedTime)].forEach(function(t){var s=document.createElement('span');s.textContent=t;m.appendChild(s)});
+  if(f.viewUrl){var a=document.createElement('a');a.href=f.viewUrl;a.target="_blank";a.rel="noopener";a.textContent="open in Drive ↗";m.appendChild(a)}
+  $('fBadges').textContent="";var d=dupOf(f);if(d)addBadge("looks like a duplicate of "+d.title,"warn");
+  if((+f.fileSize)>200e6)addBadge("huge: "+sz(f.fileSize),"hot");if(/^(untitled|test|sync)/i.test(f.title))addBadge("smells like junk","warn");
+  if(aiCache.has(f.id))showAi(aiCache.get(f.id));
+  var view=$('view');view.innerHTML='<div class="spin"></div>';
+  var p=await getPreview(f);if(cur()!==f)return;
+  if(p.pdf)renderPdf(p.pdf,view,f);
+  else if(p.img){view.textContent="";var im=new Image();im.alt=f.title;im.src=p.img;view.appendChild(im)}
+  else if(p.media){view.textContent="";var me=document.createElement(p.kind==="AUDIO"?'audio':'video');me.controls=true;me.src=p.media;view.appendChild(me)}
+  else if(p.text&&p.text.trim()){view.textContent="";var pre=document.createElement('pre');pre.textContent=p.text;view.appendChild(pre)}
+  else{view.innerHTML='<div class="none"></div>';view.firstChild.textContent=p.note||"Nothing readable inside. Press A to let Claude take a look."}
+  if(deck[pos+1])getPreview(deck[pos+1]);
+  if(prefs.autoAi&&!aiCache.has(f.id))ask();
+}
+function done(){$('fTitle').textContent=demo?"Demo deck cleared.":"My Drive root is empty of loose files. You are ken.";$('fMeta').textContent="";$('fBadges').textContent="";
+  $('view').innerHTML='<div class="none">'+(staged.some(function(s){return !s.done})?"Commit your staged moves below to make it real.":"Nothing left to sort. Reload later to see new strays.")+'</div>';hud()}
+
+// ---------- decisions ----------
+function decide(bin,keyEl){var f=cur();if(!f||busy)return;
+  if(keyEl){keyEl.classList.add('press');setTimeout(function(){keyEl.classList.remove('press')},120)}
+  var label=bin==="trash"?"Trash":prefs.bins[bin].name;
+  var st={file:f,bin:bin==="trash"?"trash":{name:prefs.bins[bin].name,id:prefs.bins[bin].id},label:label,done:false,err:null};
+  staged.push(st);stats.streak++;stats.best=Math.max(stats.best,stats.streak);var pts=10*mult();stats.score+=pts;
+  history.push({type:"stage",st:st,pts:pts});pos++;renderQueue();toast((bin==="trash"?"rm ":"mv → "+label+"  ")+"+"+pts);
+  if(stats.streak===10)setTimeout(function(){toast("STREAK 10. combo x3")},600);show()}
+function skip(){var f=cur();if(!f)return;deck.splice(pos,1);deck.push(f);stats.streak=0;history.push({type:"skip",f:f});toast("skipped. it'll come back around");show()}
+function undo(){var h=history.pop();if(!h)return toast("nothing to undo");
+  if(h.type==="stage"){if(h.st.done){history.push(h);return toast("already committed. use Drive to move it back")}staged.splice(staged.indexOf(h.st),1);stats.score-=h.pts;stats.streak=Math.max(0,stats.streak-1);pos--;deck.splice(pos,1);deck.splice(pos,0,h.st.file);renderQueue();toast("undone")}
+  else if(h.type==="skip"){var i=deck.lastIndexOf(h.f);deck.splice(i,1);deck.splice(pos,0,h.f);toast("unskipped")}
+  show()}
+$('skipBtn').onclick=skip;$('undoBtn').onclick=undo;$('openBtn').onclick=function(){var f=cur();if(f&&f.viewUrl)window.open(f.viewUrl,"_blank","noopener")};
+
+function renderQueue(){var q=$('qlist'),open=staged.filter(function(s){return !s.done});$('qCount').textContent=open.length+" pending"+(staged.length-open.length?", "+(staged.length-open.length)+" committed":"");
+  $('commit').disabled=!open.length||demo;$('commit').textContent=demo?"Commit (needs Drive)":"Commit "+open.length+" to Drive";
+  if(!staged.length){q.innerHTML='<div class="muted">Sort a few files. They queue here like a git index.</div>';return}q.textContent="";
+  staged.slice().reverse().forEach(function(s){var r=document.createElement('div');r.className='qi'+(s.err?' err':'')+(s.done?' done':'');
+    r.innerHTML='<span></span><em></em><button type="button">'+(s.done?"✓":"drop")+'</button>';r.querySelector('span').textContent=(s.bin==="trash"?"rm  ":"mv  ")+s.file.title+(s.err?"  ("+s.err+")":"");r.querySelector('em').textContent=s.bin==="trash"?"Trash":"→ "+s.label;
+    if(!s.done)r.querySelector('button').onclick=function(){staged.splice(staged.indexOf(s),1);history=history.filter(function(h){return h.st!==s});deck.splice(pos,0,s.file);stats.streak=0;renderQueue();show()};q.appendChild(r)});hud()}
+
+$('commit').onclick=async function(){if(demo||busy)return;var todo=staged.filter(function(s){return !s.done});if(!todo.length)return;busy=true;this.disabled=true;var btn=this,ok=0;
+  try{
+    var need={};todo.forEach(function(s){if(s.bin!=="trash"&&!s.bin.id&&!binFolder(s.bin))need[s.bin.name]=1});
+    for(var n in need){btn.textContent="mkdir "+n+"…";var nf=await call("create_file",{title:n,contentMimeType:FOLDER,parentId:"root"});rootFolders.push({id:nf.id,title:n});}
+    for(var i=0;i<todo.length;i++){var s=todo[i];btn.textContent=(i+1)+"/"+todo.length+"…";
+      try{if(s.bin==="trash")await call("trash_file",{fileId:s.file.id});else{var bf=s.bin.id?{id:s.bin.id}:binFolder(s.bin);await call("update_file",{fileId:s.file.id,parentId:bf.id})}
+        s.done=true;s.err=null;s.file.gone=true;ok++;stats.filed++;stats.lifetime++;stats.freed+=(+s.file.fileSize||0);if(s.bin==="trash")stats.trashed++;}
+      catch(e){s.err=e.code==="server_unavailable"?"no answer, check Drive before retrying":errText(e);if(/reconnect|not connected|declined|blocks/.test(errText(e))){banner(errText(e),true);break}}
+      renderQueue()}
+    save();toast("committed "+ok+(ok===1?" file":" files"));if(stats.lifetime>=100&&stats.lifetime-ok<100)setTimeout(function(){toast("RANK UP: wheel")},1900);
+  }catch(e){banner(errText(e),true)}
+  busy=false;renderBins();renderQueue();hud()};
+
+// ---------- Claude ----------
+function showAi(r){if(!r)return;$('aiText').innerHTML="";var b=document.createElement('b');b.textContent="Claude: ";$('aiText').appendChild(b);$('aiText').appendChild(document.createTextNode((r.summary||"")+(r.folder?"  Suggests "+r.folder+(r.why?" ("+r.why+")":"")+".":"")));
+  var idx=r.folder&&r.folder.toLowerCase()==="trash"?"trash":prefs.bins.findIndex(function(b){return b.name.toLowerCase()===String(r.folder||"").toLowerCase()});renderBins(idx===-1?undefined:idx)}
+async function ask(){var f=cur();if(!f)return;if(!sample){$('aiText').textContent="Claude is not available in this view.";return}
+  if(aiCache.has(f.id))return showAi(aiCache.get(f.id));$('aiText').textContent="Claude is reading "+f.title+"…";
+  var p=await getPreview(f),images=[];
+  try{var lim=sample.limits?await sample.limits():{};if(lim&&lim.images&&!(p.text&&p.text.trim())){var cv=$('view').querySelector('canvas');if(cv){var bl=await new Promise(function(res){cv.toBlob(res,"image/jpeg",.85)});if(bl)images.push(bl)}else if(p.img){var r0=await fetch(p.img);images.push(await r0.blob())}}}catch(e){}
+  var bins=prefs.bins.map(function(b){return b.name}).concat(["Trash"]);
+  var prompt="You help a person file loose Google Drive files into folders. Be concrete and plain.\nFile name: "+f.title+"\nType: "+f.mimeType+"\nSize: "+sz(f.fileSize)+"\nCreated: "+day(f.createdTime)+", modified: "+day(f.modifiedTime)+"\n"+(p.text?"Content excerpt:\n"+p.text.slice(0,3500):"No text excerpt."+(images.length?" An image of the file is attached.":""))+
+    "\nFolders: "+bins.join(", ")+"\nReply as JSON only: {\"summary\": one sentence, max 22 words, saying what this file actually is, \"folder\": exactly one name from the folder list (Trash for junk, empty, test, or duplicate files), \"why\": max 8 words}";
+  try{var r=await sample.json(prompt,{modelTier:"quick",images:images.length?images:undefined});if(cur()!==f){aiCache.set(f.id,r);return}aiCache.set(f.id,r);showAi(r)}
+  catch(e){$('aiText').textContent=e&&e.code==="not_granted"?"Claude access was declined for this page.":e&&e.code==="rate_limited"?"Claude is busy. Try again in a bit.":"Claude could not read this one."}}
+$('aiBtn').onclick=ask;
+
+// ---------- keyboard ----------
+document.addEventListener('keydown',function(e){if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;var k=e.key;
+  if(/^[1-9]$/.test(k)&&prefs.bins[+k-1]){e.preventDefault();decide(+k-1,document.querySelector('.key[data-i="'+(+k-1)+'"]'))}
+  else if(k==="0"||k==="Delete"||k==="Backspace"){e.preventDefault();decide("trash",document.querySelector('.key.trash'))}
+  else if(k==="s"||k==="S"||k==="ArrowRight"){e.preventDefault();skip()}
+  else if(k==="u"||k==="U"||k==="z"){e.preventDefault();undo()}
+  else if(k==="a"||k==="A"){e.preventDefault();ask()}
+  else if(k==="o"||k==="O"){$('openBtn').click()}});
+
+// ---------- demo (no Drive in this view) ----------
+function startDemo(){demo=true;rootFolders=[];
+  deck=[{id:"d1",title:"scan_0001.pdf",mimeType:"text/plain",fileSize:"48211",createdTime:"2017-03-02",modifiedTime:"2017-03-02",demoText:"MIDWEST AUTO CARE\nInvoice 10442\nOil change, tire rotation\nTotal $89.40"},
+   {id:"d2",title:"Untitled document",mimeType:"text/plain",fileSize:"0",createdTime:"2025-01-01",modifiedTime:"2025-01-01",demoText:""},
+   {id:"d3",title:"setlist_final_v3.txt",mimeType:"text/plain",fileSize:"912",createdTime:"2024-06-11",modifiedTime:"2024-06-12",demoText:"1. Opener in E\n2. Slow blues in A\n3. Encore"},
+   {id:"d4",title:"IMG_2231.jpeg",mimeType:"text/plain",fileSize:"3100000",createdTime:"2023-08-19",modifiedTime:"2023-08-19",demoText:"(a photo would render here)"},
+   {id:"d5",title:"q3_review_notes.docx",mimeType:"text/plain",fileSize:"22013",createdTime:"2022-10-01",modifiedTime:"2022-10-04",demoText:"Self review, Q3\nWins: shipped the thing\nNext: ship the other thing"},
+   {id:"d6",title:"setlist_final_v3 (1).txt",mimeType:"text/plain",fileSize:"912",createdTime:"2024-06-12",modifiedTime:"2024-06-12",demoText:"1. Opener in E\n2. Slow blues in A\n3. Encore"}];
+  startCount=deck.length;renderBins();renderQueue();show();
+  if(!$('banner').textContent)banner("Demo deck. Open this page inside Claude with Google Drive connected to sort your real loose files.")}
+
+// ---------- boot ----------
+renderBins();renderQueue();hud();
+(async function(){
+  if(!window.claude||!window.claude.use){startDemo();return}
+  var m=await window.claude.use("mcp").catch(function(){return null});sample=await window.claude.use("sample").catch(function(){return null});
+  if(!m){startDemo();return}mcp=m;loadDrive();
+})();
+})();
+</script>
+
+</body></html>

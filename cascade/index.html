@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#05060c">
+<title>CASCADE — six descents, one clock</title>
+<meta name="description" content="An isometric marble descent. Six courses, one clock that carries over. Roll it downhill before time runs out.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CASCADE">
+<meta property="og:description" content="An isometric marble descent. Six courses, one clock that carries over.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23eaf3ff'/><circle cx='11' cy='11' r='4' fill='%236fb0ff'/></svg>">
+<style>
+  :root{
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-l: env(safe-area-inset-left, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+    --ink:#e8f1ff; --dim:#7f8dab; --hot:#ffd23f; --bad:#ff4d5e; --good:#4dffb8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    width:100%;height:100%;overflow:hidden;background:#05060c;
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    color:var(--ink);
+    -webkit-user-select:none;user-select:none;
+    -webkit-touch-callout:none;
+    overscroll-behavior:none;touch-action:none;
+  }
+  #wrap{position:fixed;inset:0;}
+  canvas{display:block;width:100%;height:100%;}
+  /* ---------- scanline / vignette ---------- */
+  #grain{
+    position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,.62) 100%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, rgba(0,0,0,0) 1px 3px);
+    mix-blend-mode:multiply;opacity:.85;
+  }
+  /* ---------- HUD ---------- */
+  #hud{
+    position:fixed;z-index:10;pointer-events:none;
+    top:calc(var(--safe-t) + 10px); left:calc(var(--safe-l) + 14px); right:calc(var(--safe-r) + 14px);
+    display:flex;align-items:flex-start;justify-content:space-between;
+    font-weight:700;letter-spacing:.09em;
+  }
+  .hcol{display:flex;flex-direction:column;gap:3px;}
+  .hcol.r{align-items:flex-end;}
+  .lbl{font-size:9px;color:var(--dim);letter-spacing:.24em;}
+  .val{font-size:15px;color:var(--ink);text-shadow:0 0 12px rgba(120,190,255,.35);}
+  #clock{
+    position:fixed;z-index:10;pointer-events:none;
+    top:calc(var(--safe-t) + 4px);left:0;right:0;text-align:center;
+    font-size:44px;font-weight:800;letter-spacing:.04em;
+    color:var(--hot);text-shadow:0 0 26px rgba(255,210,63,.45);
+    font-variant-numeric:tabular-nums;
+  }
+  #clock.warn{color:var(--bad);text-shadow:0 0 30px rgba(255,77,94,.6);}
+  #clock.pulse{animation:tick .28s ease-out;}
+  @keyframes tick{0%{transform:scale(1.14)}100%{transform:scale(1)}}
+  #depth{
+    position:fixed;z-index:10;pointer-events:none;
+    right:calc(var(--safe-r) + 16px);top:50%;transform:translateY(-50%);
+    width:4px;height:34vh;border-radius:3px;background:rgba(255,255,255,.09);
+    overflow:hidden;
+  }
+  #depthfill{position:absolute;left:0;right:0;top:0;background:linear-gradient(180deg,#6fd3ff,#3f7bff);border-radius:3px;height:0%;}
+  /* ---------- overlays ---------- */
+  #ov{
+    position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;
+    padding:calc(var(--safe-t) + 20px) 24px calc(var(--safe-b) + 20px);
+    background:radial-gradient(ellipse at 50% 40%, rgba(10,16,34,.72), rgba(3,4,10,.94));
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  }
+  #ov.hide{display:none;}
+  #ov.thin{background:radial-gradient(ellipse at 50% 45%, rgba(6,10,24,.42), rgba(3,4,10,.72));}
+  .title{
+    font-size:clamp(40px,13vw,96px);font-weight:800;letter-spacing:.16em;
+    background:linear-gradient(180deg,#fff 10%,#7fc4ff 55%,#2f6bff 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 6px 26px rgba(60,130,255,.42));
+    margin-bottom:2px;
+  }
+  .sub{font-size:clamp(9px,2.6vw,12px);letter-spacing:.42em;color:var(--dim);margin-bottom:30px;}
+  .card{font-size:clamp(22px,6.4vw,40px);font-weight:800;letter-spacing:.14em;margin-bottom:6px;}
+  .card.win{color:var(--good);} .card.lose{color:var(--bad);}
+  .note{font-size:12px;color:var(--dim);letter-spacing:.14em;line-height:2;max-width:440px;}
+  .note b{color:var(--ink);font-weight:700;}
+  .btn{
+    pointer-events:auto;cursor:pointer;margin-top:26px;
+    padding:15px 34px;border:1px solid rgba(140,190,255,.4);border-radius:999px;
+    background:rgba(60,120,255,.14);color:var(--ink);
+    font:inherit;font-size:13px;font-weight:700;letter-spacing:.26em;
+    transition:background .16s ease, transform .1s ease;
+  }
+  .btn:active{transform:scale(.96);background:rgba(60,120,255,.3);}
+  .kv{display:flex;gap:34px;margin-top:20px;justify-content:center;flex-wrap:wrap;}
+  .kv div{display:flex;flex-direction:column;gap:5px;}
+  .kv .lbl{font-size:9px;}
+  .kv .num{font-size:26px;font-weight:800;color:var(--hot);font-variant-numeric:tabular-nums;}
+  /* ---------- touch control ---------- */
+  #pad{
+    position:fixed;z-index:12;display:none;
+    left:calc(var(--safe-l) + 22px);bottom:calc(var(--safe-b) + 26px);
+    width:132px;height:132px;border-radius:50%;
+    border:1px solid rgba(160,200,255,.22);background:rgba(120,170,255,.06);
+    touch-action:none;
+  }
+  #pad.on{display:block;}
+  #nub{
+    position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
+    border-radius:50%;background:rgba(150,200,255,.3);
+    border:1px solid rgba(190,220,255,.5);
+    box-shadow:0 0 22px rgba(90,150,255,.35);
+  }
+  #mute{
+    position:fixed;z-index:14;pointer-events:auto;cursor:pointer;
+    right:calc(var(--safe-r) + 14px);bottom:calc(var(--safe-b) + 16px);
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(160,200,255,.22);background:rgba(10,16,34,.55);
+    color:var(--dim);font:inherit;font-size:15px;line-height:1;
+  }
+  #fps{
+    position:fixed;z-index:14;pointer-events:none;
+    left:calc(var(--safe-l) + 14px);bottom:calc(var(--safe-b) + 16px);
+    font-size:10px;color:rgba(127,141,171,.5);letter-spacing:.1em;
+  }
+  .flash{position:fixed;inset:0;z-index:8;pointer-events:none;background:#fff;opacity:0;}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c"></canvas></div>
+<div class="flash" id="flash"></div>
+<div id="grain"></div>
+
+<div id="hud">
+  <div class="hcol"><span class="lbl">COURSE</span><span class="val" id="lvName">—</span></div>
+  <div class="hcol r"><span class="lbl">SCORE</span><span class="val" id="score">0</span></div>
+</div>
+<div id="clock">00</div>
+<div id="depth"><div id="depthfill"></div></div>
+<div id="pad"><div id="nub"></div></div>
+<button id="mute" aria-label="Toggle sound">♪</button>
+<div id="fps"></div>
+
+<div id="ov">
+  <div class="title">CASCADE</div>
+  <div class="sub">SIX DESCENTS · ONE CLOCK</div>
+  <div class="note" id="ovNote">
+    Steer the marble downhill before the clock runs out.<br>
+    Leftover seconds carry to the next course.<br><br>
+    <b>Touch</b> drag anywhere · <b>Keys</b> WASD / arrows · <b>Mouse</b> click to lock, move to steer
+  </div>
+  <button class="btn" id="ovBtn">BEGIN DESCENT</button>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+"use strict";
+/* ---------------------------------------------------------------------------
+   Startup guards. This file gets emailed and AirDropped around, so the two
+   ways it can fail on someone else's machine — no internet for the 3D library,
+   or no WebGL — must explain themselves instead of showing a black screen.
+   ------------------------------------------------------------------------- */
+function fatal(head, body){
+  const ov=document.getElementById('ov');
+  ov.className='';
+  ov.innerHTML=
+    '<div class="card lose">'+head+'</div>'+
+    '<div class="note">'+body+'</div>';
+}
+if(typeof THREE==='undefined'){
+  fatal('CAN’T START',
+    'The 3D library couldn’t load, which almost always means <b>no internet connection</b>.'+
+    '<br><br>Connect to a network and reload this page.');
+  throw new Error('CASCADE: three.js failed to load');
+}
+(function(){
+  let ok=false;
+  try{
+    const t=document.createElement('canvas');
+    ok=!!(window.WebGLRenderingContext && (t.getContext('webgl')||t.getContext('experimental-webgl')));
+  }catch(e){ ok=false; }
+  if(!ok){
+    fatal('CAN’T START',
+      'This browser can’t do WebGL, which the game needs to draw.'+
+      '<br><br>Try Chrome, Safari or Firefox, and check that hardware acceleration is on.');
+    throw new Error('CASCADE: no WebGL');
+  }
+})();
+
+/* ============================================================================
+   CASCADE — an isometric marble descent
+   Single-file. Original courses, original score, original creature designs.
+   Engine notes:
+     · Static level geometry is baked into ONE non-indexed BufferGeometry with
+       vertex colours and MeshBasicMaterial => zero lighting cost, flat retro look.
+     · Collision is sphere-vs-OBB against a uniform spatial hash, solved at a
+       fixed 120 Hz timestep with render interpolation.
+     · Audio is fully synthesized at runtime — no asset downloads.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- constants */
+const R          = 0.80;     // marble radius
+const GRAV       = 34;       // m/s^2
+const ROLL_K     = 0.714;    // 5/7 — solid sphere rolling inertia on a slope
+// Steering is deliberately weaker than gravity on the steeper ramps: you can
+// crawl back uphill, but the descent always has the upper hand.
+const ACC_GROUND = 18;
+const ACC_AIR    = 7;
+const REST       = 0.34;     // restitution
+const REST_BOUNCY= 0.86;
+const REST_MIN   = 1.6;      // below this closing speed, kill the bounce entirely
+// Rolling resistance is LOW on purpose — a marble should feel slippery and
+// momentum-heavy. Top speed comes from how long the ramp is, not from drag.
+const GROUND_KEEP= 0.74;     // tangential velocity retained per second on the ground
+const AIR_KEEP   = 0.955;    // horizontal retention per second in the air
+const VMAX       = 46;       // hard speed cap — keeps the 120 Hz solver tunnel-free
+const FIXED_DT   = 1/120;
+const MAX_STEPS  = 6;
+const CELL       = 10;       // spatial-hash cell size
+
+/* ------------------------------------------------------------------- helpers */
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp =(a,b,t)=>a+(b-a)*t;
+const DIRV = {'x':[1,0,0],'-x':[-1,0,0],'z':[0,0,1],'-z':[0,0,-1]};
+const LATV = {'x':[0,0,1],'-x':[0,0,-1],'z':[1,0,0],'-z':[-1,0,0]};
+
+function hexToRGB(h){return [((h>>16)&255)/255,((h>>8)&255)/255,(h&255)/255];}
+
+/* =============================================================== AUDIO ENGINE
+   A small tracker. Six original tunes, one per course. Everything is
+   oscillator+noise synthesis so the file stays self-contained.
+   ========================================================================== */
+const Audio_ = {
+  ctx:null, master:null, musicBus:null, sfxBus:null,
+  enabled:true, started:false,
+  step:0, nextTime:0, track:null, secPerStep:0,
+  rollSrc:null, rollGain:null, rollFilt:null,
+
+  init(){
+    if(this.ctx) return;
+    const AC = window.AudioContext||window.webkitAudioContext;
+    if(!AC) { this.enabled=false; return; }
+    const ctx = this.ctx = new AC();
+    this.master = ctx.createGain(); this.master.gain.value = 0.9;
+    this.master.connect(ctx.destination);
+
+    // gentle bus compression so the mix never clips on phone speakers
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value=-14; comp.knee.value=22; comp.ratio.value=4;
+    comp.attack.value=0.004; comp.release.value=0.18;
+    comp.connect(this.master);
+
+    this.musicBus = ctx.createGain(); this.musicBus.gain.value=0.34; this.musicBus.connect(comp);
+    this.sfxBus   = ctx.createGain(); this.sfxBus.gain.value  =0.55; this.sfxBus.connect(comp);
+    this.buildRoll();
+  },
+  resume(){ if(this.ctx && this.ctx.state==='suspended') this.ctx.resume(); },
+
+  /* ---- persistent rolling-noise voice, modulated by marble speed ---- */
+  buildRoll(){
+    const ctx=this.ctx;
+    const len = ctx.sampleRate*2;
+    const buf = ctx.createBuffer(1,len,ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let last=0;
+    for(let i=0;i<len;i++){                 // brown-ish noise: warmer than white
+      const w=Math.random()*2-1;
+      last=(last+0.032*w)/1.032; d[i]=last*3.2;
+    }
+    const src=ctx.createBufferSource(); src.buffer=buf; src.loop=true;
+    const filt=ctx.createBiquadFilter(); filt.type='bandpass'; filt.frequency.value=300; filt.Q.value=1.1;
+    const g=ctx.createGain(); g.gain.value=0;
+    src.connect(filt); filt.connect(g); g.connect(this.sfxBus);
+    src.start();
+    this.rollSrc=src; this.rollGain=g; this.rollFilt=filt;
+  },
+  setRoll(speed, grounded){
+    if(!this.ctx||!this.rollGain) return;
+    const t=this.ctx.currentTime;
+    const s=clamp(speed/18,0,1);
+    const target = grounded ? 0.028+0.30*s*s : 0.0;
+    this.rollGain.gain.setTargetAtTime(target, t, 0.05);
+    this.rollFilt.frequency.setTargetAtTime(160+900*s, t, 0.06);
+  },
+
+  /* ---- generic one-shot voice ---- */
+  tone(o){
+    if(!this.ctx||!this.enabled) return;
+    const ctx=this.ctx, t0=o.t||ctx.currentTime;
+    const osc=ctx.createOscillator(); osc.type=o.type||'square';
+    const g=ctx.createGain();
+    osc.frequency.setValueAtTime(o.f, t0);
+    if(o.f2) osc.frequency.exponentialRampToValueAtTime(Math.max(1,o.f2), t0+o.d);
+    const peak=o.v==null?0.2:o.v;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(peak, t0+(o.a==null?0.006:o.a));
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+o.d);
+    let node=osc;
+    if(o.cut){ const f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=o.cut; osc.connect(f); node=f; }
+    node.connect(g); g.connect(o.bus||this.sfxBus);
+    osc.start(t0); osc.stop(t0+o.d+0.03);
+  },
+  noise(o){
+    if(!this.ctx||!this.enabled) return;
+    const ctx=this.ctx, t0=o.t||ctx.currentTime, d=o.d;
+    const len=Math.max(1,Math.ceil(ctx.sampleRate*d));
+    const buf=ctx.createBuffer(1,len,ctx.sampleRate); const ch=buf.getChannelData(0);
+    for(let i=0;i<len;i++) ch[i]=(Math.random()*2-1);
+    const src=ctx.createBufferSource(); src.buffer=buf;
+    const f=ctx.createBiquadFilter(); f.type=o.ftype||'bandpass';
+    f.frequency.setValueAtTime(o.f||1200,t0);
+    if(o.f2) f.frequency.exponentialRampToValueAtTime(Math.max(40,o.f2), t0+d);
+    f.Q.value=o.q||1;
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(o.v==null?0.3:o.v, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+d);
+    src.connect(f); f.connect(g); g.connect(o.bus||this.sfxBus);
+    src.start(t0); src.stop(t0+d+0.02);
+  },
+
+  /* ------------------------------- sound effects ------------------------- */
+  sfx(name, p){
+    if(!this.ctx||!this.enabled) return;
+    const t=this.ctx.currentTime;
+    switch(name){
+      case 'tap':      // wall / floor impact, intensity 0..1
+        this.noise({t,d:0.06,f:900*(0.5+(p||0.4)),f2:180,v:0.10+0.26*(p||0.4),q:0.7});
+        this.tone ({t,d:0.07,f:150+120*(p||0.4),f2:60,v:0.10+0.16*(p||0.4),type:'sine'});
+        break;
+      case 'bouncy':
+        this.tone({t,d:0.18,f:220,f2:760,v:0.22,type:'triangle'});
+        this.tone({t:t+0.01,d:0.16,f:440,f2:1500,v:0.10,type:'square'});
+        break;
+      case 'edge':     // left the floor
+        this.tone({t,d:0.5,f:520,f2:90,v:0.16,type:'sine'});
+        break;
+      case 'shatter':
+        this.noise({t,d:0.5,f:4200,f2:220,v:0.42,q:0.5,ftype:'bandpass'});
+        this.tone ({t,d:0.42,f:320,f2:40,v:0.24,type:'sawtooth',cut:1400});
+        for(let i=0;i<7;i++) this.tone({t:t+0.02+i*0.035,d:0.13,f:1500+Math.random()*2400,f2:400,v:0.07,type:'triangle'});
+        break;
+      case 'dissolve':
+        this.noise({t,d:0.75,f:600,f2:120,v:0.3,q:2.2,ftype:'lowpass'});
+        this.tone ({t,d:0.7,f:200,f2:44,v:0.2,type:'sawtooth',cut:900});
+        break;
+      case 'suck':
+        this.noise({t,d:0.7,f:200,f2:3600,v:0.26,q:3});
+        this.tone ({t,d:0.65,f:110,f2:900,v:0.16,type:'sawtooth',cut:2200});
+        break;
+      case 'spawn':
+        this.tone({t,d:0.26,f:180,f2:620,v:0.18,type:'triangle'});
+        break;
+      case 'chk':
+        this.tone({t,d:0.1,f:880,v:0.16,type:'square'});
+        this.tone({t:t+0.08,d:0.16,f:1320,v:0.14,type:'square'});
+        break;
+      case 'tick':
+        this.tone({t,d:0.07,f:1500,v:0.16,type:'square'});
+        break;
+      case 'tickbad':
+        this.tone({t,d:0.11,f:760,f2:520,v:0.24,type:'square'});
+        break;
+      case 'goal':{
+        const s=[0,4,7,12,16,19,24];
+        s.forEach((n,i)=>this.tone({t:t+i*0.062,d:0.34,f:220*Math.pow(2,n/12),v:0.19,type:'square'}));
+        this.noise({t:t+0.02,d:0.5,f:3000,f2:600,v:0.14,q:0.6});
+        break;}
+      case 'over':{
+        const s=[12,10,7,3,0,-4];
+        s.forEach((n,i)=>this.tone({t:t+i*0.15,d:0.5,f:220*Math.pow(2,n/12),v:0.2,type:'sawtooth',cut:1100}));
+        break;}
+      case 'start':
+        this.tone({t,d:0.5,f:110,f2:440,v:0.2,type:'square'});
+        this.tone({t:t+0.12,d:0.45,f:165,f2:660,v:0.14,type:'triangle'});
+        break;
+    }
+  },
+
+  /* ------------------------------- music tracker -------------------------- */
+  // Each track: 16-step patterns. Values are MIDI notes; null = rest.
+  playTrack(tr){
+    this.track=tr; this.step=0;
+    if(this.ctx) this.nextTime=this.ctx.currentTime+0.06;
+    this.secPerStep = 60/tr.bpm/4;    // 16th notes
+  },
+  stopTrack(){ this.track=null; },
+  pump(){
+    if(!this.ctx||!this.track||!this.enabled) return;
+    const ctx=this.ctx, tr=this.track;
+    while(this.nextTime < ctx.currentTime + 0.18){
+      this.emitStep(this.step, this.nextTime, tr);
+      this.nextTime += this.secPerStep;
+      this.step = (this.step+1) % (16*tr.bars);
+    }
+  },
+  emitStep(s,t,tr){
+    const m = n => 440*Math.pow(2,(n-69)/12);
+    const bus = this.musicBus;
+    const i16 = s % 16, bar = Math.floor(s/16);
+
+    // --- bass
+    const b = tr.bass[s % tr.bass.length];
+    if(b!=null) this.tone({t,d:this.secPerStep*(tr.bassLen||3.2),f:m(b),v:0.30,type:tr.bassWave||'triangle',bus,cut:tr.bassCut||500});
+    // --- arpeggio / pad
+    const a = tr.arp[s % tr.arp.length];
+    if(a!=null) this.tone({t,d:this.secPerStep*1.5,f:m(a),v:0.11,type:tr.arpWave||'square',bus,cut:tr.arpCut||2600});
+    // --- lead (enters after bar 1)
+    if(bar>=(tr.leadIn||1)){
+      const l = tr.lead[s % tr.lead.length];
+      if(l!=null) this.tone({t,d:this.secPerStep*(tr.leadLen||2.6),f:m(l),v:0.15,type:tr.leadWave||'square',bus,cut:3200});
+    }
+    // --- drums
+    if(tr.kick && tr.kick[i16]) this.tone({t,d:0.16,f:150,f2:44,v:0.34,type:'sine',bus});
+    if(tr.hat  && tr.hat[i16])  this.noise({t,d:0.035,f:8000,v:0.055,q:1.1,bus});
+    if(tr.snr  && tr.snr[i16])  this.noise({t,d:0.13,f:1900,f2:900,v:0.14,q:0.8,bus});
+  }
+};
+
+/* --------------------------------- the six original tunes ----------------- */
+const P=(str)=>str.split('').map(c=>c==='x'?1:0);   // drum pattern shorthand
+const TRACKS = [
+  { // 1 · SHALLOWS — bright, rolling, welcoming
+    bpm:118, bars:2, bassWave:'triangle', arpWave:'square', leadWave:'square',
+    bass:[45,null,null,45, null,null,52,null, 43,null,null,43, null,50,null,null],
+    arp :[69,76,81,76, 69,76,81,76, 67,74,79,74, 67,74,79,74],
+    lead:[null,null,null,null, 88,null,86,null, 84,null,null,81, null,79,null,null,
+          null,null,null,null, 86,null,84,null, 81,null,79,null, 76,null,null,null],
+    kick:P('x.......x.......'), hat:P('..x...x...x...x.'), snr:P('....x.......x...')
+  },
+  { // 2 · THE GALLERY — mellow, dorian, patient
+    bpm:104, bars:2, bassWave:'triangle', arpWave:'triangle', leadWave:'square',
+    bass:[41,null,41,null, 48,null,null,null, 39,null,39,null, 46,null,null,null],
+    arp :[65,72,77,72, 65,72,77,72, 63,70,75,70, 68,72,77,72],
+    lead:[84,null,null,82, null,79,null,null, 77,null,79,null, 82,null,null,null,
+          null,null,84,null, 86,null,null,84, null,82,null,79, null,null,null,null],
+    kick:P('x.....x.x.......'), hat:P('..x...x...x...x.'), snr:P('....x.......x...')
+  },
+  { // 3 · IRONWORKS — tense, chromatic, industrial
+    bpm:132, bars:2, bassWave:'sawtooth', bassCut:380, arpWave:'square', leadWave:'square',
+    bass:[40,40,null,40, 41,null,40,null, 38,38,null,38, 40,null,41,null],
+    arp :[64,71,76,71, 65,72,77,72, 62,69,74,69, 64,71,76,71],
+    lead:[null,88,null,87, null,88,null,83, null,80,null,83, 87,null,null,null,
+          null,88,null,90, null,88,null,87, null,83,null,80, null,null,null,null],
+    kick:P('x...x...x...x...'), hat:P('x.x.x.x.x.x.x.x.'), snr:P('....x.......x.x.')
+  },
+  { // 4 · VAULTS — airy, sparse, vertiginous
+    bpm:96, bars:2, bassWave:'sine', bassCut:300, bassLen:5, arpWave:'triangle', leadWave:'triangle', leadLen:4,
+    bass:[36,null,null,null, null,null,null,null, 38,null,null,null, null,null,null,null],
+    arp :[72,79,84,79, 76,83,88,83, 74,81,86,81, 72,79,84,79],
+    lead:[91,null,null,null, null,88,null,null, 86,null,null,null, null,null,null,null,
+          89,null,null,null, null,86,null,null, 84,null,null,null, null,null,null,null],
+    kick:P('x...............'), hat:P('....x.......x...'), snr:P('........x.......')
+  },
+  { // 5 · THE FOLLY — goofy, bouncy, major-sixth swagger
+    bpm:142, bars:2, bassWave:'square', bassCut:600, arpWave:'square', leadWave:'square',
+    bass:[43,null,43,50, null,43,null,47, 45,null,45,52, null,45,null,48],
+    arp :[curve(0),curve(1),curve(2),curve(3), curve(4),curve(5),curve(6),curve(7),
+          curve(8),curve(9),curve(10),curve(11), curve(12),curve(13),curve(14),curve(15)],
+    lead:[79,null,81,null, 83,null,81,79, 76,null,79,null, 81,null,null,null,
+          83,null,81,null, 79,null,76,null, 74,null,76,null, 79,null,null,null],
+    kick:P('x..x..x.x..x..x.'), hat:P('..x...x...x...x.'), snr:P('....x.......x...')
+  },
+  { // 6 · THE SPINE — dark, urgent, minor-second bite
+    bpm:150, bars:2, bassWave:'sawtooth', bassCut:340, arpWave:'square', leadWave:'sawtooth',
+    bass:[38,38,39,38, 45,null,38,null, 36,36,37,36, 43,null,36,null],
+    arp :[62,69,74,69, 63,70,75,70, 60,67,72,67, 62,69,74,69],
+    lead:[86,null,85,null, 86,null,90,null, 89,null,86,null, 85,null,null,null,
+          86,null,88,null, 89,null,91,null, 90,null,86,null, 83,null,null,null],
+    kick:P('x...x...x...x..x'), hat:P('x.x.x.x.x.x.x.x.'), snr:P('....x.......x...')
+  }
+];
+function curve(i){ const s=[67,71,74,76,79,76,74,71]; return s[i%s.length]; }
+
+const COURSE_NAMES = ['SHALLOWS','THE GALLERY','IRONWORKS','VAULTS','THE FOLLY','THE SPINE'];
+
+/* =============================================================== LEVEL BUILD
+   A tiny path DSL. A course is a chain of flats, slopes and turns, plus
+   hand-placed hazards and creatures.
+   ========================================================================== */
+function Course(opts){
+  this.items=[];         // {kind, c:[x,y,z], h:[hx,hy,hz], rx, rz, col, tag}
+  this.spawns=[];        // checkpoints in order
+  this.creatures=[];
+  this.x=opts.x||0; this.y=opts.y||0; this.z=opts.z||0;
+  this.dir=opts.dir||'z'; this.w=opts.w||12;
+  this.pal=opts.pal;
+  this.goal=null;
+  this.killY=0;
+}
+Course.prototype.push=function(o){ this.items.push(o); return o; };
+
+/** rotated box. y is CENTER. */
+Course.prototype.box=function(cx,cy,cz,hx,hy,hz,rx,rz,col,kind){
+  return this.push({kind:kind||'solid',c:[cx,cy,cz],h:[hx,hy,hz],rx:rx||0,rz:rz||0,col:col});
+};
+
+/** flat run along current dir. len along dir, thickness 1.2, top surface at this.y */
+Course.prototype.flat=function(len,o){
+  o=o||{}; const w=o.w||this.w, d=DIRV[this.dir], lat=LATV[this.dir];
+  const cx=this.x+d[0]*len/2, cz=this.z+d[2]*len/2, cy=this.y-0.6;
+  const hx = d[0]?len/2:w/2, hz = d[2]?len/2:w/2;
+  this.box(cx,cy,cz,hx,0.6,hz,0,0,o.col||this.pal.floor,o.kind||'solid');
+  if(o.rails!==false) this.rails(cx,cy,cz,len,w,0,0,o);
+  this.x+=d[0]*len; this.z+=d[2]*len;
+  this.lastSeg={type:'flat',len:len,drop:0};
+  if(o.chk) this.spawns.push([this.x-d[0]*len*0.5, this.y, this.z-d[2]*len*0.5]);
+  return this;
+};
+
+/** Surface height at an offset from the cursor. Negative `along` looks BACK
+ *  along the segment we just laid down — which matters enormously on ramps,
+ *  where the naive `this.y` would bury or float anything placed there. */
+Course.prototype.surfY=function(along){
+  if(along>=0 || !this.lastSeg) return this.y;
+  const L=this.lastSeg;
+  if(L.type!=='slope' || !L.len) return this.y;
+  const back=Math.min(-along, L.len);
+  return this.y + L.drop*(back/L.len);
+};
+
+/** descending ramp: drops `drop` over horizontal distance `len` */
+Course.prototype.slope=function(len,drop,o){
+  o=o||{}; const w=o.w||this.w, d=DIRV[this.dir];
+  const ang=Math.atan2(drop,len), hyp=Math.hypot(len,drop);
+  let rx=0,rz=0;
+  if(this.dir==='z') rx= ang; else if(this.dir==='-z') rx=-ang;
+  else if(this.dir==='x') rz=-ang; else rz= ang;
+  const cx=this.x+d[0]*len/2, cz=this.z+d[2]*len/2, cy=this.y-drop/2-0.6;
+  const hx = d[0]?hyp/2:w/2, hz = d[2]?hyp/2:w/2;
+  this.box(cx,cy,cz,hx,0.6,hz,rx,rz,o.col||this.pal.ramp,o.kind||'solid');
+  if(o.rails!==false) this.rails(cx,cy,cz,hyp,w,rx,rz,o);
+  this.x+=d[0]*len; this.z+=d[2]*len; this.y-=drop;
+  this.lastSeg={type:'slope',len:len,drop:drop};
+  if(o.chk) this.spawns.push([this.x-d[0]*len*0.35, this.y+drop*0.35, this.z-d[2]*len*0.35]);
+  return this;
+};
+
+/** side rails hugging a (possibly rotated) segment */
+Course.prototype.rails=function(cx,cy,cz,len,w,rx,rz,o){
+  const lat=LATV[this.dir], d=DIRV[this.dir];
+  const hh=o.railH||1.1;
+  const sides = o.rails==='left'?[-1]:o.rails==='right'?[1]:[-1,1];
+  for(const s of sides){
+    // local offset (lateral*(w/2+0.35), +hh, 0) rotated by the segment rotation
+    const off=[lat[0]*s*(w/2+0.35), hh, lat[2]*s*(w/2+0.35)];
+    const r=rotVec(off,rx,rz);
+    const hx = d[0]?len/2:0.35, hz = d[2]?len/2:0.35;
+    this.box(cx+r[0],cy+r[1],cz+r[2],hx,hh,hz,rx,rz,o.railCol||this.pal.rail,'solid');
+  }
+};
+
+/** corner pad, then face a new direction */
+Course.prototype.turn=function(nd,o){
+  o=o||{}; const size=o.size||this.w, d=DIRV[this.dir], n=DIRV[nd];
+  const cx=this.x+d[0]*size/2, cz=this.z+d[2]*size/2, cy=this.y-0.6;
+  this.box(cx,cy,cz,size/2,0.6,size/2,0,0,o.col||this.pal.pad,'solid');
+  // outer corner walls so you don't fly straight off
+  if(o.walls!==false){
+    const bx=cx+d[0]*(size/2+0.35), bz=cz+d[2]*(size/2+0.35);
+    this.box(bx,cy+1.1,bz, d[0]?0.35:size/2, 1.1, d[2]?0.35:size/2, 0,0,o.railCol||this.pal.rail,'solid');
+  }
+  this.x=cx+n[0]*size/2; this.z=cz+n[2]*size/2; this.dir=nd;
+  this.lastSeg={type:'flat',len:size,drop:0};
+  if(o.w) this.w=o.w;
+  if(o.chk) this.spawns.push([cx,this.y,cz]);
+  return this;
+};
+
+Course.prototype.width=function(w){ this.w=w; return this; };
+Course.prototype.wall=function(cx,cy,cz,hx,hy,hz,col){ return this.box(cx,cy,cz,hx,hy,hz,0,0,col||this.pal.rail,'solid'); };
+Course.prototype.pillar=function(along,lateral,r,h,col){
+  const p=this.at(along,lateral);
+  return this.box(p[0],p[1]+h/2,p[2],r,h,r,0,0,col||this.pal.rail,'solid');
+};
+/** (alongDir, lateral) offsets from the cursor -> world [x, surfaceY, z] */
+Course.prototype.at=function(along,lateral){
+  const d=DIRV[this.dir], lat=LATV[this.dir];
+  return [this.x+d[0]*along+lat[0]*lateral, this.surfY(along), this.z+d[2]*along+lat[2]*lateral];
+};
+Course.prototype.hazard=function(along,lateral,hx,hz,kind){
+  const p=this.at(along,lateral);
+  return this.box(p[0],p[1]-0.35,p[2],hx,0.35,hz,0,0,this.pal.hazard,kind||'acid');
+};
+Course.prototype.bouncy=function(len,o){
+  o=o||{}; o.kind='bouncy'; o.col=this.pal.bouncy; return this.flat(len,o);
+};
+Course.prototype.creature=function(type,along,lateral,cfg){
+  const p=this.at(along,lateral);
+  this.creatures.push(Object.assign({type:type,x:p[0],y:p[1],z:p[2]},cfg||{}));
+  return this;
+};
+Course.prototype.finish=function(){
+  const d=DIRV[this.dir], size=this.w;
+  const cx=this.x+d[0]*size*0.9, cz=this.z+d[2]*size*0.9, cy=this.y-0.6;
+  this.box(cx,cy,cz,d[0]?size*0.9:size/2,0.6,d[2]?size*0.9:size/2,0,0,this.pal.goal,'solid');
+  this.goal={c:[cx,this.y+1.6,cz],h:[d[0]?size*0.85:size/2,2.2,d[2]?size*0.85:size/2],surfY:this.y};
+  // back stop
+  const bx=cx+d[0]*(size*0.9+0.4), bz=cz+d[2]*(size*0.9+0.4);
+  this.box(bx,cy+2,bz, d[0]?0.4:size/2, 2, d[2]?0.4:size/2,0,0,this.pal.rail,'solid');
+  return this;
+};
+
+function rotVec(v,rx,rz){
+  // apply Rz then Rx (matches THREE default 'XYZ' with ry=0 closely enough for offsets)
+  let x=v[0],y=v[1],z=v[2];
+  if(rz){ const c=Math.cos(rz),s=Math.sin(rz); const nx=x*c-y*s, ny=x*s+y*c; x=nx;y=ny; }
+  if(rx){ const c=Math.cos(rx),s=Math.sin(rx); const ny=y*c-z*s, nz=y*s+z*c; y=ny;z=nz; }
+  return [x,y,z];
+}
+
+/* ------------------------------------------------------------- palettes ---- */
+const PALS=[
+  {floor:0x3f6fa8,ramp:0x4d82bd,pad:0x35608f,rail:0x8fc4f0,goal:0x4dffb8,hazard:0x39d98a,bouncy:0xff9f45,sky:0x070c1a,fog:0x0a1226,marble:0xeaf3ff},
+  {floor:0x2f7f68,ramp:0x389278,pad:0x286b58,rail:0x8ff0cf,goal:0x4dffb8,hazard:0xa4e34a,bouncy:0xff9f45,sky:0x061410,fog:0x0a1f1a,marble:0xeaf3ff},
+  {floor:0x8a5433,ramp:0x9c633c,pad:0x74452a,rail:0xf0b98f,goal:0x4dffb8,hazard:0xff6a3d,bouncy:0xffd23f,sky:0x150a06,fog:0x241009,marble:0xeaf3ff},
+  {floor:0x5a4b93,ramp:0x6a59aa,pad:0x483c78,rail:0xc0b0ff,goal:0x4dffb8,hazard:0xd94fff,bouncy:0x45e0ff,sky:0x0b0718,fog:0x150e2c,marble:0xeaf3ff},
+  {floor:0xb03f6a,ramp:0xc74d7c,pad:0x932f55,rail:0xffb0cf,goal:0x4dffb8,hazard:0xffe14d,bouncy:0x45ffb0,sky:0x180611,fog:0x2a0b1e,marble:0xeaf3ff},
+  {floor:0x2b3140,ramp:0x353c4f,pad:0x232833,rail:0xff6b6b,goal:0x4dffb8,hazard:0xff2d55,bouncy:0xffd23f,sky:0x04050a,fog:0x0a0c14,marble:0xeaf3ff}
+];
+
+/* ============================================================ THE SIX COURSES
+   Each returns a Course. Times are the seconds ADDED to the bank on entry.
+   ========================================================================== */
+const LEVELS=[
+/* ---------------------------------------------------------------- 1 SHALLOWS
+   Teaches: momentum, slope reading, rails, the goal strip. No creatures. */
+function(){
+  const c=new Course({x:0,y:36,z:0,dir:'z',w:14,pal:PALS[0]});
+  c.time=62;
+  c.flat(10,{chk:true});
+  c.slope(24,7);
+  c.flat(8);
+  c.turn('x',{chk:true});
+  c.slope(26,8);
+  c.flat(10);
+  // a little island of pillars to weave through
+  c.pillar(6,-4,1.1,2.4); c.pillar(12,3,1.1,2.4); c.pillar(18,-2,1.1,2.4);
+  c.flat(24);
+  c.turn('z',{chk:true,w:8});
+  c.width(8);
+  c.slope(30,11);
+  c.flat(8);
+  c.turn('x',{chk:true,w:14});
+  c.width(14);
+  c.slope(22,7);
+  c.flat(12);
+  c.finish();
+  return c;
+},
+/* ------------------------------------------------------------ 2 THE GALLERY
+   Teaches: narrow ledges, acid, first creature (CRUSHER). */
+function(){
+  const c=new Course({x:0,y:40,z:0,dir:'z',w:12,pal:PALS[1]});
+  c.time=52;
+  c.flat(8,{chk:true});
+  c.slope(22,7);
+  c.turn('x',{w:10}); c.width(10);
+  c.slope(20,6);
+  c.flat(16);
+  c.creature('crusher',-11,-2.5,{period:1.9,phase:0});
+  c.creature('crusher',-5, 2.5,{period:1.9,phase:0.95});
+  c.turn('z',{chk:true,w:14}); c.width(14);
+  // acid gallery: two pools, a safe lane down the middle
+  c.flat(28,{});
+  c.hazard(-22,-4.6,3.2,7,'acid');
+  c.hazard(-11, 4.6,3.2,7,'acid');
+  c.slope(24,8,{w:14});
+  c.turn('x',{chk:true,w:6}); c.width(6);
+  // the catwalk — no rails, don't overcook it
+  c.flat(30,{rails:false});
+  c.turn('z',{w:12}); c.width(12);
+  c.slope(26,10);
+  c.creature('crusher',-13,0,{period:1.5,phase:0.4});
+  c.flat(10);
+  c.finish();
+  return c;
+},
+/* -------------------------------------------------------------- 3 IRONWORKS
+   Teaches: the CHASER, funnels, moving pressure. Steep. */
+function(){
+  const c=new Course({x:0,y:44,z:0,dir:'z',w:13,pal:PALS[2]});
+  c.time=54;
+  c.flat(8,{chk:true});
+  c.slope(20,8);
+  c.creature('chaser',-9,0,{speed:15,agro:44});
+  c.turn('x',{w:13});
+  c.slope(24,9);
+  // funnel: rails pinch inward via pillars
+  c.pillar(6,-5.4,1.6,2.2); c.pillar(6,5.4,1.6,2.2);
+  c.pillar(14,-3.6,1.6,2.2); c.pillar(14,3.6,1.6,2.2);
+  c.flat(20);
+  c.turn('z',{chk:true,w:9}); c.width(9);
+  c.slope(28,12);
+  c.hazard(-20,0,3.4,4.2,'acid');
+  c.turn('x',{w:13}); c.width(13);
+  c.flat(14);
+  c.creature('crusher',-8,-3,{period:1.35,phase:0});
+  c.creature('crusher',-8, 3,{period:1.35,phase:0.5});
+  c.slope(26,10,{chk:true});
+  c.creature('chaser',-12,2,{speed:17,agro:50});
+  c.turn('z',{w:8}); c.width(8);
+  c.slope(24,9,{rails:'left'});
+  c.flat(12);
+  c.finish();
+  return c;
+},
+/* ----------------------------------------------------------------- 4 VAULTS
+   Teaches: air control, exposure. Long unrailed spans, real drops. */
+function(){
+  const c=new Course({x:0,y:52,z:0,dir:'z',w:10,pal:PALS[3]});
+  c.time=50;
+  c.flat(8,{chk:true});
+  c.slope(18,7);
+  c.turn('x',{w:5}); c.width(5);
+  c.flat(26,{rails:false});                  // first tightrope
+  c.turn('z',{w:9,chk:true}); c.width(9);
+  c.slope(22,10,{rails:false});
+  c.turn('x',{w:9});
+  c.flat(10);
+  // stepping stones — 1-unit gaps, crossable with speed, punishing without it
+  for(let i=0;i<4;i++){
+    const p=c.at(3+i*7, (i%2?1:-1)*2.6);
+    c.box(p[0],p[1]-0.6,p[2],3.0,0.6,3.0,0,0,c.pal.pad,'solid');
+  }
+  c.x+=27;
+  c.flat(10,{chk:true});
+  c.turn('z',{w:11}); c.width(11);
+  c.slope(26,12);
+  c.creature('vacuum',-13,0,{radius:12,pull:26});
+  c.turn('x',{w:6}); c.width(6);
+  c.flat(28,{rails:false});                  // second tightrope, faster
+  c.creature('chaser',-14,0,{speed:18,agro:60});
+  c.turn('z',{w:12,chk:true}); c.width(12);
+  c.slope(24,10);
+  c.flat(10);
+  c.finish();
+  return c;
+},
+/* -------------------------------------------------------------- 5 THE FOLLY
+   Teaches: bounce pads, chaos. Wide, silly, springy. */
+function(){
+  const c=new Course({x:0,y:46,z:0,dir:'z',w:15,pal:PALS[4]});
+  c.time=48;
+  c.flat(8,{chk:true});
+  c.slope(20,6);
+  c.bouncy(12);                              // launch
+  c.flat(10);
+  c.turn('x',{w:15});
+  c.slope(24,8);
+  c.bouncy(10);
+  c.flat(16);
+  c.creature('crusher',-12,-5,{period:1.1,phase:0});
+  c.creature('crusher',-12, 0,{period:1.1,phase:0.36});
+  c.creature('crusher',-12, 5,{period:1.1,phase:0.72});
+  c.turn('z',{chk:true,w:15});
+  c.slope(26,9);
+  // the pinball garden — bumpers strewn down the face of the ramp
+  for(let i=0;i<6;i++){
+    const p=c.at(-22+i*3.6, ((i*2.7)%9)-4.5);
+    c.box(p[0],p[1]+1.4,p[2],1.3,1.4,1.3,0,0,c.pal.bouncy,'bouncy');
+  }
+  c.flat(12);
+  c.turn('x',{w:10}); c.width(10);
+  c.bouncy(14);
+  c.slope(24,9,{chk:true});
+  c.hazard(-16,-3.2,2.4,5,'acid'); c.hazard(-8,3.2,2.4,5,'acid');
+  c.turn('z',{w:13}); c.width(13);
+  c.slope(22,8);
+  c.creature('chaser',-10,0,{speed:19,agro:52});
+  c.flat(10);
+  c.finish();
+  return c;
+},
+/* --------------------------------------------------------------- 6 THE SPINE
+   Short. Steep. Everything at once. */
+function(){
+  const c=new Course({x:0,y:58,z:0,dir:'z',w:9,pal:PALS[5]});
+  c.time=56;
+  c.flat(6,{chk:true});
+  c.slope(20,11);
+  c.creature('chaser',-9,0,{speed:20,agro:70});
+  c.turn('x',{w:7}); c.width(7);
+  c.slope(22,12,{rails:'right'});
+  c.hazard(-14,0,2.6,5,'acid');
+  c.turn('z',{w:5,chk:true}); c.width(5);
+  c.flat(24,{rails:false});
+  c.creature('vacuum',-12,0,{radius:13,pull:34});
+  c.turn('x',{w:11}); c.width(11);
+  c.slope(24,12);
+  c.creature('crusher',-16,-3,{period:0.95,phase:0});
+  c.creature('crusher',-11, 3,{period:0.95,phase:0.3});
+  c.creature('crusher',-6, -3,{period:0.95,phase:0.6});
+  c.turn('z',{w:8,chk:true}); c.width(8);
+  c.slope(26,14,{rails:'left'});
+  c.creature('chaser',-13,1,{speed:22,agro:80});
+  c.turn('x',{w:6}); c.width(6);
+  c.flat(18,{rails:false});
+  c.hazard(-9,0,2.0,2.4,'acid');
+  c.turn('z',{w:12}); c.width(12);
+  c.slope(20,9);
+  c.flat(10);
+  c.finish();
+  return c;
+}
+];
+
+/* ============================================================ GEOMETRY BAKER
+   Turns the item list into one flat-shaded vertex-coloured mesh.
+   Top faces get subdivided into tiles for a checkerboard read.
+   ========================================================================== */
+const FACE_SHADE = {top:1.0, px:0.80, nx:0.60, pz:0.88, nz:0.52, bot:0.36};
+
+function bakeGeometry(items){
+  const pos=[], col=[];
+  const q=new THREE.Quaternion(), e=new THREE.Euler();
+  const v=new THREE.Vector3();
+
+  function emit(x,y,z,cx,cy,cz,r,g,b){
+    v.set(x,y,z).applyQuaternion(q);
+    pos.push(v.x+cx, v.y+cy, v.z+cz);
+    col.push(r,g,b);
+  }
+  function quad(a,b,c,d,cen,rgb,f){
+    const r=rgb[0]*f, g=rgb[1]*f, bl=rgb[2]*f;
+    emit(a[0],a[1],a[2],cen[0],cen[1],cen[2],r,g,bl);
+    emit(b[0],b[1],b[2],cen[0],cen[1],cen[2],r,g,bl);
+    emit(c[0],c[1],c[2],cen[0],cen[1],cen[2],r,g,bl);
+    emit(a[0],a[1],a[2],cen[0],cen[1],cen[2],r,g,bl);
+    emit(c[0],c[1],c[2],cen[0],cen[1],cen[2],r,g,bl);
+    emit(d[0],d[1],d[2],cen[0],cen[1],cen[2],r,g,bl);
+  }
+
+  for(const it of items){
+    if(it.kind==='acid') continue;            // drawn separately, animated
+    const [hx,hy,hz]=it.h, cen=it.c;
+    e.set(it.rx||0,0,it.rz||0,'ZYX'); q.setFromEuler(e);
+    const rgb=hexToRGB(it.col);
+
+    // --- top face, subdivided into ~2u tiles for the checker read
+    const nx=Math.max(1,Math.round(hx*2/2.2)), nz=Math.max(1,Math.round(hz*2/2.2));
+    for(let i=0;i<nx;i++) for(let j=0;j<nz;j++){
+      const x0=-hx+2*hx*i/nx, x1=-hx+2*hx*(i+1)/nx;
+      const z0=-hz+2*hz*j/nz, z1=-hz+2*hz*(j+1)/nz;
+      const f=FACE_SHADE.top*(((i+j)&1)?0.895:1.0);
+      quad([x0,hy,z1],[x1,hy,z1],[x1,hy,z0],[x0,hy,z0],cen,rgb,f);
+    }
+    // --- sides + bottom
+    quad([-hx,-hy,hz],[hx,-hy,hz],[hx,hy,hz],[-hx,hy,hz], cen,rgb,FACE_SHADE.pz);
+    quad([hx,-hy,-hz],[-hx,-hy,-hz],[-hx,hy,-hz],[hx,hy,-hz],cen,rgb,FACE_SHADE.nz);
+    quad([hx,-hy,hz],[hx,-hy,-hz],[hx,hy,-hz],[hx,hy,hz], cen,rgb,FACE_SHADE.px);
+    quad([-hx,-hy,-hz],[-hx,-hy,hz],[-hx,hy,hz],[-hx,hy,-hz],cen,rgb,FACE_SHADE.nx);
+    quad([-hx,-hy,-hz],[hx,-hy,-hz],[hx,-hy,hz],[-hx,-hy,hz],cen,rgb,FACE_SHADE.bot);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('color',    new THREE.Float32BufferAttribute(col,3));
+  g.computeBoundingSphere();
+  return g;
+}
+
+/* ============================================================ COLLISION WORLD
+   Colliders keep their 3 local axes precomputed; broadphase is a uniform hash.
+   ========================================================================== */
+function buildColliders(items){
+  const list=[], e=new THREE.Euler(), q=new THREE.Quaternion();
+  const ux=new THREE.Vector3(), uy=new THREE.Vector3(), uz=new THREE.Vector3();
+  for(const it of items){
+    e.set(it.rx||0,0,it.rz||0,'ZYX'); q.setFromEuler(e);
+    ux.set(1,0,0).applyQuaternion(q); uy.set(0,1,0).applyQuaternion(q); uz.set(0,0,1).applyQuaternion(q);
+    const h=it.h;
+    // world AABB extent
+    const ex=Math.abs(ux.x)*h[0]+Math.abs(uy.x)*h[1]+Math.abs(uz.x)*h[2];
+    const ey=Math.abs(ux.y)*h[0]+Math.abs(uy.y)*h[1]+Math.abs(uz.y)*h[2];
+    const ez=Math.abs(ux.z)*h[0]+Math.abs(uy.z)*h[1]+Math.abs(uz.z)*h[2];
+    list.push({
+      kind:it.kind, c:it.c, h:h,
+      ux:[ux.x,ux.y,ux.z], uy:[uy.x,uy.y,uy.z], uz:[uz.x,uz.y,uz.z],
+      ex:ex, ey:ey, ez:ez
+    });
+  }
+  return list;
+}
+
+function buildHash(cols){
+  const map=new Map();
+  for(let i=0;i<cols.length;i++){
+    const o=cols[i];
+    const x0=Math.floor((o.c[0]-o.ex)/CELL), x1=Math.floor((o.c[0]+o.ex)/CELL);
+    const z0=Math.floor((o.c[2]-o.ez)/CELL), z1=Math.floor((o.c[2]+o.ez)/CELL);
+    for(let x=x0;x<=x1;x++) for(let z=z0;z<=z1;z++){
+      const k=x*73856093 ^ z*19349663;
+      let a=map.get(k); if(!a){a=[];map.set(k,a);} a.push(i);
+    }
+  }
+  return map;
+}
+
+/* sphere vs OBB. writes into `out` and returns true on overlap. */
+const _out={nx:0,ny:0,nz:0,depth:0};
+function sphereOBB(px,py,pz,r,o,out){
+  const dx=px-o.c[0], dy=py-o.c[1], dz=pz-o.c[2];
+  // cheap AABB reject
+  if(Math.abs(dx)>o.ex+r||Math.abs(dy)>o.ey+r||Math.abs(dz)>o.ez+r) return false;
+  const lx=dx*o.ux[0]+dy*o.ux[1]+dz*o.ux[2];
+  const ly=dx*o.uy[0]+dy*o.uy[1]+dz*o.uy[2];
+  const lz=dx*o.uz[0]+dy*o.uz[1]+dz*o.uz[2];
+  const cx=clamp(lx,-o.h[0],o.h[0]), cy=clamp(ly,-o.h[1],o.h[1]), cz=clamp(lz,-o.h[2],o.h[2]);
+  let ax=lx-cx, ay=ly-cy, az=lz-cz;
+  let d2=ax*ax+ay*ay+az*az;
+  if(d2>r*r) return false;
+  if(d2<1e-10){
+    // centre is inside the box — escape along the shallowest axis
+    const px_=o.h[0]-Math.abs(lx), py_=o.h[1]-Math.abs(ly), pz_=o.h[2]-Math.abs(lz);
+    if(py_<=px_&&py_<=pz_){ ay=ly>=0?1:-1; ax=az=0; out.depth=py_+r; }
+    else if(px_<=pz_){ ax=lx>=0?1:-1; ay=az=0; out.depth=px_+r; }
+    else { az=lz>=0?1:-1; ax=ay=0; out.depth=pz_+r; }
+  } else {
+    const d=Math.sqrt(d2); ax/=d; ay/=d; az/=d; out.depth=r-d;
+  }
+  out.nx=ax*o.ux[0]+ay*o.uy[0]+az*o.uz[0];
+  out.ny=ax*o.ux[1]+ay*o.uy[1]+az*o.uz[1];
+  out.nz=ax*o.ux[2]+ay*o.uy[2]+az*o.uz[2];
+  return true;
+}
+function pointInBox(px,py,pz,c,h){
+  return Math.abs(px-c[0])<=h[0] && Math.abs(py-c[1])<=h[1] && Math.abs(pz-c[2])<=h[2];
+}
+
+/* ================================================================= RENDERER */
+const canvas=document.getElementById('c');
+let renderer;
+try{
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance',stencil:false});
+}catch(err){
+  fatal('CAN’T START','The graphics context failed to open.<br><br>'+
+    'Close some other tabs and reload — this usually means too many pages are already using the GPU.');
+  throw err;
+}
+renderer.setClearColor(0x05060c,1);
+const scene=new THREE.Scene();
+
+const VIEW=28;                                   // ortho half-height in world units
+const CAM_DIST=150;                              // camera stand-off along CAM_DIR
+const camera=new THREE.OrthographicCamera(-VIEW,VIEW,VIEW,-VIEW,0.1,600);
+const CAM_DIR=new THREE.Vector3(1,1.18,1).normalize();
+const camTarget=new THREE.Vector3();
+const camLook=new THREE.Vector3();
+
+// dynamic objects need lighting; static baked mesh does not
+scene.add(new THREE.AmbientLight(0xffffff,0.62));
+const sun=new THREE.DirectionalLight(0xffffff,0.85); sun.position.set(6,12,4); scene.add(sun);
+const rim=new THREE.DirectionalLight(0x88bbff,0.35); rim.position.set(-6,3,-6); scene.add(rim);
+
+/* --------------------------------------------------- marble + shadow blob --- */
+function marbleTexture(){
+  const s=128, cv=document.createElement('canvas'); cv.width=cv.height=s;
+  const x=cv.getContext('2d');
+  x.fillStyle='#eef4ff'; x.fillRect(0,0,s,s);
+  // swirl bands so rotation is legible
+  for(let i=0;i<7;i++){
+    x.strokeStyle=i%2?'rgba(70,120,200,.55)':'rgba(150,190,240,.4)';
+    x.lineWidth=4+((i*3)%7);
+    x.beginPath();
+    for(let a=0;a<=64;a++){
+      const t=a/64*Math.PI*2;
+      const rr=s*0.12+i*s*0.055+Math.sin(t*3+i)*s*0.02;
+      const px=s/2+Math.cos(t)*rr, py=s/2+Math.sin(t)*rr*0.9;
+      a?x.lineTo(px,py):x.moveTo(px,py);
+    }
+    x.stroke();
+  }
+  x.fillStyle='rgba(255,255,255,.85)';
+  x.beginPath(); x.ellipse(s*0.32,s*0.28,s*0.1,s*0.07,-0.5,0,7); x.fill();
+  const t=new THREE.CanvasTexture(cv);
+  t.wrapS=t.wrapT=THREE.RepeatWrapping;
+  return t;
+}
+const marbleMat=new THREE.MeshPhongMaterial({map:marbleTexture(),shininess:70,specular:0x9fc4ff});
+const marble=new THREE.Mesh(new THREE.SphereGeometry(R,26,20),marbleMat);
+marble.renderOrder=2; scene.add(marble);
+
+const blob=new THREE.Mesh(
+  new THREE.CircleGeometry(R*1.5,20),
+  new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.34,depthWrite:false})
+);
+blob.rotation.x=-Math.PI/2; scene.add(blob);
+marble.visible=false; blob.visible=false;      // nothing to show until a course loads
+
+/* -------------------------------------------------------------- particles -- */
+const PCOUNT=120;
+const pGeo=new THREE.BufferGeometry();
+const pPos=new Float32Array(PCOUNT*3), pVel=new Float32Array(PCOUNT*3), pLife=new Float32Array(PCOUNT);
+pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+// sizeAttenuation is meaningless under an orthographic camera — fix size in px
+const pMat=new THREE.PointsMaterial({size:5,sizeAttenuation:false,color:0xdfeaff,transparent:true,opacity:0.95,depthWrite:false});
+const points=new THREE.Points(pGeo,pMat); points.frustumCulled=false; scene.add(points);
+function burst(x,y,z,tint){
+  pMat.color.setHex(tint==null?0xdfeaff:tint);
+  for(let i=0;i<PCOUNT;i++){
+    pPos[i*3]=x; pPos[i*3+1]=y; pPos[i*3+2]=z;
+    const a=Math.random()*Math.PI*2, b=Math.acos(Math.random()*2-1), sp=5+Math.random()*13;
+    pVel[i*3]  =Math.sin(b)*Math.cos(a)*sp;
+    pVel[i*3+1]=Math.abs(Math.cos(b))*sp*0.9+3;
+    pVel[i*3+2]=Math.sin(b)*Math.sin(a)*sp;
+    pLife[i]=0.55+Math.random()*0.55;
+  }
+  pGeo.attributes.position.needsUpdate=true;
+}
+function stepParticles(dt){
+  let alive=false;
+  for(let i=0;i<PCOUNT;i++){
+    if(pLife[i]<=0) continue;
+    alive=true; pLife[i]-=dt;
+    pVel[i*3+1]-=42*dt;
+    pPos[i*3]  +=pVel[i*3]*dt;
+    pPos[i*3+1]+=pVel[i*3+1]*dt;
+    pPos[i*3+2]+=pVel[i*3+2]*dt;
+  }
+  points.visible=alive;
+  if(alive) pGeo.attributes.position.needsUpdate=true;
+}
+
+/* ==================================================================== INPUT */
+const keys=Object.create(null);
+const input={x:0,z:0};        // screen-space steering, magnitude <= 1
+let ballX=0, ballZ=0;         // trackball accumulator
+let touchId=null, padCX=0, padCY=0, usingPad=false;
+const padEl=document.getElementById('pad'), nubEl=document.getElementById('nub');
+const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints>0;
+
+addEventListener('keydown',e=>{
+  keys[e.code]=true;
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+  if(e.code==='KeyP') togglePause();
+  if(e.code==='KeyM') toggleMute();
+  if(e.code==='KeyR' && G.state==='play') kill('reset');
+},{passive:false});
+addEventListener('keyup',e=>{keys[e.code]=false});
+
+/* mouse-as-trackball with pointer lock (desktop) */
+canvas.addEventListener('click',()=>{
+  if(!isTouch && G.state==='play' && document.pointerLockElement!==canvas){
+    canvas.requestPointerLock&&canvas.requestPointerLock();
+  }
+});
+addEventListener('mousemove',e=>{
+  if(document.pointerLockElement===canvas){
+    ballX += e.movementX*0.016;
+    ballZ += e.movementY*0.016;
+  }
+});
+
+/* touch: virtual trackball anywhere on screen, visual pad follows the thumb */
+function touchStart(e){
+  if(G.state!=='play') return;
+  const t=e.changedTouches[0];
+  if(touchId!==null) return;
+  touchId=t.identifier; padCX=t.clientX; padCY=t.clientY; usingPad=true;
+  padEl.classList.add('on');
+  padEl.style.left=(padCX-66)+'px'; padEl.style.top=(padCY-66)+'px';
+  padEl.style.bottom='auto';
+  e.preventDefault();
+}
+function touchMove(e){
+  if(touchId===null) return;
+  for(const t of e.changedTouches){
+    if(t.identifier!==touchId) continue;
+    const dx=t.clientX-padCX, dy=t.clientY-padCY;
+    const m=Math.hypot(dx,dy), lim=54;
+    const k=m>lim?lim/m:1;
+    input.x=clamp(dx/lim,-1,1); input.z=clamp(dy/lim,-1,1);
+    const l=Math.hypot(input.x,input.z); if(l>1){input.x/=l;input.z/=l;}
+    nubEl.style.transform=`translate(${dx*k}px,${dy*k}px)`;
+  }
+  e.preventDefault();
+}
+function touchEnd(e){
+  for(const t of e.changedTouches){
+    if(t.identifier!==touchId) continue;
+    touchId=null; usingPad=false; input.x=input.z=0;
+    nubEl.style.transform='translate(0,0)';
+    padEl.classList.remove('on');
+  }
+}
+canvas.addEventListener('touchstart',touchStart,{passive:false});
+canvas.addEventListener('touchmove',touchMove,{passive:false});
+canvas.addEventListener('touchend',touchEnd,{passive:false});
+canvas.addEventListener('touchcancel',touchEnd,{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+
+function readInput(dt){
+  if(usingPad) return;                       // touch already wrote input
+  let kx=0,kz=0;
+  if(keys.KeyW||keys.ArrowUp)    kz-=1;
+  if(keys.KeyS||keys.ArrowDown)  kz+=1;
+  if(keys.KeyA||keys.ArrowLeft)  kx-=1;
+  if(keys.KeyD||keys.ArrowRight) kx+=1;
+  if(kx||kz){
+    const l=Math.hypot(kx,kz); input.x=kx/l; input.z=kz/l; ballX=ballZ=0;
+  } else if(Math.abs(ballX)>0.001||Math.abs(ballZ)>0.001){
+    const decay=Math.pow(0.0012,dt);
+    ballX*=decay; ballZ*=decay;
+    let bx=clamp(ballX,-1,1), bz=clamp(ballZ,-1,1);
+    const l=Math.hypot(bx,bz); if(l>1){bx/=l;bz/=l;}
+    input.x=bx; input.z=bz;
+  } else { input.x=0; input.z=0; }
+}
+
+/* ================================================================ GAME STATE */
+const G={
+  state:'title',            // title|intro|play|dead|clear|over|pause
+  level:0, bank:0, score:0,
+  cols:[], hash:null, items:[], creatures:[], spawns:[], goal:null, killY:0,
+  staticMesh:null, hazMeshes:[], creatureMeshes:[],
+  spawnIdx:0, timer:0, tAcc:0, lastWhole:99,
+  p:new THREE.Vector3(), v:new THREE.Vector3(), prevP:new THREE.Vector3(),
+  grounded:false, gN:new THREE.Vector3(0,1,0), lastGroundY:0,
+  rot:new THREE.Quaternion(), deadT:0, clearT:0, introT:0,
+  startY:0, endY:0, best:0
+};
+
+const ovEl=document.getElementById('ov'), ovBtn=document.getElementById('ovBtn'), ovNote=document.getElementById('ovNote');
+const clockEl=document.getElementById('clock'), lvNameEl=document.getElementById('lvName'), scoreEl=document.getElementById('score');
+const depthFill=document.getElementById('depthfill'), flashEl=document.getElementById('flash'), fpsEl=document.getElementById('fps');
+
+function showOverlay(html,btn,thin){
+  ovEl.innerHTML=html+(btn?`<button class="btn" id="ovBtn">${btn}</button>`:'');
+  ovEl.className=thin?'thin':'';
+  const b=document.getElementById('ovBtn');
+  if(b) b.onclick=()=>{Audio_.init();Audio_.resume();overlayAction();};
+}
+function hideOverlay(){ ovEl.className='hide'; }
+let overlayAction=()=>{};
+
+/* -------------------------------------------------------------- level load */
+function loadLevel(n){
+  // teardown
+  if(G.staticMesh){ scene.remove(G.staticMesh); G.staticMesh.geometry.dispose(); G.staticMesh.material.dispose(); }
+  G.hazMeshes.forEach(m=>{scene.remove(m);m.geometry.dispose();m.material.dispose();});
+  G.creatureMeshes.forEach(m=>{
+    m.root.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); });
+    scene.remove(m.root);
+  });
+  G.hazMeshes=[]; G.creatureMeshes=[];
+
+  const c=LEVELS[n]();
+  G.items=c.items; G.spawns=c.spawns.slice(); G.goal=c.goal;
+  G.creatures=c.creatures; G.pal=c.pal;
+  G.startY=c.spawns[0]?c.spawns[0][1]:0;
+  G.endY=c.goal.surfY;
+  // One rule for every course: you are gone once you fall clearly below the
+  // finish plane. Keeps the "lost it" beat consistently snappy.
+  G.killY=G.endY-14;
+
+  // static bake
+  const geo=bakeGeometry(c.items);
+  G.staticMesh=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({vertexColors:true}));
+  G.staticMesh.frustumCulled=false;
+  scene.add(G.staticMesh);
+
+  // colliders
+  G.cols=buildColliders(c.items);
+  G.hash=buildHash(G.cols);
+
+  // hazard surfaces (animated, drawn on top of the floor)
+  for(const it of c.items){
+    if(it.kind!=='acid') continue;
+    const g=new THREE.PlaneGeometry(it.h[0]*2,it.h[2]*2);
+    const m=new THREE.MeshBasicMaterial({color:it.col,transparent:true,opacity:0.85});
+    const mesh=new THREE.Mesh(g,m);
+    mesh.rotation.x=-Math.PI/2;
+    mesh.position.set(it.c[0],it.c[1]+it.h[1]+0.03,it.c[2]);
+    mesh.userData.base=it.col;
+    scene.add(mesh); G.hazMeshes.push(mesh);
+  }
+  // goal glow strip
+  {
+    const gh=G.goal.h;
+    const g=new THREE.PlaneGeometry(gh[0]*2,gh[2]*2);
+    const m=new THREE.MeshBasicMaterial({color:0x4dffb8,transparent:true,opacity:0.5});
+    const mesh=new THREE.Mesh(g,m); mesh.rotation.x=-Math.PI/2;
+    mesh.position.set(G.goal.c[0],G.goal.surfY+0.05,G.goal.c[2]);
+    mesh.userData.goal=true;
+    scene.add(mesh); G.hazMeshes.push(mesh);
+  }
+
+  buildCreatures();
+
+  // Fog is measured from the camera, which orbits 150 units back — so the
+  // usable band sits AROUND that distance, not near zero.
+  scene.fog=new THREE.Fog(c.pal.fog, CAM_DIST-25, CAM_DIST+105);
+  renderer.setClearColor(c.pal.sky,1);
+  marbleMat.color.setHex(c.pal.marble);
+
+  G.spawnIdx=0;
+  G.bank += c.time;
+  G.timer = G.bank;
+  G.lastWhole=Math.ceil(G.timer);
+  respawn(true);
+}
+
+/* ------------------------------------------------------------- creatures --- */
+function buildCreatures(){
+  for(const cr of G.creatures){
+    const root=new THREE.Group();
+    if(cr.type==='chaser'){
+      const m=new THREE.Mesh(new THREE.SphereGeometry(R*1.15,20,14),
+        new THREE.MeshPhongMaterial({color:0x14161d,shininess:110,specular:0xff6b6b}));
+      root.add(m);
+      const eye=new THREE.Mesh(new THREE.SphereGeometry(R*0.3,8,6),
+        new THREE.MeshBasicMaterial({color:0xff2d55}));
+      eye.position.set(0,R*0.5,R*0.95); root.add(eye);
+      cr.mesh=m; cr.eye=eye;
+      cr.px=cr.x; cr.py=cr.y+3; cr.pz=cr.z; cr.vx=0; cr.vy=0; cr.vz=0;
+      cr.rot=new THREE.Quaternion();
+    } else if(cr.type==='crusher'){
+      // An unsupported overhead press. Deliberately has NO collider: any
+      // plinth big enough to look right would fence the marble out of the
+      // strike zone and the hazard could never actually land on you.
+      const head=new THREE.Mesh(new THREE.BoxGeometry(2.4,1.1,2.4),
+        new THREE.MeshPhongMaterial({color:0xff6b6b,shininess:60,specular:0xffffff}));
+      root.add(head);
+      const cap=new THREE.Mesh(new THREE.BoxGeometry(2.9,0.34,2.9),
+        new THREE.MeshPhongMaterial({color:0x2c3550,shininess:30}));
+      cap.position.y=0.72; head.add(cap);
+      // floor decal telegraphs the strike zone
+      const ring=new THREE.Mesh(new THREE.RingGeometry(1.15,1.55,18,1),
+        new THREE.MeshBasicMaterial({color:0xff6b6b,transparent:true,opacity:0.45,side:THREE.DoubleSide}));
+      ring.rotation.x=-Math.PI/2; ring.position.y=0.06; root.add(ring);
+      cr.head=head; cr.ring=ring;
+      cr.t=(cr.phase||0)*(cr.period||1.6);
+    } else if(cr.type==='vacuum'){
+      const cone=new THREE.Mesh(new THREE.CylinderGeometry(2.2,0.9,2.6,14,1,true),
+        new THREE.MeshPhongMaterial({color:0x1c2440,shininess:40,side:THREE.DoubleSide}));
+      cone.position.y=1.3; root.add(cone);
+      const ring=new THREE.Mesh(new THREE.TorusGeometry(2.2,0.16,6,20),
+        new THREE.MeshBasicMaterial({color:0xd94fff}));
+      ring.rotation.x=Math.PI/2; ring.position.y=2.6; root.add(ring);
+      const swirl=new THREE.Mesh(new THREE.RingGeometry(0.7,(cr.radius||12),24,1),
+        new THREE.MeshBasicMaterial({color:0xd94fff,transparent:true,opacity:0.09,side:THREE.DoubleSide}));
+      swirl.rotation.x=-Math.PI/2; swirl.position.y=0.12; root.add(swirl);
+      cr.ring=ring; cr.swirl=swirl;
+    }
+    root.position.set(cr.x,cr.y,cr.z);
+    scene.add(root);
+    G.creatureMeshes.push({root:root,cr:cr});
+    cr.root=root;
+  }
+}
+
+function stepCreatures(dt,t){
+  for(const cr of G.creatures){
+    if(cr.type==='crusher'){
+      cr.t+=dt;
+      const per=cr.period||1.6;
+      const ph=(cr.t%per)/per;
+      // hangs high, drops fast, dwells, winches back up slowly
+      let h;
+      if(ph<0.12)      { h=lerp(4.6,0.58,Math.pow(ph/0.12,1.7)); }   // slam
+      else if(ph<0.30) { h=0.58; }                                    // dwell
+      else             { h=lerp(0.58,4.6,(ph-0.30)/0.70); }           // lift
+      cr.head.position.y=h;
+      cr.headY=h;
+      // decal brightens as the strike approaches
+      const warn = ph>0.82 ? (ph-0.82)/0.18 : 0;
+      cr.ring.material.opacity = 0.28 + 0.62*Math.max(warn, ph<0.30?1:0);
+      cr.ring.scale.setScalar(1 + 0.14*warn);
+      const down = ph<0.30;
+      if(cr.wasDown!==down){
+        cr.wasDown=down;
+        if(down && distToMarble2(cr)<1600) Audio_.sfx('tap',0.65);
+      }
+    } else if(cr.type==='vacuum'){
+      cr.ring.rotation.z+=dt*3.2;
+      cr.swirl.rotation.z-=dt*1.1;
+      cr.swirl.material.opacity=0.07+0.05*Math.sin(t*4);
+    } else if(cr.type==='chaser'){
+      stepChaser(cr,dt);
+    }
+  }
+}
+function distToMarble2(cr){
+  const dx=cr.x-G.p.x, dy=cr.y-G.p.y, dz=cr.z-G.p.z;
+  return dx*dx+dy*dy+dz*dz;
+}
+
+/* the chaser runs the same sphere solver, at lower fidelity */
+function stepChaser(cr,dt){
+  const dx=G.p.x-cr.px, dz=G.p.z-cr.pz, dy=G.p.y-cr.py;
+  const d=Math.hypot(dx,dy,dz);
+  const agro=cr.agro||45;
+  if(d<agro){
+    const k=(cr.speed||16);
+    cr.vx += (dx/d)*k*dt; cr.vz += (dz/d)*k*dt;
+  } else {
+    // drift home
+    cr.vx += (cr.x-cr.px)*0.5*dt; cr.vz += (cr.z-cr.pz)*0.5*dt;
+  }
+  cr.vy -= GRAV*dt;
+  cr.px+=cr.vx*dt; cr.py+=cr.vy*dt; cr.pz+=cr.vz*dt;
+
+  // collide
+  const rr=R*1.15;
+  const near=queryHash(cr.px,cr.pz,rr+1);
+  let grounded=false;
+  for(const i of near){
+    const o=G.cols[i];
+    if(o.kind==='acid') continue;
+    if(sphereOBB(cr.px,cr.py,cr.pz,rr,o,_out)){
+      cr.px+=_out.nx*_out.depth; cr.py+=_out.ny*_out.depth; cr.pz+=_out.nz*_out.depth;
+      const vn=cr.vx*_out.nx+cr.vy*_out.ny+cr.vz*_out.nz;
+      if(vn<0){ cr.vx-=_out.nx*vn*1.2; cr.vy-=_out.ny*vn*1.2; cr.vz-=_out.nz*vn*1.2; }
+      if(_out.ny>0.5) grounded=true;
+    }
+  }
+  const damp=Math.pow(grounded?0.22:0.9,dt);
+  cr.vx*=damp; cr.vz*=damp;
+  if(cr.py < G.killY-2){ cr.px=cr.x; cr.py=cr.y+3; cr.pz=cr.z; cr.vx=cr.vy=cr.vz=0; }
+  cr.root.position.set(cr.px,cr.py,cr.pz);
+
+  // spin visual
+  const sp=Math.hypot(cr.vx,cr.vz);
+  if(sp>0.01){
+    const ax=new THREE.Vector3(-cr.vz,0,cr.vx).normalize();
+    const q=new THREE.Quaternion().setFromAxisAngle(ax,sp*dt/(R*1.15));
+    cr.rot.premultiply(q); cr.root.quaternion.copy(cr.rot);
+  }
+}
+
+/* ------------------------------------------------------------ spatial query */
+const _near=[];
+function queryHash(x,z,pad){
+  _near.length=0;
+  const x0=Math.floor((x-pad)/CELL), x1=Math.floor((x+pad)/CELL);
+  const z0=Math.floor((z-pad)/CELL), z1=Math.floor((z+pad)/CELL);
+  for(let ix=x0;ix<=x1;ix++) for(let iz=z0;iz<=z1;iz++){
+    const a=G.hash.get(ix*73856093 ^ iz*19349663);
+    if(!a) continue;
+    for(let i=0;i<a.length;i++){ const v=a[i]; if(_near.indexOf(v)<0) _near.push(v); }
+  }
+  return _near;
+}
+
+/* =================================================================== PHYSICS */
+let impactCooldown=0, wasGrounded=true, airTime=0, edgeCued=false;
+
+function physicsStep(dt){
+  const p=G.p, v=G.v;
+
+  // --- steering, mapped from screen space into the isometric world basis.
+  //     The camera sits along +X+Y+Z looking back at the origin, so:
+  //       screen up    -> world (-0.7071, 0, -0.7071)
+  //       screen right -> world ( 0.7071, 0, -0.7071)
+  //     input.z is positive when the player pushes DOWN-screen.
+  const acc=G.grounded?ACC_GROUND:ACC_AIR;
+  const s=0.70710678;
+  const wx=( input.x + input.z)*s;
+  const wz=(-input.x + input.z)*s;
+  v.x += wx*acc*dt;
+  v.z += wz*acc*dt;
+
+  // --- gravity. A solid sphere that rolls rather than slides only converts
+  //     5/7 of gravity into linear acceleration; the rest spins it up.
+  v.y -= GRAV*(G.grounded?ROLL_K:1)*dt;
+
+  const keep=Math.pow(G.grounded?GROUND_KEEP:AIR_KEEP, dt);
+  v.x*=keep; v.z*=keep;
+
+  // speed cap (horizontal + vertical handled separately so falls stay honest)
+  const hs=Math.hypot(v.x,v.z);
+  if(hs>VMAX){ v.x*=VMAX/hs; v.z*=VMAX/hs; }
+  if(v.y<-VMAX) v.y=-VMAX;
+
+  p.x+=v.x*dt; p.y+=v.y*dt; p.z+=v.z*dt;
+
+  // --- collide
+  G.grounded=false;
+  let hitSpeed=0, bounced=false, inAcid=false;
+  const near=queryHash(p.x,p.z,R+2);
+  for(let k=0;k<near.length;k++){
+    const o=G.cols[near[k]];
+    if(o.kind==='acid'){
+      if(pointInBox(p.x,p.y-R*0.5,p.z,o.c,[o.h[0],o.h[1]+R,o.h[2]])) inAcid=true;
+      continue;
+    }
+    if(!sphereOBB(p.x,p.y,p.z,R,o,_out)) continue;
+    p.x+=_out.nx*_out.depth; p.y+=_out.ny*_out.depth; p.z+=_out.nz*_out.depth;
+    const vn=v.x*_out.nx+v.y*_out.ny+v.z*_out.nz;
+    if(vn<0){
+      const mag=-vn;
+      // Resting contacts must not bounce or the marble buzzes on flat ground.
+      let rest = o.kind==='bouncy' ? REST_BOUNCY : (mag<REST_MIN ? 0 : REST);
+      if(mag>2.2 && impactCooldown<=0){ hitSpeed=Math.max(hitSpeed,mag); if(o.kind==='bouncy') bounced=true; }
+      v.x-=_out.nx*vn*(1+rest); v.y-=_out.ny*vn*(1+rest); v.z-=_out.nz*vn*(1+rest);
+    }
+    if(_out.ny>0.45){ G.grounded=true; G.gN.set(_out.nx,_out.ny,_out.nz); G.lastGroundY=p.y-R; }
+  }
+
+  if(hitSpeed>0){
+    impactCooldown=0.06;
+    Audio_.sfx(bounced?'bouncy':'tap', clamp(hitSpeed/16,0.15,1));
+  }
+  impactCooldown-=dt;
+
+  if(inAcid){ kill('acid'); return; }
+
+  // --- creature interactions
+  for(const cr of G.creatures){
+    if(cr.type==='crusher'){
+      const dx=p.x-cr.x, dz=p.z-cr.z;
+      if(dx*dx+dz*dz < 1.5*1.5 && cr.headY!=null && cr.headY < 1.6 && p.y < cr.y+2.6){
+        kill('crush'); return;
+      }
+    } else if(cr.type==='vacuum'){
+      const dx=cr.x-p.x, dz=cr.z-p.z, d=Math.hypot(dx,dz);
+      const rad=cr.radius||12;
+      if(d<rad && Math.abs(p.y-cr.y)<8){
+        const f=(1-d/rad); const k=(cr.pull||26)*f*f;
+        v.x+=(dx/(d||1))*k*dt; v.z+=(dz/(d||1))*k*dt;
+        if(d<1.4){ kill('suck'); return; }
+      }
+    } else if(cr.type==='chaser'){
+      const dx=p.x-cr.px, dy=p.y-cr.py, dz=p.z-cr.pz;
+      const d=Math.hypot(dx,dy,dz);
+      if(d < R+R*1.15){
+        const nx=dx/(d||1), ny=dy/(d||1), nz=dz/(d||1);
+        const rel=(v.x-cr.vx)*nx+(v.y-cr.vy)*ny+(v.z-cr.vz)*nz;
+        const impact=Math.abs(rel)+Math.hypot(cr.vx,cr.vz);
+        const j=10+impact*1.15;
+        v.x+=nx*j; v.y+=Math.max(ny*j,3.5); v.z+=nz*j;
+        cr.vx-=nx*j*0.5; cr.vz-=nz*j*0.5;
+        p.x+=nx*0.4; p.y+=ny*0.4; p.z+=nz*0.4;
+        if(impactCooldown<=0){ impactCooldown=0.12; Audio_.sfx('tap',0.95); }
+        if(impact>26){ kill('shatter'); return; }
+      }
+    }
+  }
+
+  // --- goal
+  if(G.goal && pointInBox(p.x,p.y,p.z,G.goal.c,G.goal.h)){ clearLevel(); return; }
+
+  // --- checkpoint progression (recorded as we pass, never inferred at death,
+  //     otherwise a long fall would "unlock" every checkpoint below us)
+  if(G.grounded && G.spawnIdx < G.spawns.length-1){
+    const nx=G.spawns[G.spawnIdx+1];
+    const dx=p.x-nx[0], dz=p.z-nx[2];
+    if(dx*dx+dz*dz < 100 && Math.abs(p.y-nx[1]) < 6){
+      G.spawnIdx++; Audio_.sfx('chk');
+    }
+  }
+
+  // --- the void
+  if(p.y < G.killY){ kill('fall'); return; }
+
+  // --- rolling visual: angular axis = contactNormal × velocity
+  const sp=Math.hypot(v.x,v.z);
+  if(sp>0.02){
+    const n=G.grounded?G.gN:_upN;
+    const ax=n.y*v.z-n.z*v.y, ay=n.z*v.x-n.x*v.z, az=n.x*v.y-n.y*v.x;
+    const al=Math.hypot(ax,ay,az);
+    if(al>1e-5){
+      _axis.set(ax/al,ay/al,az/al);
+      _q.setFromAxisAngle(_axis, (sp*dt)/R);
+      G.rot.premultiply(_q);
+    }
+  }
+
+  // --- audio feel. Contact flickers every time the marble crosses a seam
+  // between two platforms, so the "you're falling" cue waits for real airtime
+  // rather than firing on the transition.
+  if(G.grounded){ airTime=0; edgeCued=false; }
+  else {
+    airTime+=dt;
+    if(!edgeCued && airTime>0.16 && v.y<-4){ edgeCued=true; Audio_.sfx('edge'); }
+  }
+  wasGrounded=G.grounded;
+}
+const _axis=new THREE.Vector3(), _q=new THREE.Quaternion(), _upN={x:0,y:1,z:0};
+
+/* ================================================================ LIFE CYCLE */
+function respawn(fresh){
+  const s=G.spawns[Math.min(G.spawnIdx,G.spawns.length-1)]||[0,10,0];
+  // spawns store the SURFACE height — settle the marble right on it so a
+  // respawn doesn't start with an unearned bounce
+  G.p.set(s[0],s[1]+R+0.04,s[2]);
+  G.prevP.copy(G.p);
+  G.v.set(0,0,0);
+  G.rot.identity();
+  G.lastGroundY=s[1];        // so the contact shadow starts under the marble
+  G.grounded=false; wasGrounded=true; airTime=0; edgeCued=false; impactCooldown=0.2;
+  input.x=input.z=0; ballX=ballZ=0;
+  camTarget.copy(G.p);
+  if(!fresh) Audio_.sfx('spawn');
+}
+function kill(reason){
+  if(G.state!=='play') return;
+  G.state='dead'; G.deadT=0;
+  marble.visible=false; blob.visible=false;
+  Audio_.setRoll(0,false);
+  const tint = reason==='acid'?0x8fff5a : reason==='suck'?0xd94fff : reason==='crush'?0xff6b6b : 0xdfeaff;
+  burst(G.p.x,G.p.y,G.p.z,tint);
+  if(reason==='acid') Audio_.sfx('dissolve');
+  else if(reason==='suck') Audio_.sfx('suck');
+  else if(reason==='fall') Audio_.sfx('shatter');
+  else Audio_.sfx('shatter');
+  flash(reason==='acid'?0.25:0.4);
+  // G.spawnIdx was already advanced live, as checkpoints were physically passed.
+}
+function flash(a){
+  flashEl.style.transition='none'; flashEl.style.opacity=a;
+  requestAnimationFrame(()=>{ flashEl.style.transition='opacity .35s ease-out'; flashEl.style.opacity=0; });
+}
+function clearLevel(){
+  if(G.state!=='play') return;
+  G.state='clear'; G.clearT=0;
+  Audio_.setRoll(0,false); Audio_.stopTrack(); Audio_.sfx('goal');
+  const bonus=Math.floor(G.timer*100);
+  G.score+=1000+bonus;
+  G.bank=G.timer;
+  scoreEl.textContent=G.score.toLocaleString();
+  burst(G.p.x,G.p.y,G.p.z,0x4dffb8);
+  marble.visible=false; blob.visible=false;
+  showOverlay(
+    `<div class="card win">COURSE CLEAR</div>
+     <div class="note">${COURSE_NAMES[G.level]}</div>
+     <div class="kv">
+       <div><span class="lbl">TIME LEFT</span><span class="num">${G.timer.toFixed(1)}</span></div>
+       <div><span class="lbl">BONUS</span><span class="num">+${bonus.toLocaleString()}</span></div>
+       <div><span class="lbl">SCORE</span><span class="num">${G.score.toLocaleString()}</span></div>
+     </div>`, null, true);
+  overlayAction=()=>{};
+  setTimeout(()=>{
+    if(G.level+1>=LEVELS.length) finish(true);
+    else { G.level++; startLevel(); }
+  }, 2400);
+}
+function gameOver(won){ finish(won); }
+function finish(won){
+  G.state='over';
+  Audio_.setRoll(0,false); Audio_.stopTrack();
+  if(!won) Audio_.sfx('over');
+  marble.visible=false; blob.visible=false;
+  G.best=Math.max(G.best,G.score);
+  showOverlay(
+    `<div class="card ${won?'win':'lose'}">${won?'ALL SIX CLEARED':'OUT OF TIME'}</div>
+     <div class="note">${won?'You held the clock the whole way down.':'The clock always wins eventually.'}</div>
+     <div class="kv">
+       <div><span class="lbl">SCORE</span><span class="num">${G.score.toLocaleString()}</span></div>
+       <div><span class="lbl">BEST</span><span class="num">${G.best.toLocaleString()}</span></div>
+       <div><span class="lbl">REACHED</span><span class="num">${G.level+1}/6</span></div>
+     </div>`, 'RUN AGAIN');
+  overlayAction=()=>{ G.level=0; G.score=0; G.bank=0; scoreEl.textContent='0'; startLevel(); };
+}
+
+function startLevel(){
+  hideOverlay();
+  loadLevel(G.level);
+  lvNameEl.textContent=COURSE_NAMES[G.level];
+  marble.visible=true; blob.visible=true;
+  G.state='intro'; G.introT=0;
+  Audio_.playTrack(TRACKS[G.level]);
+  Audio_.sfx('start');
+  showOverlay(
+    `<div class="card">${G.level+1} · ${COURSE_NAMES[G.level]}</div>
+     <div class="note">TIME BANK <b>${G.timer.toFixed(0)}</b></div>`, null, true);
+  setTimeout(()=>{ if(G.state==='intro'){ hideOverlay(); G.state='play'; } }, 1500);
+}
+
+function togglePause(){
+  if(G.state==='play'){
+    G.state='pause'; Audio_.setRoll(0,false); Audio_.stopTrack();
+    showOverlay(`<div class="card">PAUSED</div><div class="note">${COURSE_NAMES[G.level]}</div>`,'RESUME');
+    overlayAction=()=>{ hideOverlay(); G.state='play'; Audio_.playTrack(TRACKS[G.level]); };
+  } else if(G.state==='pause'){ hideOverlay(); G.state='play'; Audio_.playTrack(TRACKS[G.level]); }
+}
+const muteBtn=document.getElementById('mute');
+function toggleMute(){
+  Audio_.enabled=!Audio_.enabled;
+  if(Audio_.master) Audio_.master.gain.value=Audio_.enabled?0.9:0;
+  muteBtn.textContent=Audio_.enabled?'♪':'✕';
+  muteBtn.style.color=Audio_.enabled?'var(--dim)':'var(--bad)';
+}
+muteBtn.onclick=(e)=>{e.stopPropagation();toggleMute();};
+
+/* ===================================================================== LOOP */
+let last=performance.now(), acc=0, fpsAcc=0, fpsN=0, fpsT=0;
+
+function resize(){
+  const w=innerWidth, h=innerHeight;
+  const dpr=Math.min(devicePixelRatio||1, 2);
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(w,h,false);
+  const aspect=w/h;
+  // keep a consistent vertical field; widen horizontally
+  const vh = h<560 ? VIEW*0.86 : VIEW;
+  camera.top=vh; camera.bottom=-vh;
+  camera.left=-vh*aspect; camera.right=vh*aspect;
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize',()=>{ resize(); });
+addEventListener('orientationchange',()=>setTimeout(resize,120));
+resize();
+
+function frame(now){
+  requestAnimationFrame(frame);
+  let dt=(now-last)/1000; last=now;
+  if(dt>0.25) dt=0.25;
+  const t=now/1000;
+
+  // fps meter
+  fpsAcc+=dt; fpsN++;
+  if(fpsAcc>0.5){ fpsT=fpsN/fpsAcc; fpsAcc=0; fpsN=0; fpsEl.textContent=fpsT.toFixed(0)+' FPS'; }
+
+  Audio_.pump();
+
+  if(G.state==='play'){
+    readInput(dt);
+
+    // fixed-step physics
+    acc+=dt;
+    let steps=0;
+    while(acc>=FIXED_DT && steps<MAX_STEPS){
+      G.prevP.copy(G.p);
+      physicsStep(FIXED_DT);
+      if(G.state!=='play') break;
+      acc-=FIXED_DT; steps++;
+    }
+    if(acc>FIXED_DT*MAX_STEPS) acc=0;
+
+    if(G.state==='play'){
+      stepCreatures(dt,t);
+
+      // clock
+      G.timer-=dt;
+      const whole=Math.ceil(G.timer);
+      if(whole!==G.lastWhole){
+        G.lastWhole=whole;
+        clockEl.classList.remove('pulse'); void clockEl.offsetWidth; clockEl.classList.add('pulse');
+        if(whole<=10&&whole>0) Audio_.sfx('tickbad');
+        else if(whole%10===0) Audio_.sfx('tick');
+      }
+      clockEl.textContent=(G.timer<10?Math.max(0,G.timer).toFixed(1):Math.ceil(Math.max(0,G.timer)).toString().padStart(2,'0'));
+      clockEl.classList.toggle('warn',G.timer<10);
+      if(G.timer<=0){ G.timer=0; gameOver(false); }
+
+      // Guard again: gameOver() flips the state, and re-arming the rolling
+      // voice here would leave it droning under the game-over screen.
+      if(G.state==='play'){
+        Audio_.setRoll(Math.hypot(G.v.x,G.v.z), G.grounded);
+        const prog=clamp((G.startY-G.p.y)/Math.max(1,(G.startY-G.endY)),0,1);
+        depthFill.style.height=(prog*100).toFixed(1)+'%';
+      }
+    }
+  } else if(G.state==='dead'){
+    G.deadT+=dt;
+    stepCreatures(dt,t);
+    if(G.deadT>0.85){
+      marble.visible=true; blob.visible=true;
+      respawn(false);
+      G.state='play'; acc=0;
+    }
+  } else if(G.state==='clear'){
+    G.clearT+=dt; stepCreatures(dt,t);
+  }
+
+  stepParticles(dt);
+
+  // marble transform (interpolated)
+  if(G.state==='play'){
+    const a=clamp(acc/FIXED_DT,0,1);
+    marble.position.lerpVectors(G.prevP,G.p,a);
+  } else {
+    marble.position.copy(G.p);
+  }
+  marble.quaternion.copy(G.rot);
+  blob.position.set(marble.position.x, G.lastGroundY+0.06, marble.position.z);
+  const fallDist=clamp((marble.position.y-R-G.lastGroundY)/12,0,1);
+  blob.material.opacity=0.34*(1-fallDist);
+  blob.scale.setScalar(1+fallDist*0.9);
+
+  // animate hazards
+  for(const m of G.hazMeshes){
+    if(m.userData.goal) m.material.opacity=0.35+0.22*Math.sin(t*5);
+    else m.material.opacity=0.72+0.16*Math.sin(t*2.6+m.position.x*0.2);
+  }
+
+  // camera: smooth follow, slight lead in the direction of travel
+  const leadX=clamp(G.v.x*0.28,-8,8), leadZ=clamp(G.v.z*0.28,-8,8);
+  camLook.set(marble.position.x+leadX, marble.position.y+2.2, marble.position.z+leadZ);
+  camTarget.lerp(camLook, 1-Math.pow(0.0015,dt));
+  camera.position.copy(camTarget).addScaledVector(CAM_DIR,CAM_DIST);
+  camera.lookAt(camTarget);
+
+  renderer.render(scene,camera);
+}
+
+/* =============================================================== SELF-TEST
+   Builds all six courses at boot and asserts the invariants that are easy to
+   break while authoring levels: floating/buried props, unreachable finishes,
+   checkpoints out of order, NaN geometry. Failures are reported loudly rather
+   than turning into a course you silently cannot complete.
+   ========================================================================== */
+function selfTest(){
+  const fails=[];
+  const KNOWN={chaser:1,crusher:1,vacuum:1};
+  for(let i=0;i<LEVELS.length;i++){
+    const name=COURSE_NAMES[i];
+    let c;
+    try { c=LEVELS[i](); }
+    catch(err){ fails.push(`${name}: threw while building — ${err.message}`); continue; }
+
+    if(!c.items.length)        fails.push(`${name}: no geometry`);
+    if(c.spawns.length<2)      fails.push(`${name}: needs at least 2 checkpoints, has ${c.spawns.length}`);
+    if(!c.goal)                fails.push(`${name}: no finish`);
+    if(!(c.time>0))            fails.push(`${name}: no time allowance`);
+
+    // every number that reaches the solver must be finite
+    for(const it of c.items){
+      const nums=it.c.concat(it.h,[it.rx,it.rz]);
+      if(nums.some(n=>!isFinite(n))) { fails.push(`${name}: non-finite collider at ${it.c}`); break; }
+    }
+    // the course must actually descend, and checkpoints must follow it down
+    if(c.goal && c.spawns.length){
+      if(c.goal.surfY >= c.spawns[0][1]) fails.push(`${name}: finish is not below the start`);
+      for(let k=1;k<c.spawns.length;k++){
+        if(c.spawns[k][1] > c.spawns[k-1][1]+0.001)
+          fails.push(`${name}: checkpoint ${k} sits above checkpoint ${k-1}`);
+      }
+    }
+    // props must rest on a real surface, not float or sink
+    for(const cr of c.creatures){
+      if(!KNOWN[cr.type]) fails.push(`${name}: unknown creature "${cr.type}"`);
+      if(!isFinite(cr.x)||!isFinite(cr.y)||!isFinite(cr.z))
+        fails.push(`${name}: creature "${cr.type}" has non-finite position`);
+      const support=c.items.some(it=>
+        it.kind!=='acid' &&
+        Math.abs(cr.x-it.c[0])<=it.h[0]+Math.abs(it.rz)*it.h[0]+2.5 &&
+        Math.abs(cr.z-it.c[2])<=it.h[2]+Math.abs(it.rx)*it.h[2]+2.5 &&
+        cr.y>it.c[1]-4 && cr.y<it.c[1]+4);
+      if(!support) fails.push(`${name}: creature "${cr.type}" at y=${cr.y.toFixed(1)} has no surface under it`);
+    }
+    // the baker and the collider builder must agree that this is buildable
+    try { buildColliders(c.items); }
+    catch(err){ fails.push(`${name}: collider build failed — ${err.message}`); }
+  }
+
+  if(fails.length){
+    console.error('CASCADE self-test failed:\n  '+fails.join('\n  '));
+    const bar=document.createElement('div');
+    bar.style.cssText='position:fixed;z-index:99;left:0;right:0;bottom:0;padding:10px 14px;'+
+      'background:#3a0d14;color:#ffb0b8;font:11px/1.6 ui-monospace,monospace;max-height:36vh;overflow:auto;';
+    bar.textContent='SELF-TEST: '+fails.length+' issue(s) — '+fails.join(' · ');
+    document.body.appendChild(bar);
+  } else {
+    console.log('CASCADE self-test: all 6 courses OK');
+  }
+  return fails.length===0;
+}
+selfTest();
+
+/* ==================================================================== BOOT */
+overlayAction=()=>{
+  G.level=0; G.score=0; G.bank=0;
+  scoreEl.textContent='0';
+  startLevel();
+};
+document.getElementById('ovBtn').onclick=()=>{ Audio_.init(); Audio_.resume(); overlayAction(); };
+
+// unlock audio on any first gesture (iOS requirement)
+['touchend','mousedown','keydown'].forEach(ev=>{
+  addEventListener(ev,function once(){ Audio_.init(); Audio_.resume(); }, {once:true, passive:true});
+});
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden && G.state==='play') togglePause();
+});
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

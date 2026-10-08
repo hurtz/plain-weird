@@ -1,0 +1,300 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>fsgolf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: a single tractor-feed printout sheet with sprocket margins; scorecard on top, teletype output, prompt at the bottom. One deliberate look: greenbar paper. */
+:root{
+  color-scheme:light;
+  --desk:#d9d4c4; --paper:#fbfaf3; --bar:#dcebd6; --ink:#17231a; --ink-2:#4f5d50; --red:#a8261d; --hole:#cfc9b6;
+  --f-mono:"Courier Prime", "Courier New", Courier, monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--desk);color:var(--ink);font:16px/1.45 var(--f-mono);padding-inline:16px;padding-block:20px 40px}
+.sheet{max-width:900px;margin:0 auto;background:var(--paper);position:relative;padding:18px 44px 22px;box-shadow:0 1px 0 #0001,0 10px 30px #0002}
+.sheet::before,.sheet::after{content:"";position:absolute;top:0;bottom:0;width:30px;background-image:radial-gradient(circle at 15px 12px,var(--hole) 0 5px,transparent 6px);background-size:30px 24px;border-right:1px dashed #0001}
+.sheet::before{left:0}.sheet::after{right:0;border-right:0;border-left:1px dashed #0001}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+h1{margin:0;font:700 30px/1 var(--f-mono);letter-spacing:-.02em}
+.tag{color:var(--ink-2);font-size:14px}
+.card{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1.5px solid var(--ink);margin-top:12px;font-size:13px}
+.card div{padding:4px 8px;border-right:1px solid var(--ink);min-width:0;overflow-wrap:anywhere}
+.card div:last-child{border-right:0}
+.card .h{font-weight:700;background:#0000000a}
+.card b{font-size:15px}
+.cur{background:#a8261d14}
+#out{height:min(58vh,560px);overflow-y:auto;margin-top:12px;white-space:pre-wrap;word-break:break-word;
+  background:repeating-linear-gradient(to bottom,var(--bar) 0 4.35em,var(--paper) 4.35em 8.7em);background-attachment:local;padding:0 8px}
+#out .e{color:var(--red)} #out .d{color:var(--ink-2)} #out .b{font-weight:700} #out .ok{font-weight:700;text-decoration:underline}
+.prompt{display:flex;gap:8px;align-items:center;border-top:1.5px solid var(--ink);padding-top:8px;margin-top:6px}
+.prompt span{white-space:nowrap;color:var(--ink-2);max-width:45%;overflow:hidden;text-overflow:ellipsis}
+#cmd{flex:1;min-width:0;font:inherit;color:var(--ink);background:transparent;border:0;outline:0;caret-color:var(--red)}
+.keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.keys button{font:13px var(--f-mono);background:transparent;border:1.5px solid var(--ink);color:var(--ink);padding:3px 8px;cursor:pointer}
+.keys button:hover{background:var(--ink);color:var(--paper)}
+.keys button:focus-visible,#cmd:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.foot{max-width:900px;margin:10px auto 0;font-size:13px;color:#4a4636}
+@media (max-width:640px){.sheet{padding:14px 34px 18px}.card{grid-template-columns:repeat(4,minmax(0,1fr))}.card .x{display:none}body{font-size:14.5px}}
+</style>
+
+<div class="sheet">
+  <header><h1>fsgolf</h1><span class="tag">sort the mess in the fewest strokes. real shell, real files from your Drive.</span></header>
+  <div class="card" id="card"></div>
+  <div id="out" aria-live="polite"></div>
+  <form class="prompt" id="f" autocomplete="off"><span id="ps1">jason@pdp11:~$</span><input id="cmd" aria-label="command" spellcheck="false" autocapitalize="off"></form>
+  <div class="keys">
+    <button type="button" data-c="ls">ls</button><button type="button" data-c="tree">tree</button><button type="button" data-c="fsck">fsck</button><button type="button" data-c="hint">hint</button><button type="button" data-c="help">help</button><button type="button" data-c="reset">reset</button>
+  </div>
+</div>
+<p class="foot">Strokes count every mkdir, mv, rm and rmdir line. Looking around is free. Globs, quotes and tab completion work. Your history is a real move plan: type <b>history</b> and paste it to Claude.</p>
+
+<script>
+(function(){
+// ---------- data: real files, tags = folder names that count as a correct home ----------
+var F={
+ bread:["Lisa's Mushroom Bread.pdf","PDF",211,2016,["recipes","home","kitchen","food"]],
+ missy:["Missy's Recipies.pdf","PDF",1196,2016,["recipes","home","kitchen","food"]],
+ ini:["2016_10_11_14_25_00.ini","INI",1,2016,["junk"]],
+ ford:["Receipt Iowa Tax And Tags 2007 Ford Focus.pdf","PDF",92,2018,["cars","car","vehicles","auto"]],
+ kbday:["Kennedy's 11th Birthday Party Invitations","DOC",8,2016,["family","kennedy","kids"]],
+ xmasl:["Notebook - XMas Lights","DOC",2,2011,["archive","notebook","old"]],
+ nissan:["Notebook - 2000 Nissan Quest","DOC",2,2011,["archive","notebook","old","cars","car","vehicles"]],
+ oil:["2024-07-30 Smart Honda Oil Change.pdf","PDF",1342,2024,["cars","car","vehicles","auto"]],
+ recall:["2024-11-29 Smart Honda CRV Recall Repair.pdf","PDF",1170,2024,["cars","car","vehicles","auto"]],
+ kgrad:["Kennedy Grad Invitations","SHEET",6,2024,["family","kennedy","kids"]],
+ xmas:["Xmas Card List","SHEET",4,2024,["family","contacts"]],
+ addr:["2024 Addresses","SHEET",3,2024,["family","contacts"]],
+ warr:["4820 Warranty Repairs","SHEET",3,2025,["home","house","condo"]],
+ park:["4820 Visitor Parking Map","IMG",2396,2026,["home","house","condo"]],
+ rail:["OConnell Railing Bid.pdf","PDF",260,2025,["home","house","condo","renovation","reno"]],
+ psc:["2025 PSC","DOC",8,2025,["work","career","meta","job"]],
+ resume:["Jason_OConnell_Data_Center_Resume.pdf","PDF",90,2026,["work","career","job","resume"]],
+ pros:["Job Pros and Cons","SHEET",2,2021,["work","career","job"]],
+ sync1:["TEST_MAC_SYNC_CONFIRM.txt","TXT",0,2026,["junk"]],
+ sync2:["SYNC_TEST_FROM_MAC_1773885847.txt","TXT",0,2026,["junk"]],
+ untitled:["Untitled document","DOC",1,2026,["junk"]],
+ oj:["OJ_25-06-19-19-53.pdf","PDF",0,2025,["junk"]],
+ img416:["IMG_0416.jpeg","IMG",4427,2026,["photos","pictures","images","pics"]],
+ img418:["IMG_0418.jpeg","IMG",4405,2026,["photos","pictures","images","pics"]],
+ fur:["furnuggets.jpg","IMG",93,2026,["photos","pictures","images","pics","cats","pets"]],
+ fm3:["FM3_Guide_v2.docx","DOCX",14,2026,["music","gear","guitar","fractal","fm3"],"fm3"],
+ fm3b:["FM3_Guide_v2 copy.docx","DOCX",14,2026,["music","gear","guitar","fractal","fm3"],"fm3"],
+ pick:["Guitar Pickup Cheat Sheet","SHEET",1,2026,["music","gear","guitar"]],
+ blues:["Blues Arpeggios A7 to D7","DOC",18,2025,["music","theory","guitar","lessons"]],
+ lyr:["I Need To Know - lyrics only.docx","DOCX",16,2026,["music","lyrics","songs"]],
+ tabz:["TabZam_Backup_2026-06-21.zip","ZIP",456,2026,["music","backups","guitar","tabs"]],
+ reddit:["REDDIT_MANAGER.md","MD",7,2026,["projects","code","dev","src"]],
+ aisim:["AI Social Simulator Forge Init","DOC",55,2026,["projects","code","dev","ai"]],
+ itx:["Denise ITX BOM","SHEET",9,2023,["projects","hardware","builds","hw"]],
+ pistorm:["BOM_Pistorm_rev_b","SHEET",1,2023,["projects","hardware","retro","amiga","hw"]],
+ retro:["Retrogaming on Modern Hardware","SLIDES",3716,2021,["projects","retro","talks","slides"]],
+ sauna:["Sauna Business Feasibility Analysis","DOC",476,2026,["projects","ideas","business"]],
+ trend:["Trend Spotter Concept","DOC",3,2026,["projects","ideas","code"]],
+ scan1:["SCAN2316.jpg","IMG",3442,2012,["photos","scans","pictures","archive"]],
+ scan2:["SCAN2767.jpg","IMG",1393,2012,["photos","scans","pictures","archive"]],
+ s2019:["2019_06_23_16_34_32.pdf","PDF",337,2019,["scans","archive","old"]],
+ s2018:["2018_09_13_19_38_36.pdf","PDF",786,2018,["scans","archive","old"]],
+ dm1:["260717 Design Meeting #1.pdf","PDF",32573,2026,["home","house","renovation","reno","condo"],"dm"],
+ dm2:["260717 Design Meeting #1 (1).pdf","PDF",32573,2026,["home","house","renovation","reno","condo"],"dm"],
+ reese:["Reese Design + Build ID Packages.pdf","PDF",11086,2026,["home","house","renovation","reno","condo"]],
+ nirv:["Nirvana Final Export 2024-12-17.csv","CSV",2393,2024,["archive","backups","exports","old"]]
+};
+var HOLES=[
+ {t:"Downloads, 2016",path:"/home/jason/Downloads",par:6,files:["bread","missy","ini","ford","kbday","xmasl","nissan"],dirs:{}},
+ {t:"My Drive root",path:"/home/jason/drive",par:9,files:["oil","recall","kgrad","xmas","addr","warr","park","rail","psc","resume","pros","sync1","sync2","untitled","oj","img416","img418","fur"],dirs:{"New Folder":{},"Stuff":{_f:["psc"]}}},
+ {t:"Personal_Photos_Archive (boss)",path:"/home/jason/Personal_Photos_Archive",par:10,files:["fm3","fm3b","pick","blues","lyr","tabz","reddit","aisim","itx","pistorm","retro","sauna","trend","scan1","scan2","s2019","s2018","dm1","dm2","reese","nirv"],dirs:{"New Folder":{"untitled folder":{"untitled folder 2":{}}}}}
+];
+// fix hole 2: psc lives in Stuff, not at root
+HOLES[1].files=HOLES[1].files.filter(function(k){return k!=="psc"});
+
+var out=document.getElementById('out'),cmd=document.getElementById('cmd'),ps1=document.getElementById('ps1'),card=document.getElementById('card');
+var best={};try{best=JSON.parse(localStorage.getItem('fsgolf.best')||'{}')}catch(e){}
+var hi=0,root,home,cwd,strokes=0,done=false,hist=[],hpos=0,log=[];
+
+function mkdir_(name,parent){return {name:name,dir:true,kids:{},parent:parent}}
+function mkfile(k,parent){var d=F[k];return {name:d[0],dir:false,meta:{key:k,type:d[1],kb:d[2],yr:d[3],tags:d[4],dup:d[5]},parent:parent}}
+function build(i){
+  var h=HOLES[i];root=mkdir_("",null);root.parent=root;var n=root;
+  h.path.split('/').filter(Boolean).forEach(function(p){var c=mkdir_(p,n);n.kids[p]=c;n=c});
+  home=n;
+  h.files.forEach(function(k){var f=mkfile(k,home);home.kids[f.name]=f});
+  (function addDirs(spec,parent){Object.keys(spec).forEach(function(nm){if(nm==="_f")return;var d=mkdir_(nm,parent);parent.kids[nm]=d;(spec[nm]._f||[]).forEach(function(k){var f=mkfile(k,d);d.kids[f.name]=f});addDirs(spec[nm],d)})})(h.dirs,home);
+  cwd=home;strokes=0;done=false;log=[];cleanStar=false;
+}
+function pathOf(n){if(n===root)return "/";var p=[];while(n!==root){p.unshift(n.name);n=n.parent}return "/"+p.join('/')}
+function disp(n){var p=pathOf(n),h=pathOf(home);return p===h?"~":(p.indexOf(h+"/")===0?"~"+p.slice(h.length):p)}
+function inHole(n){while(n&&n!==root){if(n===home)return true;n=n.parent}return false}
+function resolve(p,base){
+  if(p==="~")return home; var n=p[0]==="/"?root:(p.indexOf("~/")===0?(p=p.slice(2),home):(base||cwd));
+  var parts=p.split('/').filter(Boolean);
+  for(var i=0;i<parts.length;i++){var s=parts[i];if(s===".")continue;if(s===".."){n=n.parent;continue}if(!n.dir||!n.kids[s])return null;n=n.kids[s]}
+  return n;
+}
+function splitPath(p){var i=p.lastIndexOf('/');if(i<0)return [".",p];return [p.slice(0,i)||"/",p.slice(i+1)]}
+function esc(s){return s.replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function print(s,cls){var d=document.createElement('div');if(cls)d.className=cls;d.textContent=s;out.appendChild(d);out.scrollTop=out.scrollHeight}
+function q(s){return /[\s'"#$&()*?\[\]]/.test(s)?"'"+s.replace(/'/g,"'\\''")+"'":s}
+
+// tokenizer with quotes, backslash escapes, and glob marking
+function tokenize(line){
+  var toks=[],cur=null,glob=false,i=0,c;
+  function push(){if(cur!==null){toks.push({s:cur,g:glob});cur=null;glob=false}}
+  while(i<line.length){c=line[i];
+    if(c==="'"){var j=line.indexOf("'",i+1);if(j<0)j=line.length;cur=(cur||"")+line.slice(i+1,j);i=j+1;continue}
+    if(c==='"'){var k=i+1,b="";while(k<line.length&&line[k]!=='"'){if(line[k]==="\\"&&k+1<line.length){k++}b+=line[k];k++}cur=(cur||"")+b;i=k+1;continue}
+    if(c==="\\"&&i+1<line.length){cur=(cur||"")+line[i+1];i+=2;continue}
+    if(/\s/.test(c)){push();i++;continue}
+    if(c==="*"||c==="?"||c==="["){glob=true}
+    cur=(cur||"")+c;i++;
+  }
+  push();return toks;
+}
+function globRe(p){return new RegExp("^"+p.replace(/[.+^${}()|\\]/g,"\\$&").replace(/\*/g,".*").replace(/\?/g,".")+"$")}
+function expand(toks){
+  var res=[];toks.forEach(function(t){
+    if(!t.g){res.push(t.s);return}
+    var sp=splitPath(t.s),dir=resolve(sp[0]);
+    if(!dir||!dir.dir){res.push(t.s);return}
+    var re=globRe(sp[1]),m=Object.keys(dir.kids).filter(function(n){return re.test(n)&&n[0]!=="."}).sort();
+    if(!m.length){res.push(t.s);return}
+    m.forEach(function(n){res.push(sp[0]==="."&&t.s.indexOf("./")!==0?n:(sp[0]==="/"?"/"+n:sp[0]+"/"+n))});
+  });return res;
+}
+
+// ---------- fsck: the lint rules that make a structure "correct" ----------
+function stem(w){w=w.toLowerCase();return w.length>3&&/s$/.test(w)&&!/ss$/.test(w)?w.slice(0,-1):w}
+function words(name){return name.replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).map(stem)}
+function placedOK(f){var n=f.parent;var tags=f.meta.tags.map(stem);while(n&&n!==home&&n!==root){if(words(n.name).some(function(w){return tags.indexOf(w)>=0}))return true;n=n.parent}return false}
+function style(n){if(/^[a-z0-9._]+$/.test(n))return "lowercase";if(/^[A-Z][A-Za-z0-9]*(?:[ _][A-Z0-9][A-Za-z0-9]*)*$/.test(n))return "Title";return "mixed"}
+function fsck(){
+  var E=[],W=[],seen={},files=0,dirs=0;
+  (function walk(d,depth){
+    var names=Object.keys(d.kids).sort(),subdirs=[];
+    if(d!==home){dirs++;if(!names.length)W.push("empty directory: "+disp(d));else if(names.length===1)W.push("lonely directory (1 entry): "+disp(d));if(depth>3)W.push("deep path, depth "+depth+": "+disp(d))}
+    names.forEach(function(nm){var c=d.kids[nm];
+      if(c.dir){subdirs.push(nm);walk(c,depth+1);return}
+      files++;var m=c.meta;
+      if(m.tags[0]==="junk"){E.push("junk still allocated: "+disp(c));return}
+      if(m.dup){if(seen[m.dup]){E.push("duplicate inode content: "+disp(c)+" = "+seen[m.dup]);return}seen[m.dup]=disp(c)}
+      if(d===home)E.push("loose file at hole root: "+c.name);
+      else if(!placedOK(c))E.push("misfiled: "+disp(c));
+    });
+    var st={};subdirs.forEach(function(s){st[style(s)]=1});
+    if(Object.keys(st).length>1)W.push("mixed naming styles in "+disp(d)+": "+subdirs.join(", "));
+  })(home,0);
+  return {E:E,W:W,files:files,dirs:dirs};
+}
+
+function renderCard(){
+  var h='<div class="h">HOLE</div><div class="h">PAR</div><div class="h">STROKES</div><div class="h">BEST</div><div class="h x">STATUS</div>';
+  HOLES.forEach(function(x,i){var c=i===hi?' class="cur"':'';var b=best[i];
+    h+='<div'+c+'><b>'+(i+1)+'</b> '+esc(x.t)+'</div><div'+c+'>'+x.par+'</div><div'+c+'>'+(i===hi?strokes:"")+'</div><div'+c+'>'+(b?b.s+" "+"★".repeat(b.st):"")+'</div><div class="x'+(i===hi?' cur':'')+'">'+(i===hi?(done?"cleared":"in play"):(b?"cleared":""))+'</div>';
+  });card.innerHTML=h;ps1.textContent="jason@pdp11:"+disp(cwd)+"$";
+}
+function golfName(d){return d<=-3?"albatross":d===-2?"eagle":d===-1?"birdie":d===0?"par":d===1?"bogey":d===2?"double bogey":"+"+d}
+var cleanStar=false;
+function check(){
+  var r=fsck();
+  if(done){if(!cleanStar&&!r.E.length&&!r.W.length){cleanStar=true;var st2=2+(strokes<=HOLES[hi].par?1:0),b2=best[hi];print("*** zero warnings. second star earned. "+"★".repeat(st2)+"☆".repeat(3-st2),"ok");if(!b2||st2>b2.st){best[hi]={s:b2?Math.min(b2.s,strokes):strokes,st:st2};try{localStorage.setItem('fsgolf.best',JSON.stringify(best))}catch(e){}}}return}
+  if(r.E.length)return;cleanStar=!r.W.length;
+  done=true;var par=HOLES[hi].par,d=strokes-par,st=1+(r.W.length?0:1)+(d<=0?1:0);
+  print("");print("*** fsck: 0 errors. HOLE "+(hi+1)+" CLEARED in "+strokes+" strokes (par "+par+"): "+golfName(d).toUpperCase()+"  "+"★".repeat(st)+"☆".repeat(3-st),"ok");
+  if(r.W.length)print("    "+r.W.length+" warning(s) left. Clean those for the second star. Type fsck to see them.","d");
+  var b=best[hi];if(!b||strokes<b.s||(strokes===b.s&&st>b.st)){best[hi]={s:strokes,st:st};try{localStorage.setItem('fsgolf.best',JSON.stringify(best))}catch(e){}print("    new personal best.","b")}
+  print(hi<HOLES.length-1?"    type next for hole "+(hi+2)+", or keep polishing.":"    That was the last hole. You may now call yourself wheel.","d");
+}
+
+// ---------- commands ----------
+var C={};
+C.help=function(){["commands: ls [-l] [path]  cd [path]  pwd  tree [path]  file <name>","          mkdir [-p] dir...  mv src... dest  rm [-r] path...  rmdir dir...","          fsck  hint  history  reset  next  clear  whoami","rules:    fsck must report 0 errors. errors = loose files at the hole root,","          misfiled files, duplicates, junk. warnings = empty or lonely dirs,","          paths deeper than 3, mixed naming styles between siblings.","stars:    ★ clean  ★ zero warnings  ★ at or under par","tips:     globs work (mv *Honda* cars). quote names with spaces. Tab completes."].forEach(function(l){print(l,"d")})};
+C.pwd=function(){print(pathOf(cwd))};
+C.whoami=function(){print("jason (uid 1000, groups: users). not yet wheel. clear hole 3 for that.")};
+C.sudo=function(){print("jason is not in the sudoers file. This incident will be reported.","e")};
+C.clear=function(){out.textContent=""};
+C.cd=function(a){var t=resolve(a[0]||"~");if(!t)return print("cd: "+a[0]+": No such file or directory","e");if(!t.dir)return print("cd: "+a[0]+": Not a directory","e");cwd=t};
+function sz(kb){return kb>=1024?(kb/1024).toFixed(1)+"M":kb+"K"}
+C.ls=function(a){var l=a[0]==="-l";if(l)a=a.slice(1);var t=resolve(a[0]||".");if(!t)return print("ls: "+a[0]+": No such file or directory","e");
+  if(!t.dir)return print(t.name);var n=Object.keys(t.kids).sort();if(!n.length)return print("(empty)","d");
+  n.forEach(function(nm){var c=t.kids[nm];print(l?(c.dir?"drwxr-xr-x  jason      -   ":"-rw-r--r--  jason  "+(" "+sz(c.meta.kb)).slice(-6)+"  ")+(c.dir?nm+"/":nm):(c.dir?nm+"/":nm))})};
+C.tree=function(a){var t=resolve(a[0]||".");if(!t||!t.dir)return print("tree: bad path","e");print(t===home?"~":t.name+"/");var nd=0,nf=0;
+  (function w(d,pre){var n=Object.keys(d.kids).sort();n.forEach(function(nm,i){var c=d.kids[nm],last=i===n.length-1;print(pre+(last?"└── ":"├── ")+nm+(c.dir?"/":""));if(c.dir){nd++;w(c,pre+(last?"    ":"│   "))}else nf++})})(t,"");
+  print(nd+" directories, "+nf+" files","d")};
+C.file=function(a){a.forEach(function(p){var t=resolve(p);if(!t)return print("file: "+p+": cannot open","e");print(t.dir?p+": directory":p+": "+t.meta.type+", "+sz(t.meta.kb)+", "+t.meta.yr+(t.meta.kb===0?" (empty)":""))})};
+C.mkdir=function(a){var pf=a[0]==="-p";if(pf)a=a.slice(1);if(!a.length)return print("mkdir: missing operand","e");var ok=false;
+  a.forEach(function(p){var parts=p.split('/').filter(Boolean),n=p[0]==="/"?root:cwd;if(p.indexOf("~/")===0){n=home;parts=parts.slice(1)}
+    for(var i=0;i<parts.length;i++){var s=parts[i];if(s==="..")n=n.parent;else if(s!=="."){
+      if(n.kids[s]){if(!n.kids[s].dir)return print("mkdir: "+p+": File exists","e");if(i===parts.length-1&&!pf)return print("mkdir: "+p+": File exists","e");n=n.kids[s]}
+      else{if(i<parts.length-1&&!pf)return print("mkdir: "+p+": No such file or directory","e");if(!inHole(n))return print("mkdir: "+p+": Permission denied (outside the hole)","e");var d=mkdir_(s,n);n.kids[s]=d;n=d;ok=true}}}
+  });return ok};
+C.mv=function(a){if(a.length<2)return print("usage: mv src... dest","e");var dst=a.pop(),dn=resolve(dst),ok=false;
+  if(a.length>1&&(!dn||!dn.dir))return print("mv: "+dst+": Not a directory","e");
+  a.forEach(function(s){var sn=resolve(s);if(!sn)return print("mv: "+s+": No such file or directory","e");if(sn===home)return print("mv: cannot move the hole itself","e");
+    var target,newName;
+    if(dn&&dn.dir){target=dn;newName=sn.name}else{var sp=splitPath(dst);target=resolve(sp[0]);newName=sp[1];if(!target||!target.dir)return print("mv: "+dst+": No such file or directory","e")}
+    if(!inHole(target)&&target!==home)return print("mv: "+dst+": Permission denied (outside the hole)","e");
+    for(var x=target;x&&x!==root;x=x.parent)if(x===sn)return print("mv: cannot move "+s+" into itself","e");
+    if(target.kids[newName]&&target.kids[newName]!==sn){if(target.kids[newName].dir)return print("mv: "+newName+": Directory exists","e")}
+    delete sn.parent.kids[sn.name];sn.name=newName;sn.parent=target;target.kids[newName]=sn;ok=true;
+  });return ok};
+C.rm=function(a){var r=false;while(a[0]&&a[0][0]==="-"){if(/r/.test(a[0]))r=true;a=a.slice(1)}
+  if(a.some(function(p){return p==="/"||p==="/*"}))return print("rm: nice try. the PDP-11 thanks you for your restraint.","e");
+  var ok=false;a.forEach(function(p){var t=resolve(p);if(!t)return print("rm: "+p+": No such file or directory","e");if(t===home||!inHole(t))return print("rm: "+p+": Permission denied","e");
+    if(t.dir&&!r)return print("rm: "+p+": is a directory","e");
+    if(!t.dir&&t.meta.tags[0]!=="junk"&&!t.meta.dup)print("rm: removed "+t.name+" (not junk. fsck will not miss it, but you might)","d");
+    for(var x=cwd;x&&x!==root;x=x.parent)if(x===t){cwd=home;break}delete t.parent.kids[t.name];ok=true});return ok};
+C.rmdir=function(a){var ok=false;a.forEach(function(p){var t=resolve(p);if(!t||!t.dir)return print("rmdir: "+p+": No such directory","e");if(Object.keys(t.kids).length)return print("rmdir: "+p+": Directory not empty","e");if(t===home)return print("rmdir: refusing","e");delete t.parent.kids[t.name];ok=true});return ok};
+C.fsck=function(){var r=fsck();print("** /dev/hole"+(hi+1)+"  ("+disp(home)+")","b");print("** Phase 1: Check root for loose inodes");print("** Phase 2: Check placement and duplicates");print("** Phase 3: Check directory shape and names");
+  r.E.forEach(function(e){print("ERROR  "+e,"e")});r.W.forEach(function(w){print("warn   "+w,"d")});
+  var health=Math.max(0,Math.round(100-r.E.length*100/Math.max(1,r.files)));print(r.files+" files, "+r.dirs+" directories, "+r.E.length+" errors, "+r.W.length+" warnings. inode health "+health+"%","b")};
+C.hint=function(){var r=fsck();if(!r.E.length&&!r.W.length)return print("nothing to fix. go play the next hole.","d");
+  var m=null;(function w(d){Object.keys(d.kids).forEach(function(nm){var c=d.kids[nm];if(m)return;if(c.dir)return w(c);if(c.meta.tags[0]==="junk"||(c.meta.dup&&/copy|\(1\)/.test(c.name)))m=["rm",c];else if(d===home||!placedOK(c))m=["mv",c]})})(home);
+  if(!m)return print("hint: "+(r.E[0]||r.W[0]),"d");
+  if(m[0]==="rm")print("hint: "+m[1].name+" is junk or a duplicate. rm it.","d");else print("hint: "+m[1].name+" wants a directory named like: "+m[1].meta.tags.slice(0,3).join(", "),"d")};
+C.history=function(){if(!log.length)return print("(no strokes yet)","d");print("# move plan, hole "+(hi+1)+": "+HOLES[hi].t,"d");log.forEach(function(l){print(l)})};
+C.reset=function(){build(hi);print("hole "+(hi+1)+" reset. strokes 0.","d");C.ls([])};
+C.next=function(){if(hi>=HOLES.length-1)return print("no more holes. you are the filesystem now.","d");if(!done)print("skipping an unfinished hole. no score recorded.","d");hi++;start()};
+C.cat=function(a){print("cat: "+(a[0]||"")+": binary or Google file. try file instead.","d")};
+C.man=function(){print("No manual entry. Real hackers read the source. (try help)","d")};
+C.exit=C.logout=function(){print("There is no escape from the filesystem.","d")};
+
+function run(line){
+  print("jason@pdp11:"+disp(cwd)+"$ "+line,"b");line=line.trim();if(!line)return;
+  hist.push(line);hpos=hist.length;
+  if(/^rm\s+-rf\s+\/\s*$/.test(line))return print("rm: nice try. the PDP-11 thanks you for your restraint.","e");
+  var toks=tokenize(line);if(!toks.length)return;var name=toks[0].s,args=expand(toks.slice(1));
+  var fn=C[name];if(!fn)return print(name+": command not found","e");
+  var mut={mkdir:1,mv:1,rm:1,rmdir:1}[name],before=done;
+  var ok=fn(args);
+  if(mut&&ok!==false&&ok!==undefined){strokes++;log.push(line)}
+  renderCard();if(mut)check();renderCard();
+}
+function start(){build(hi);out.textContent="";
+  print("PDP-11/45 UNIX V7, fsgolf edition.  login: jason","b");print("Last login: Tue Oct  6 1979 on tty0","d");
+  print("HOLE "+(hi+1)+" of "+HOLES.length+": "+HOLES[hi].t+"   PAR "+HOLES[hi].par,"b");
+  print("Make fsck report 0 errors. Type help if lost.","d");print("");C.ls([]);renderCard();
+}
+// tab completion
+function complete(){
+  var v=cmd.value,m=v.match(/(\S*)$/),frag=m?m[1]:"",unq=frag.replace(/\\(.)/g,"$1").replace(/^['"]/,"");
+  var sp=splitPath(unq),dir=resolve(sp[0]);if(!dir||!dir.dir)return;
+  var c=Object.keys(dir.kids).filter(function(n){return n.indexOf(sp[1])===0});if(!c.length)return;
+  var pick=c.length===1?c[0]:c.reduce(function(a,b){var i=0;while(i<a.length&&a[i]===b[i])i++;return a.slice(0,i)});
+  if(c.length>1&&pick===sp[1]){print(c.join("   "),"d");return}
+  var full=(sp[0]==="."&&unq.indexOf("./")!==0?"":sp[0].replace(/\/$/,"")+"/")+pick;
+  var escd=full.replace(/([\s'"()&#$*?\[\]])/g,"\\$1")+(c.length===1&&dir.kids[pick].dir?"/":(c.length===1?" ":""));
+  cmd.value=v.slice(0,v.length-frag.length)+escd;
+}
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();var l=cmd.value;cmd.value="";run(l)});
+cmd.addEventListener('keydown',function(e){
+  if(e.key==="Tab"){e.preventDefault();complete()}
+  else if(e.key==="ArrowUp"){e.preventDefault();if(hpos>0){hpos--;cmd.value=hist[hpos]}}
+  else if(e.key==="ArrowDown"){e.preventDefault();if(hpos<hist.length-1){hpos++;cmd.value=hist[hpos]}else{hpos=hist.length;cmd.value=""}}
+  else if(e.key==="l"&&e.ctrlKey){e.preventDefault();C.clear()}
+});
+document.querySelectorAll('.keys button').forEach(function(b){b.addEventListener('click',function(){run(b.dataset.c);cmd.focus()})});
+out.addEventListener('click',function(){if(!window.getSelection().toString())cmd.focus()});
+start();
+})();
+</script>
+
+</body></html>

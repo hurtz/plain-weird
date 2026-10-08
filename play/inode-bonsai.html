@@ -1,0 +1,270 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Inode Bonsai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: the tree is the stage (left); the selected branch and the harmony seal live in a side column; fallen leaves and the burn pile sit under the tree. One deliberate look: ink on cool washi. */
+:root{
+  color-scheme:light;
+  --washi:#eceee6; --panel:#f6f7f1; --ink:#1e241d; --ink-2:#5b6357; --line:#cfd4c6;
+  --moss:#4e7b3a; --leaf-bad:#c98a2b; --rot:#7b5a3c; --bark:#4a3a2d; --blossom:#e59bb2; --seal:#b5342a;
+  --f-display:"Shippori Mincho", "Hiragino Mincho ProN", Georgia, serif;
+  --f-body:"Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--washi);color:var(--ink);font:15px/1.55 var(--f-body);padding-inline:16px;padding-block:22px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px}
+h1{font:800 clamp(28px,4vw,42px)/1 var(--f-display);margin:0;letter-spacing:.01em}
+.sub{color:var(--ink-2);max-width:62ch;margin:6px 0 0}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:6px;position:relative;overflow:hidden}
+#tree{display:block;width:100%;height:auto;aspect-ratio:4/3;touch-action:none}
+.season{position:absolute;left:14px;top:10px;font:600 14px var(--f-display);color:var(--ink-2)}
+.side{display:grid;gap:16px;min-width:0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}
+.box h2{margin:0;font:700 16px var(--f-display)}
+.seal-row{display:flex;gap:14px;align-items:center}
+.seal{width:84px;height:84px;flex:none;border:3px solid var(--seal);color:var(--seal);border-radius:8px;display:grid;place-items:center;transform:rotate(-4deg);font:800 34px/1 var(--f-display);font-variant-numeric:tabular-nums;background:#b5342a0a}
+.seal small{display:block;font:500 10px var(--f-body);letter-spacing:.12em;text-align:center}
+.metrics{display:grid;gap:6px;font-size:13px}
+.m{display:grid;grid-template-columns:96px 1fr 40px;gap:8px;align-items:center}
+.m .t{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.m .t i{display:block;height:100%;background:var(--moss)}
+.m span:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.tray{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:16px}
+.ground,.burn{background:var(--panel);border:1px dashed var(--ink-2);border-radius:6px;padding:12px;min-height:96px;min-width:0}
+.ground h3,.burn h3{margin:0 0 8px;font:700 14px var(--f-display)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:4px 9px 4px 5px;border:1px solid var(--line);background:#fff;border-radius:999px;font-size:13px;cursor:grab;user-select:none;touch-action:none}
+.chip b{font:700 9.5px var(--f-body);letter-spacing:.06em;background:var(--ink);color:var(--panel);padding:2px 5px;border-radius:999px}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.chip.sel{outline:2px solid var(--seal);outline-offset:1px}
+.burn{display:grid;align-content:start;text-align:center;border-color:var(--seal);color:var(--seal)}
+.burn svg{margin:0 auto}
+.burn .n{font:800 22px var(--f-display)}
+.over{background:#b5342a12!important}
+.ghost{position:fixed;pointer-events:none;z-index:50;opacity:.92;transform:translate(-50%,-50%) rotate(-3deg)}
+.files{display:grid;gap:4px;max-height:220px;overflow:auto}
+.frow{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;padding:3px 0;border-bottom:1px solid var(--line)}
+.frow span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow.bad span{color:var(--leaf-bad)}
+.row{display:flex;gap:6px}
+input[type=text]{flex:1;min-width:0;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink)}
+button{font:500 13px var(--f-body);padding:6px 10px;border-radius:4px;border:1px solid var(--ink);background:var(--ink);color:var(--panel);cursor:pointer}
+button.ghostb{background:transparent;color:var(--ink)}
+button.danger{background:transparent;color:var(--seal);border-color:var(--seal)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--seal);outline-offset:2px}
+.small{font-size:12.5px;color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:14px;height:7px;border-radius:7px;margin-right:5px;vertical-align:1px}
+#tree text{font:500 13px var(--f-body);fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.hit{cursor:pointer}
+.sway{transform-origin:50% 100%;animation:sway 7s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-.4deg)}to{transform:rotate(.4deg)}}
+.petal{position:absolute;top:-10px;width:9px;height:7px;border-radius:60% 0 60% 0;background:var(--blossom);animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(560px) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.sway,.petal{animation:none}}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}.tray{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div><h1>Inode Bonsai</h1><p class="sub">Your loose Drive files have fallen off the tree. Graft each leaf onto the right branch, grow and prune branches, and keep the shape balanced. A healthy structure blooms.</p></div>
+    <div class="legend"><span><i style="background:var(--moss)"></i>right branch</span><span><i style="background:var(--leaf-bad)"></i>wrong branch</span><span><i style="background:var(--rot)"></i>junk or duplicate</span><span><i style="background:var(--blossom)"></i>harmonious branch</span></div>
+  </header>
+  <div class="main">
+    <div style="display:grid;gap:16px;min-width:0">
+      <div class="stage" id="stage"><div class="season" id="season"></div><svg id="tree" viewBox="0 0 800 600" role="img" aria-label="Directory tree"></svg></div>
+      <div class="tray">
+        <div class="ground" data-drop="ground"><h3>Fallen leaves <span class="small" id="gcount"></span></h3><div class="chips" id="ground"></div></div>
+        <div class="burn" data-drop="burn" id="burn"><h3>Burn pile</h3>
+          <svg width="34" height="40" viewBox="0 0 34 40" aria-hidden="true"><path d="M17 2c3 8 12 12 12 23a12 12 0 0 1-24 0c0-6 3-9 5-12 1 4 3 6 5 6-1-7 0-12 2-17z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <div class="n" id="bcount">0</div><div class="small">junk and duplicates go here. rm is forever-ish.</div>
+          <button type="button" class="ghostb" id="rescue" style="margin-top:6px">Rescue last</button>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="box">
+        <div class="seal-row"><div class="seal"><div><small>HARMONY</small><span id="score">0</span></div></div>
+          <div><h2 id="stitle">Winter</h2><p class="small" id="sdesc"></p></div></div>
+        <div class="metrics" id="metrics"></div>
+      </div>
+      <div class="box" id="panel"></div>
+      <div class="box small">Drag a leaf onto a branch tip, or tap a leaf then tap a tip. Tap a tip to inspect, rename, grow or prune it. Ideal shape: 2 to 9 things per folder, 1 to 3 levels deep, one naming style among siblings, no empty folders.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+var FILES={
+ bread:["Lisa's Mushroom Bread.pdf","PDF",["recipes","home","kitchen","food"]],
+ missy:["Missy's Recipies.pdf","PDF",["recipes","home","kitchen","food"]],
+ oil:["2024-07-30 Smart Honda Oil Change.pdf","PDF",["cars","car","vehicles","auto"]],
+ recall:["2024-11-29 Smart Honda CRV Recall Repair.pdf","PDF",["cars","car","vehicles","auto"]],
+ kgrad:["Kennedy Grad Invitations","SHEET",["family","kennedy","kids"]],
+ xmas:["Xmas Card List","SHEET",["family","contacts"]],
+ addr:["2024 Addresses","SHEET",["family","contacts"]],
+ warr:["4820 Warranty Repairs","SHEET",["home","house","condo"]],
+ park:["4820 Visitor Parking Map","IMG",["home","house","condo"]],
+ rail:["OConnell Railing Bid.pdf","PDF",["home","house","condo","renovation"]],
+ psc:["2025 PSC","DOC",["work","career","job","meta"]],
+ resume:["Jason_OConnell_Data_Center_Resume.pdf","PDF",["work","career","job","resume"]],
+ pros:["Job Pros and Cons","SHEET",["work","career","job"]],
+ img416:["IMG_0416.jpeg","IMG",["photos","pictures","images","pics"]],
+ fur:["furnuggets.jpg","IMG",["photos","pictures","images","pics","cats","pets"]],
+ pick:["Guitar Pickup Cheat Sheet","SHEET",["music","gear","guitar"]],
+ blues:["Blues Arpeggios A7 to D7","DOC",["music","theory","guitar","lessons"]],
+ lyr:["I Need To Know - lyrics only.docx","DOCX",["music","lyrics","songs"]],
+ fm3:["FM3_Guide_v2.docx","DOCX",["music","gear","guitar","fractal"],"fm3"],
+ fm3b:["FM3_Guide_v2 copy.docx","DOCX",["music","gear","guitar","fractal"],"fm3"],
+ reddit:["REDDIT_MANAGER.md","MD",["projects","code","dev"]],
+ itx:["Denise ITX BOM","SHEET",["projects","hardware","builds"]],
+ retro:["Retrogaming on Modern Hardware","SLIDES",["projects","retro","talks"]],
+ sauna:["Sauna Business Feasibility Analysis","DOC",["projects","ideas","business"]],
+ s2019:["2019_06_23_16_34_32.pdf","PDF",["scans","archive","old"]],
+ nirv:["Nirvana Final Export 2024-12-17.csv","CSV",["archive","backups","exports"]],
+ sync1:["TEST_MAC_SYNC_CONFIRM.txt","TXT",["junk"]],
+ untitled:["Untitled document","DOC",["junk"]],
+ oj:["OJ_25-06-19-19-53.pdf","PDF",["junk"]]
+};
+var nodes,ground,burned,sel=null,selFile=null,nid;
+function reset(){
+  nid=0;nodes={};
+  function mk(name,parent,files){var id="n"+(nid++);nodes[id]={id:id,name:name,parent:parent,kids:[],files:files||[]};if(parent)nodes[parent].kids.push(id);return id}
+  var r=mk("~",null);mk("home",r);mk("Family Stuff",r);mk("misc",r,["psc","fur"]);
+  ground=Object.keys(FILES).filter(function(k){return k!=="psc"&&k!=="fur"});
+  // shuffle so it feels like a real pile
+  for(var i=ground.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=ground[i];ground[i]=ground[j];ground[j]=t}
+  burned=[];sel="n0";
+}
+var ROOT="n0";
+function stem(w){w=w.toLowerCase();return w.length>3&&/s$/.test(w)&&!/ss$/.test(w)?w.slice(0,-1):w}
+function words(n){return n.replace(/([a-z])([A-Z])/g,"$1 $2").toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).map(stem)}
+function isJunk(k){return FILES[k][2][0]==="junk"}
+function where(k){if(ground.indexOf(k)>=0)return "ground";if(burned.indexOf(k)>=0)return "burn";for(var id in nodes)if(nodes[id].files.indexOf(k)>=0)return id;return null}
+function placed(k,id){if(isJunk(k))return false;var tags=FILES[k][2].map(stem);while(id&&id!==ROOT){if(words(nodes[id].name).some(function(w){return tags.indexOf(w)>=0}))return true;id=nodes[id].parent}return false}
+function dupLoser(k){var d=FILES[k][3];if(!d)return false;// the second copy on the tree is the loser
+  var onTree=[];walk(ROOT,function(n){n.files.forEach(function(f){if(FILES[f][3]===d)onTree.push(f)})});return onTree.length>1&&onTree.indexOf(k)>0}
+function walk(id,fn,depth){depth=depth||0;fn(nodes[id],depth);nodes[id].kids.forEach(function(c){walk(c,fn,depth+1)})}
+function leafState(k,id){if(isJunk(k)||dupLoser(k))return "rot";return placed(k,id)?"ok":"bad"}
+function styleOf(n){if(/^[a-z0-9._]+$/.test(n))return "lower";if(/^[A-Z][A-Za-z0-9]*(?:[ _][A-Z0-9][A-Za-z0-9]*)*$/.test(n))return "Title";return "mixed"}
+
+function harmony(){
+  var keys=Object.keys(FILES),good=0;
+  keys.forEach(function(k){var w=where(k);if(w==="burn"){var d=FILES[k][3];if(isJunk(k)||(d&&keys.some(function(o){return o!==k&&FILES[o][3]===d&&where(o)!=="burn"})))good++;}else if(w&&w!=="ground"&&leafState(k,w)==="ok")good++});
+  // a burned duplicate pair: only one copy may burn for credit
+  var place=good/keys.length;
+  var bal=[],maxD=0,groups=[],empty=0,lonely=0;
+  walk(ROOT,function(n,d){var e=n.kids.length+n.files.length;maxD=Math.max(maxD,d);
+    if(n.id!==ROOT){if(e===0)empty++;else if(e===1)lonely++}
+    if(e>0)bal.push(e>=2&&e<=9?1:(e===1||(e>=10&&e<=14)?.5:0));
+    if(n.kids.length>=2){var st={};n.kids.forEach(function(c){st[styleOf(nodes[c].name)]=1});groups.push(Object.keys(st).length===1?1:0)}});
+  var balance=bal.length?bal.reduce(function(a,b){return a+b},0)/bal.length:0;
+  var depth=maxD===0?0:maxD<=3?1:maxD===4?.55:.2;
+  var naming=groups.length?groups.reduce(function(a,b){return a+b},0)/groups.length:1;
+  var tidy=Math.max(0,1-(empty*.3+lonely*.15));
+  var f=.3+.7*place;// shape only fully counts once the leaves are home
+  var parts=[["Placement",place,55,1],["Balance",balance,15,f],["Depth",depth,10,f],["Naming",naming,12,f],["Tidiness",tidy,8,f]];
+  var total=Math.round(parts.reduce(function(a,p){return a+p[1]*p[2]*p[3]},0));
+  return {total:total,parts:parts};
+}
+function harmonious(n){if(n.id===ROOT)return false;var e=n.kids.length+n.files.length;if(e<2||e>9)return false;return n.files.every(function(k){return leafState(k,n.id)==="ok"})}
+
+// ---------- drawing ----------
+var svg=document.getElementById('tree'),NS="http://www.w3.org/2000/svg";
+function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function subFiles(id){var c=0;walk(id,function(n){c+=n.files.length});return c}
+function weight(id){var n=nodes[id];return 1+n.files.length*.25+n.kids.reduce(function(a,k){return a+weight(k)},0)}
+function layout(){
+  var P={};
+  (function place(id,x,y,ang,spread,depth){P[id]={x:x,y:y,ang:ang,d:depth};var n=nodes[id],tot=n.kids.reduce(function(a,k){return a+weight(k)},0);
+    var a0=ang-spread/2;n.kids.forEach(function(k){var w=weight(k),share=spread*w/tot,ca=a0+share/2;a0+=share;
+      var len=depth===0?150:Math.max(60,150*Math.pow(.74,depth));var r=ca*Math.PI/180;
+      place(k,x+Math.cos(r)*len,y+Math.sin(r)*len,ca,Math.max(50,Math.min(130,share*1.5)),depth+1)})})(ROOT,0,0,-90,n0spread(),0);
+  return P;
+}
+function n0spread(){var k=nodes[ROOT].kids.length;return Math.min(170,60+k*22)}
+function render(){
+  var P=layout(),xs=[],ys=[];for(var id in P){xs.push(P[id].x);ys.push(P[id].y)}
+  var minX=Math.min.apply(0,xs)-120,maxX=Math.max.apply(0,xs)+120,minY=Math.min.apply(0,ys)-90,maxY=128;
+  var w=maxX-minX,h=maxY-minY,ar=4/3;if(w/h<ar){var nw=h*ar;minX-=(nw-w)/2;w=nw}else{var nh=w/ar;minY-=(nh-h);h=nh}
+  svg.setAttribute('viewBox',[minX,minY,w,h].map(Math.round).join(' '));svg.textContent="";
+  var g=el('g',{'class':'sway'},svg);
+  var tot=subFiles(ROOT);
+  // pot and soil
+  el('path',{d:"M-110 106 L110 106 L92 124 L-92 124 Z",fill:"#6d5847"},g);
+  el('rect',{x:-120,y:96,width:240,height:12,rx:3,fill:"#584536"},g);
+  el('path',{d:"M0 96 C -6 70, 6 35, 0 0",stroke:"var(--bark)","stroke-width":8+2.6*Math.sqrt(tot+1),fill:"none","stroke-linecap":"round"},g);
+  // branches
+  (function br(id){var n=nodes[id],p=P[id];n.kids.forEach(function(k,i){var c=P[k],mx=(p.x+c.x)/2,my=(p.y+c.y)/2,dx=c.x-p.x,dy=c.y-p.y,off=(i%2?1:-1)*.12;
+      el('path',{d:"M"+p.x+" "+p.y+" Q"+(mx-dy*off)+" "+(my+dx*off)+" "+c.x+" "+c.y,stroke:"var(--bark)","stroke-width":3+2.2*Math.sqrt(subFiles(k)+1),fill:"none","stroke-linecap":"round"},g);br(k)})})(ROOT);
+  // leaves, blossoms, buds, labels
+  walk(ROOT,function(n){var p=P[n.id],m=n.files.length;
+    n.files.forEach(function(k,i){var spreadA=Math.min(44,200/Math.max(1,m)),a=(p.ang+(i-(m-1)/2)*spreadA)*Math.PI/180,r=22+(i%2)*13,x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r,s=leafState(k,n.id);
+      var e=el('ellipse',{cx:x,cy:y,rx:11,ry:5,transform:"rotate("+(a*180/Math.PI)+" "+x+" "+y+")",fill:s==="ok"?"var(--moss)":s==="bad"?"var(--leaf-bad)":"var(--rot)",stroke:"#0002"},g);
+      el('title',{},e).textContent=FILES[k][0]+(s==="bad"?" (wrong branch)":s==="rot"?" (junk or duplicate)":"")});
+    if(harmonious(n)){for(var b=0;b<3;b++){var ba=(p.ang+90+b*120)*Math.PI/180,bx=p.x+Math.cos(ba)*14,by=p.y+Math.sin(ba)*14;for(var q=0;q<5;q++){var qa=q*72*Math.PI/180;el('circle',{cx:bx+Math.cos(qa)*3.2,cy:by+Math.sin(qa)*3.2,r:2.8,fill:"var(--blossom)"},g)}el('circle',{cx:bx,cy:by,r:1.6,fill:"#f3d36b"},g)}}
+    el('circle',{cx:p.x,cy:p.y,r:8,fill:n.id===sel?"var(--seal)":"var(--panel)",stroke:"var(--bark)","stroke-width":2.5},g);
+    var la=p.ang*Math.PI/180,ld=n.id===ROOT?0:(m?50:22),lx=n.id===ROOT?p.x-16:p.x+Math.cos(la)*ld,ly=n.id===ROOT?p.y+5:p.y+Math.sin(la)*ld+(Math.sin(la)<-.3?-4:14);
+    var t=el('text',{x:lx,y:ly,"text-anchor":n.id===ROOT?"end":(Math.cos(la)>.5?"start":Math.cos(la)<-.5?"end":"middle")},g);t.textContent=n.name+(n.files.length?" ("+n.files.length+")":"");
+    el('circle',{cx:p.x,cy:p.y,r:28,fill:"transparent","class":"hit","data-drop":"node:"+n.id,"data-node":n.id,tabindex:0,role:"button","aria-label":"branch "+n.name},svg);
+  });
+  renderGround();renderScore();renderPanel();
+}
+function chip(k){var c=document.createElement('div');c.className='chip'+(selFile===k?' sel':'');c.dataset.file=k;c.innerHTML='<b></b><span></span>';c.querySelector('b').textContent=FILES[k][1];c.querySelector('span').textContent=FILES[k][0];c.title=FILES[k][0];return c}
+function renderGround(){var g=document.getElementById('ground');g.textContent="";ground.forEach(function(k){g.appendChild(chip(k))});
+  document.getElementById('gcount').textContent=ground.length?ground.length+" left":"all grafted";document.getElementById('bcount').textContent=burned.length}
+var lastScore=-1;
+function renderScore(){var h=harmony();document.getElementById('score').textContent=h.total;
+  var m=document.getElementById('metrics');m.innerHTML="";h.parts.forEach(function(p){var d=document.createElement('div');d.className='m';d.innerHTML='<span></span><div class="t"><i></i></div><span></span>';d.children[0].textContent=p[0];d.querySelector('i').style.width=Math.round(p[1]*100)+"%";d.children[2].textContent=Math.round(p[1]*p[2]*p[3])+"/"+p[2];m.appendChild(d)});
+  var s=h.total<35?["Winter","Bare branches. Most leaves are on the ground."]:h.total<60?["Early spring","Buds forming. Keep grafting."]:h.total<85?["Spring","Blossoms opening. Fix names and lonely branches."]:h.total<100?["Hanami","Full bloom. A few touches left."]:["Perfect form","Every leaf home. ls would be proud."];
+  document.getElementById('stitle').textContent=s[0];document.getElementById('sdesc').textContent=s[1];document.getElementById('season').textContent=s[0];
+  petals(h.total>=85?(h.total===100?26:8):0);lastScore=h.total;
+}
+var petalN=-1;function petals(n){if(n===petalN)return;petalN=n;var st=document.getElementById('stage');st.querySelectorAll('.petal').forEach(function(p){p.remove()});
+  for(var i=0;i<n;i++){var p=document.createElement('i');p.className='petal';p.style.left=(Math.random()*100)+"%";p.style.animationDuration=(6+Math.random()*7)+"s";p.style.animationDelay=(-Math.random()*10)+"s";st.appendChild(p)}}
+function renderPanel(){var n=nodes[sel],pn=document.getElementById('panel');if(!n){sel=ROOT;n=nodes[ROOT]}
+  var path=[];for(var x=n.id;x;x=nodes[x].parent)path.unshift(nodes[x].name);
+  pn.innerHTML='<h2></h2><div class="small" id="pinfo"></div>'+(n.id!==ROOT?'<div class="row"><input type="text" id="rn" aria-label="Branch name"><button type="button" id="rnb">Rename</button></div>':'')+
+   '<div class="files" id="pfiles"></div><div class="row"><input type="text" id="gn" placeholder="new branch name" aria-label="New branch name"><button type="button" id="gb">Grow</button></div>'+(n.id!==ROOT?'<button type="button" class="danger" id="pr">Prune this branch</button>':'')+'<button type="button" class="ghostb" id="rs">Start over</button>';
+  pn.querySelector('h2').textContent=path.join('/').replace(/^~\/?/,"~/");
+  var e=n.kids.length+n.files.length;pn.querySelector('#pinfo').textContent=n.kids.length+" branches, "+n.files.length+" leaves"+(n.id!==ROOT&&e===0?". empty: prune or fill it.":e===1&&n.id!==ROOT?". lonely: one entry is a wasted level.":e>9?". crowded: split it.":"");
+  if(n.id!==ROOT){pn.querySelector('#rn').value=n.name;pn.querySelector('#rnb').onclick=function(){var v=pn.querySelector('#rn').value.trim().replace(/\//g,"_");if(v){n.name=v;render()}}}
+  var pf=pn.querySelector('#pfiles');n.files.forEach(function(k){var r=document.createElement('div');var s=leafState(k,n.id);r.className='frow'+(s!=="ok"?' bad':'');r.innerHTML='<span></span><button type="button" class="ghostb">drop</button>';r.querySelector('span').textContent=FILES[k][0];r.querySelector('span').dataset.file=k;r.querySelector('button').onclick=function(){moveTo(k,"ground")};pf.appendChild(r)});
+  if(!n.files.length)pf.innerHTML='<div class="small">no leaves on this branch</div>';
+  pn.querySelector('#gb').onclick=grow;pn.querySelector('#gn').onkeydown=function(ev){if(ev.key==="Enter")grow()};
+  if(pn.querySelector('#rn'))pn.querySelector('#rn').onkeydown=function(ev){if(ev.key==="Enter")pn.querySelector('#rnb').click()};
+  if(n.id!==ROOT)pn.querySelector('#pr').onclick=function(){prune(n.id)};
+  pn.querySelector('#rs').onclick=function(){reset();render()};
+}
+function grow(){var v=document.getElementById('gn').value.trim().replace(/\//g,"_");if(!v)return;var id="n"+(nid++);nodes[id]={id:id,name:v,parent:sel,kids:[],files:[]};nodes[sel].kids.push(id);sel=id;render()}
+function prune(id){walk(id,function(n){n.files.forEach(function(k){ground.push(k)});n.files=[]});var ids=[];walk(id,function(n){ids.push(n.id)});var p=nodes[id].parent;nodes[p].kids=nodes[p].kids.filter(function(c){return c!==id});ids.forEach(function(i){delete nodes[i]});sel=p;render()}
+function detach(k){var w=where(k);if(w==="ground")ground.splice(ground.indexOf(k),1);else if(w==="burn")burned.splice(burned.indexOf(k),1);else if(w)nodes[w].files.splice(nodes[w].files.indexOf(k),1)}
+function moveTo(k,target){detach(k);if(target==="ground")ground.push(k);else if(target==="burn")burned.push(k);else nodes[target].files.push(k);selFile=null;render()}
+document.getElementById('rescue').onclick=function(){if(burned.length){var k=burned[burned.length-1];moveTo(k,"ground")}};
+
+// ---------- drag and tap ----------
+var drag=null;
+function dropTarget(x,y){var e=document.elementFromPoint(x,y);if(!e)return null;var d=e.closest?e.closest('[data-drop]'):null;if(!d&&e.getAttribute)d=e.getAttribute('data-drop')?e:null;return d}
+document.addEventListener('pointerdown',function(ev){var c=ev.target.closest&&ev.target.closest('[data-file]');if(!c)return;drag={k:c.dataset.file,x:ev.clientX,y:ev.clientY,src:c,ghost:null,over:null}});
+document.addEventListener('pointermove',function(ev){if(!drag)return;if(!drag.ghost){if(Math.hypot(ev.clientX-drag.x,ev.clientY-drag.y)<6)return;drag.ghost=chip(drag.k);drag.ghost.classList.add('ghost');document.body.appendChild(drag.ghost)}
+  drag.ghost.style.left=ev.clientX+"px";drag.ghost.style.top=ev.clientY+"px";var t=dropTarget(ev.clientX,ev.clientY);
+  if(drag.over&&drag.over!==t){drag.over.classList&&drag.over.classList.remove('over');if(drag.over.setAttribute&&drag.over.tagName==='circle')drag.over.setAttribute('fill','transparent')}
+  if(t){if(t.tagName==='circle')t.setAttribute('fill','#b5342a22');else t.classList.add('over')}drag.over=t});
+document.addEventListener('pointerup',function(ev){if(!drag)return;var d=drag;drag=null;
+  if(d.ghost){d.ghost.remove();if(d.over&&d.over.classList)d.over.classList.remove('over');var t=dropTarget(ev.clientX,ev.clientY);if(t)applyDrop(d.k,t.getAttribute('data-drop'));else render();return}
+  selFile=selFile===d.k?null:d.k;renderGround();
+});
+function applyDrop(k,spec){if(spec==="ground"||spec==="burn")return moveTo(k,spec);if(spec&&spec.indexOf("node:")===0)return moveTo(k,spec.slice(5))}
+svg.addEventListener('click',function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute('data-node');if(!id)return;if(selFile){moveTo(selFile,id);return}sel=id;render()});
+svg.addEventListener('keydown',function(ev){if(ev.key!=="Enter"&&ev.key!==" ")return;var id=ev.target.getAttribute&&ev.target.getAttribute('data-node');if(!id)return;ev.preventDefault();if(selFile)moveTo(selFile,id);else{sel=id;render()}});
+document.getElementById('burn').addEventListener('click',function(ev){if(ev.target.id==="rescue")return;if(selFile)moveTo(selFile,"burn")});
+document.querySelector('.ground').addEventListener('click',function(ev){if(selFile&&!ev.target.closest('[data-file]'))moveTo(selFile,"ground")});
+reset();render();
+})();
+</script>
+
+</body></html>
