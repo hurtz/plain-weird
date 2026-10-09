@@ -38,6 +38,17 @@ header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 22px;align-
 .stats{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 20px;font:22px var(--display)}
 .stats b{color:var(--orange);font-weight:400}
 .drawer.big .feat{margin-top:10px}
+.fc video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;pointer-events:none}
+.fc.live video{opacity:1}
+.fc .tr{position:absolute;top:10px;left:10px;font:13px var(--body);font-weight:600;background:rgba(3,12,28,.85);color:var(--ink);border:1px solid var(--ink);padding:4px 10px;border-radius:2px;cursor:pointer;z-index:2}
+.fc .tr:hover{background:var(--gold);color:#1b1b1b}
+.fc .go,.fc .cap{z-index:1}
+.reel{margin-top:16px;overflow:hidden;border-block:2px solid var(--ink);background:var(--black);height:96px;position:relative}
+.reel .track{display:flex;gap:6px;width:max-content;animation:reel 60s linear infinite;padding:6px 0}
+.reel img{height:84px;width:auto;aspect-ratio:16/9;object-fit:cover;display:block;border:1px solid rgba(255,255,255,.3)}
+.reel:hover .track{animation-play-state:paused}
+@keyframes reel{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.reel .track{animation:none}}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
 .fc{position:relative;display:block;border:2px solid var(--ink);background:var(--black);overflow:hidden;aspect-ratio:16/9;max-width:100%;cursor:pointer;padding:0;color:var(--ink);text-align:left;font:inherit}
 .fc img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
@@ -113,6 +124,7 @@ footer a{color:var(--gold)}
   <p class="intro">I've been in IT for 32 years, starting at a Phoenix computer store in 1994. Now I build at night with AI: remakes of the games I grew up on, teardowns of their code, a TV I can swear at, a radio scanner that writes the news, and an AI that phones businesses for me. Most of the games below run right here in your browser. Hit play.</p>
   <div class="stats" id="stats"></div>
 </header>
+<div class="reel" aria-hidden="true"><div class="track" id="reel"></div></div>
 
 
 <div class="bar">
@@ -135,7 +147,7 @@ const A=id=>"https://claude.ai/artifact/"+id;
 const YT=id=>"https://www.youtube.com/watch?v="+id;
 const AI={C:"Claude",X:"Codex",U:"Cursor",S:"Suno",G:"Gemini",E:"ElevenLabs"};
 const TAG={L:["Play here","--t-live"],O:["Original","--t-orig"],R:["Retro remake","--t-retro"],E:["Emulation","--t-emu"],T:["Teardown","--t-tear"],M:["Multiplayer","--t-multi"],V:["Talks back","--t-talk"],I:["iPhone","--t-ios"],H:["Hardware","--t-hw"],C:["Concept","--t-idea"],Y:["YouTube","--t-yt"]};
-const SEC=["Games","Halloween beta","File system lab","Retro, emulation and teardowns","AI and apps","Watch: videos I made","Music","Weird web","Hardware"];
+const SEC=["Games","Halloween beta","File system lab","Retro, emulation and teardowns","AI and apps","Videos I made","Music","Weird web","Hardware"];
 const FEAT=["vine-runner","going-down","hot-aisle","catbird","life-simulator","plumbing"];
 const PLAY={"modem-lab":"play/modem-lab.html","vid-hotaisle":"play/vid-hotaisle.html","vid-catbird":"play/vid-catbird.html","vid-platter":"play/vid-platter.html","vine-runner":"play/vine-runner.html","going-down":"play/going-down.html","hot-aisle":"play/hot-aisle.html","catbird":"play/catbird.html","life-simulator":"play/life-simulator.html","plumbing":"play/plumbing.html","clauderooms":"play/clauderooms.html","tinpot":"play/tinpot.html","trick-or-steal":"play/trick-or-steal.html","trick-or-eaten":"play/trick-or-eaten.html","take-one":"play/take-one.html","play-with-me":"play/play-with-me.html","inode-rush":"play/inode-rush.html","inode-bonsai":"play/inode-bonsai.html","fsgolf":"play/fsgolf.html","w0725b":"play/uwu-skystrike.html","uber-ride":"play/uber-ride/index.html","loud-japan":"play/loud-japan/index.html","contra-crt":"play/contra-crt/index.html","rusty-raid":"play/rusty-raid.html"};
 // [key, name, section, tags, ai, one line, links]
@@ -224,7 +236,8 @@ const P=[
 
 ["vid-hotaisle","Hot Aisle Trailer",5,"O","C","Made off the clock by a data center tech. Racks break, robots lie, somebody left Jolly Ranchers on a rack again.",[]],
 ["vid-catbird","Catbird Over Des Moines Trailer",5,"OY","CX","A cute little bird with big, messy plans. The newest trailer. Free on Reddit at r/CatbirdDSM.",[["YouTube","https://youtu.be/xJUn_r5CFmg"],["Reddit","https://www.reddit.com/r/CatbirdDSM/"]]],
-["vid-platter","Platter: Do You Miss Hard Drive Sounds?",5,"O","C","The promo for Platter. Your Mac is silent. It doesn't have to be.",[["Get Platter","https://hurtz.github.io/platter/"]]],
+["vid-platter","Platter: Do You Miss Hard Drive Sounds?",5,"OY","C","The promo for Platter. Your Mac is silent. It doesn't have to be.",[["YouTube",YT("Nb9-id_z6Yw")],["Get Platter","https://hurtz.github.io/platter/"]]],
+["vid-modem","Every Dial Up Modem Sound, Explained",5,"OY","C","The Modem Lab video. Every screech and hiss of a dial up handshake, slowed down and explained step by step.",[["Watch",YT("-pOcYlXa1QY")],["Try Modem Lab","play/modem-lab.html"]]],
 ["tape","The Tape That Loaded Again",5,"EY","X","A documentary about recovering 40 year old Commodore 64 programs from cassette with AI.",[["Watch",YT("TLCCnDBVDiY")]]],
 ["denise","DeniseITX Quick Overview",5,"HY","",  "A quick look at the DeniseITX Amiga board.",[["Watch",YT("nQnLxcAOYGY")]]],
 ["yt-floppies","My Box of 5 1/4 Floppies",5,"EY","","A haul of Commodore 64 and IBM floppies from Vintage Computer Festival Midwest 19.",[["Watch",YT("YQXh7Rrq9Xk")]]],
@@ -273,12 +286,15 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!player.hidden)clos
 const playable=P.filter(p=>PLAY[p[0]]||p[6].some(l=>/^Play|demo/i.test(l[0]))).length;
 $("#stats").innerHTML=`<span><b>${P.length}</b> projects</span><span><b>${playable}</b> you can play</span><span><b>${P.filter(p=>p[3].includes("T")).length}</b> teardowns</span><span><b>${P.filter(p=>p[2]===5).length}</b> videos</span>`;
 function row(p){const[k,n,,,ai,d,l]=p;const pl=PLAY[k];return `<div class="r"><button class="th" type="button" ${pl?`data-play="${k}"`:`data-open="${k}"`} aria-label="${pl?(WATCH(k)?"Watch ":"Play "):""}${esc(n)}"><img src="img/${k}.jpg" alt="" loading="lazy" width="112" height="63" data-k="${k}"></button><div class="mid"><div class="nm"><b>${esc(n)}</b>${[...tagsOf(p)].map(chip).join("")}</div><div class="ds">${esc(d)}</div>${ai?`<div class="mw">made with ${[...ai].map(x=>AI[x]).join(" + ")}</div>`:""}</div><div class="links">${pl?`<button class="btn play" type="button" data-play="${k}">${WATCH(k)?"Watch here":"Play here"}</button>`:""}${l.map(([t,u],i)=>`<a class="btn${pl||i?" alt":""}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}</div></div>`}
-const BIG=new Set([0,5]);const ORDER=[5,0,1,2,3,4,6,7,8];
+const BIG=new Set([0,5]);const ORDER=[0,5,1,2,3,4,6,7,8];
 const GFIRST=["vine-runner","going-down","hot-aisle","catbird","life-simulator","plumbing","choppricer","they-saw-us","nice-truck","clauderooms","play-with-me","cascade","little-tempest"];
-const VFIRST=["tape","vid-catbird","vid-hotaisle","vid-platter"];
+const VFIRST=["tape","vid-modem","vid-catbird","vid-hotaisle","vid-platter"];
+const TRAILER={"hot-aisle":"vid/hotaisle.mp4","catbird":"vid/catbird.mp4","platter":"vid/platter.mp4"};const TRAILKEY={"hot-aisle":"vid-hotaisle","catbird":"vid-catbird","platter":"vid-platter"};
 const rank=(arr,k)=>{const i=arr.indexOf(k);return i<0?99:i};
 function card(p){const[k,n,,,ai,d,l]=p;const pl=PLAY[k];const attr=pl?`data-play="${k}"`:`data-open="${k}"`;const lab=pl?(WATCH(k)?"Watch here":"Play here"):(l[0]?l[0][0]:"Open");
-  return `<button class="fc" type="button" ${attr}><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360"><span class="go">${esc(lab)}</span><span class="cap"><span class="row1"><b>${esc(n)}</b>${[...p[3]].map(chip).join("")}</span><p>${esc(d)}</p></span></button>`}
+  const tv=TRAILER[k]?`<video muted loop playsinline preload="none" data-src="${TRAILER[k]}"></video>`:"";
+  const tb=TRAILKEY[k]?`<button class="tr" type="button" data-play="${TRAILKEY[k]}">Trailer</button>`:"";
+  return `<div class="fc${tv?" hasv":""}" ${attr} tabindex="0" role="button" aria-label="${esc(lab+": "+n)}"><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360">${tv}<span class="go">${esc(lab)}</span>${tb}<span class="cap"><span class="row1"><b>${esc(n)}</b>${[...p[3]].map(chip).join("")}</span><p>${esc(d)}</p></span></div>`}
 function render(){
   $("#tags").innerHTML=["All",...Object.keys(TAG)].map(t=>`<button class="chip" type="button" data-t="${t}" aria-pressed="${t===tag}">${t==="All"?"All":`<i style="background:var(${TAG[t][1]})"></i>${TAG[t][0]}`}</button>`).join("");
   const m=p=>(tag==="All"||tagsOf(p).includes(tag))&&(!q||(p[1]+" "+p[5]).toLowerCase().includes(q));
@@ -301,6 +317,11 @@ if(matchMedia("(hover:hover) and (pointer:fine)").matches){
     pv.hidden=false;pv.style.left=Math.min(e.clientX+18,innerWidth-370)+"px";pv.style.top=Math.min(e.clientY+12,innerHeight-220)+"px"});
   $("#main").addEventListener("mouseleave",()=>pv.hidden=true);
 }
+const REEL=["vine-runner","going-down","hot-aisle","catbird","life-simulator","plumbing","choppricer","they-saw-us","nice-truck","clauderooms","play-with-me","cascade","little-tempest","w0725b","rusty-raid","yars","dragons-lair","modem-lab","super-metroid","amiga-scene"];
+$("#reel").innerHTML=[...REEL,...REEL].map(k=>`<img src="img/${k}.jpg" alt="" loading="lazy">`).join("");
+document.addEventListener("mouseover",e=>{const c=e.target.closest(".fc.hasv");if(!c||c.classList.contains("live"))return;const v=c.querySelector("video");if(!v.src)v.src=v.dataset.src;c.classList.add("live");v.play().catch(()=>{})});
+document.addEventListener("mouseout",e=>{const c=e.target.closest(".fc.hasv");if(!c||c.contains(e.relatedTarget))return;c.classList.remove("live");const v=c.querySelector("video");v.pause()});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("fc"))e.target.click()});
 render();
 </script>
 
