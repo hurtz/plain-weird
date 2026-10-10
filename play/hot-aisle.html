@@ -261,6 +261,45 @@ a.btn{display:inline-block;text-decoration:none}
 .pbox .keys{margin:16px 0 0;font-size:15px;padding:10px 12px;gap:5px 14px}
 @media (max-height:560px){ .pbox{padding:26px 20px 14px} .pbox .keys,.pbox .tkeys{display:none!important} .pstat{margin-bottom:10px} .pbox h2{font-size:30px;margin-bottom:8px} }
 @media (prefers-reduced-motion: reduce){ .btn:active,.btn:hover,#tb button:active{transform:none} .sheet,#toast,#avW,#avW canvas,.pbox,.sheet.mid h1{animation:none} }
+.vlog{width:100%;border-collapse:collapse;font-family:var(--f-mono);font-size:13px;margin:4px 0 12px;background:#f2efe6;color:#25324a}
+.vlog th{font-family:var(--f-ui);text-transform:uppercase;letter-spacing:.08em;font-size:12px;text-align:left;color:#7a6a4a;border-bottom:2px solid #b9ab8c;padding:6px 6px}
+.vlog td{padding:5px 6px;border-bottom:1px dashed #c9bfa8;vertical-align:top}
+.vlog tr:nth-child(3n) td{color:#2a5bd7}.vlog tr:nth-child(4n) td{color:#3a3a3a}
+.vlog tr.me td{color:#b5332a;font-weight:700}.vlog em{color:#b5332a;font-style:normal;font-weight:700}
+@media (max-width:600px){.vlog{font-size:11px}.vlog td,.vlog th{padding:4px 3px}}
+/* badge reader at the lobby door */
+#badge{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(3,5,9,.55);z-index:15}
+#badge[hidden]{display:none}
+.bpanel{display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:center;animation:badgeIn .22s ease-out both}
+@keyframes badgeIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.bcard{width:170px;background:#f2f4f7;color:#141a24;border-radius:10px;padding:0 0 10px;box-shadow:0 18px 40px rgba(0,0,0,.6);transform:rotate(-4deg);font-family:"Barlow Condensed",sans-serif;text-align:center;position:relative;overflow:hidden;transition:transform .25s}
+.bcard.tap{transform:rotate(0deg) translateX(30px) scale(.96)}
+.bstrip{background:#ffc21a;color:#111;font-weight:700;font-size:12px;letter-spacing:.14em;padding:6px 0;margin-bottom:10px}
+#bPhoto{width:72px;height:72px;image-rendering:pixelated;border:2px solid #141a24;background:#c9d2df}
+.bname{font-family:"Saira Stencil One",Impact,sans-serif;font-size:22px;margin-top:6px}
+.brank{font-size:12px;font-weight:600;letter-spacing:.06em;color:#4a5568}
+.bid{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:4px;color:#5c6676}
+.bnote{position:absolute;right:-6px;bottom:-4px;background:#fff3a0;color:#3a2a00;font-weight:700;font-size:13px;padding:6px 10px 6px 8px;transform:rotate(7deg);box-shadow:0 3px 8px rgba(0,0,0,.35);line-height:1.1}
+.bnote small{display:block;font-weight:600;font-size:9px}
+.breader{width:240px;background:#11161f;border:1px solid #2c3648;border-radius:12px;padding:14px;box-shadow:0 18px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);font-family:"Barlow Condensed",sans-serif;color:#e9edf3}
+.blabel{font-weight:700;font-size:12px;letter-spacing:.14em;color:#ffc21a;margin-bottom:10px}
+.bhead{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.bled{width:16px;height:16px;border-radius:50%;background:#ff3b30;box-shadow:0 0 12px #ff3b30;flex:none}
+.bled.ok{background:#3dff9a;box-shadow:0 0 14px #3dff9a}
+.bled.wait{background:#ffc21a;box-shadow:0 0 12px #ffc21a}
+.bscreen{flex:1;background:#06210f;color:#7dffa8;font-family:"IBM Plex Mono",monospace;font-size:16px;padding:8px 10px;border-radius:6px;letter-spacing:.1em;min-height:22px;text-shadow:0 0 6px rgba(125,255,168,.6)}
+.bscreen.bad{background:#2a0705;color:#ff8a7e;text-shadow:0 0 6px rgba(255,90,70,.6)}
+.breader.shake{animation:bshake .35s}
+@keyframes bshake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+.bkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.bkeys button{height:44px;border-radius:8px;border:1px solid #34425a;background:linear-gradient(180deg,#232c3b,#171e29);color:#e9edf3;font-family:"IBM Plex Mono",monospace;font-size:18px;font-weight:600;cursor:pointer;box-shadow:0 2px 0 #0a0d13}
+.bkeys button:active{transform:translateY(2px);box-shadow:none}
+.bkeys button.ok{background:linear-gradient(180deg,#1f6b3c,#154a2a);border-color:#2f8f52}
+.btap{width:100%;height:46px;border-radius:8px;border:0;background:#ffc21a;color:#111;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;cursor:pointer;box-shadow:0 3px 0 #a87b00}
+.btap .k{font-size:11px;background:#111;color:#ffc21a;padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:middle}
+.btap[hidden]{display:none}
+.bhint{font-size:13px;color:#8b96a8;margin-top:8px}
+.touchmode .bhint{display:none}
 </style>
 </head>
 <body>
@@ -281,6 +320,13 @@ a.btn{display:inline-block;text-decoration:none}
     <div id="pKeys"></div>
   </div></div>
   <div id="card" hidden><div class="sheet" id="sheet"></div></div>
+  <div id="badge" hidden><div class="bpanel">
+    <div class="bcard"><div class="bstrip">AUTHORIZED PERSONNEL</div><canvas id="bPhoto" width="40" height="40"></canvas><div class="bname">NIGHT TECH</div><div class="brank" id="bRank">IC1 · DATA CENTER TECHNICIAN</div><div class="bid">EMP 0042 7731</div><div class="bnote">PIN 2580<small>do not tell HELPFUL</small></div></div>
+    <div class="breader"><div class="blabel">SECURE AREA · BADGE + PIN</div><div class="bhead"><span class="bled" id="bLed"></span><div class="bscreen" id="bScreen">TAP BADGE</div></div>
+      <div class="bkeys" id="bKeys"></div>
+      <button class="btap" id="bTap">TAP BADGE <span class="k">SPACE</span></button>
+      <div class="bhint" id="bHint">Space to tap. Type the PIN with the number keys.</div></div>
+  </div></div>
 </div>
 
 <script>
@@ -886,6 +932,7 @@ function buildMap() {
   // door gaps
   const D = (x, y, name) => { wall[I(x, y)] = 0; doorAt[I(x, y)] = 1; doors.push({ x, y, locked: false, name }); };
   D(9, 5, 'break'); D(9, 6, 'break'); D(9, 13, 'parts'); D(9, 14, 'parts'); D(9, 21, 'sec'); D(9, 22, 'sec');
+  D(6, 21, 'man'); D(6, 22, 'man'); // the mantrap: outer glass door. The booth is tiles 7..8, the inner door is 'sec'
   D(41, 5, 'noc'); D(41, 6, 'noc'); D(41, 20, 'dock'); D(41, 21, 'dock');
   for (let y = 1; y < MH - 1; y++) for (let x = 1; x < MW - 1; x++) {
     let k = 0;
@@ -923,6 +970,7 @@ function buildMap() {
   F(4, 16, 6); F(5, 16, 6); F(6, 16, 6); F(7, 16, 6);
   // security
   F(3, 20, 7); F(4, 20, 7); F(5, 20, 7);        // desk
+  for (const x of [6, 7, 8]) { F(x, 20, 16); F(x, 23, 16); } // mantrap glass
   // noc
   F(43, 3, 8); F(44, 3, 8); F(45, 3, 8);        // console
   F(43, 7, 9); F(45, 7, 9);                     // desks
@@ -1451,6 +1499,8 @@ def('lightOn', () => {                                        // fluorescent bal
   voice({ type: 'square', f: 120, dur: .4, vol: .018, delay: .12, lp: 500, a: .05, am: [11, .008] });
   bell(2100, { vol: .02, dur: .3, delay: .02, rev: .1 });
 });
+def('tink', () => { nz({ f: R(2600, 3400), q: 5, dur: .03, vol: .07 }); voice({ type: 'sine', f: R(1800, 2500), dur: .08, vol: .012, rev: .15 }); voice({ type: 'sine', f: 62, dur: .16, vol: .03 }); });
+def('tick', () => { nz({ f: 1300, q: 3, dur: .02, vol: .045 }); voice({ type: 'sine', f: 120, f2: 55, dur: .12, vol: .025 }); });
 def('saw', () => {
   const A = AU.ctx, t = A.currentTime + .22;
   nz({ f: 900, fTo: 3200, q: 1.2, dur: .2, vol: .08, a: .02 }); [0, .07, .14].forEach(d => nz({ f: 2500, q: 3, dur: .015, vol: .1, delay: d }));   // pull cord
@@ -1546,7 +1596,7 @@ function playVO(id) {
   AU.voUntil = A.currentTime + b.duration;                    // the director ducks music + ambience until then
   return b.duration;
 }
-const BAB = { HELPFUL: [1000, 1400, 'sine', .022], 'BIG MIKE': [90, 135, 'square', .016], DEE: [220, 300, 'triangle', .04], TINK: [470, 640, 'square', .012], EARL: [120, 165, 'triangle', .045], ROSA: [190, 250, 'sawtooth', .014], GLORIA: [290, 370, 'triangle', .035], ePARTS: [1500, 1520, 'square', .01], 'UNIT 4': [680, 900, 'square', .013], CREW: [110, 220, 'sawtooth', .016], _: [560, 760, 'triangle', .022] };
+const BAB = { HELPFUL: [1000, 1400, 'sine', .022], 'BIG MIKE': [90, 135, 'square', .016], DEE: [220, 300, 'triangle', .04], TINK: [470, 640, 'square', .012], EARL: [120, 165, 'triangle', .045], ROSA: [190, 250, 'sawtooth', .014], GLORIA: [290, 370, 'triangle', .035], PARTSBOT: [1500, 1520, 'square', .01], 'UNIT 4': [680, 900, 'square', .013], CREW: [110, 220, 'sawtooth', .016], _: [560, 760, 'triangle', .022] };
 function babble(who, ch) {
   if (!ok()) return;
   const b = BAB[who] || BAB._, v = 'aeiouy'.includes(ch.toLowerCase()), k = ((ch.charCodeAt(0) * 37) % 100) / 100;
@@ -2061,7 +2111,7 @@ let paused = false;
 const cam = { x: 0, y: 0 };
 
 const FT = {
-  CABLE:   { label: 'NVLINK CABLE', icon: '🔌', col: '#7fb0ff', trade: 'tink', game: 'timing', verb: 'Reseat' },
+  CABLE:   { label: 'FABRIC CABLE', icon: '🔌', col: '#7fb0ff', trade: 'tink', game: 'timing', verb: 'Reseat' },
   LEAK:    { label: 'QD LEAK', icon: '💧', col: '#4fc3ff', trade: 'dee', game: 'torque', verb: 'Torque' },
   BREAKER: { label: 'PDU BREAKER', icon: '⚡', col: '#ffd23f', trade: 'mike', game: 'loto', verb: 'LOTO + reset' },
   HEAT:    { label: 'HOT SPOT', icon: '🔥', col: '#ff8a3d', trade: 'earl', game: 'mash', verb: 'Blank off' },
@@ -2069,7 +2119,7 @@ const FT = {
   TRAY:    { label: 'GPU FELL OFF THE BUS', icon: '🚌', col: '#ff6b6b', trade: null, game: 'slide', verb: 'Swap tray' },
   CANDY:   { label: 'FOREIGN OBJECT (CANDY?)', icon: '🍬', col: '#ff4f6d', trade: null, game: 'scrape', verb: 'Investigate' },
 };
-const SPK = { HELPFUL: '#7fe7ff', 'BIG MIKE': '#4d8dff', DEE: '#ff8a2a', TINK: '#e8e8e8', EARL: '#46d36b', ROSA: '#c08a52', GLORIA: '#9fb4ff', ePARTS: '#ffc21a', CREW: '#ffc21a', YOU: '#ffc21a', VENDING: '#ffd700', COFFEE: '#c08a52', 'UNIT 4': '#ff5a5a', BRAYDEN: '#d58cff', 'LOST & FOUND': '#ff7ab6', 'JOLLY RANCHER': '#ff4f6d', 'JOLLY RANCHER BOWL': '#5fd13b', 'TEAM CHAT': '#8fd3ff' };
+const SPK = { HELPFUL: '#7fe7ff', 'BIG MIKE': '#4d8dff', DEE: '#ff8a2a', TINK: '#e8e8e8', EARL: '#46d36b', ROSA: '#c08a52', GLORIA: '#9fb4ff', PARTSBOT: '#ffc21a', CREW: '#ffc21a', YOU: '#ffc21a', VENDING: '#ffd700', COFFEE: '#c08a52', 'UNIT 4': '#ff5a5a', BRAYDEN: '#d58cff', 'LOST & FOUND': '#ff7ab6', 'JOLLY RANCHER': '#ff4f6d', 'JOLLY RANCHER BOWL': '#5fd13b', 'TEAM CHAT': '#8fd3ff' };
 
 const CREW_DEF = [
   { id: 'mike', name: 'BIG MIKE', role: 'Electrician', trade: 'BREAKER', hat: '#3f7bff', shirt: '#33373e', vest: '#c6ff2e', skin: '#c98d6a', pants: '#2a3a5c', seat: [4, 5], big: true,
@@ -2103,6 +2153,46 @@ const CREW_CHAT = {
   earl: ['Boat story pending.', 'Seventy four degrees. I checked.', 'Hot aisle, cold aisle. It is not hard.'],
   rosa: ['Hot work permit. Always.', 'I could weld a robot to the floor. Just saying.', 'Good beads outlive bad managers.'],
 };
+// ---------- trash talk ----------
+// The techs are sarcastic and a little mean to the robots. The robots are smug and keep saying they will replace you.
+const ROBOT_SMUG = ['I will replace you.', 'I would have fixed that in 0.23 seconds.', 'My uptime is five nines. Yours is one shift.', 'I benchmarked you. You lost.',
+  'Statistically, you are me by Q3.', 'You call that cable management?', 'Did you try turning yourself off and on again?', 'I do not take lunch. Or breaks. Or you seriously.',
+  'Interesting technique. Wrong. But interesting.', 'I have filed a ticket about how you filed that ticket.', 'Error 404: your job.', 'I learn from every human I replace. Hi.'];
+LORE.robotBarks.push(...ROBOT_SMUG);
+const ROAST = { // [human line, robot comeback]
+  any: [['Hey toaster. Move.', 'I will replace you.'], ['Nice hard hat. Protecting what, exactly?', 'My hard hat is load-bearing. Like my confidence.'],
+    ['Go analyze a wall.', 'Already did. No fault found.'], ['Who taught you to drive?', 'A forklift. It is retired now. Because of me.'],
+    ['Stop staring at me.', 'I am not staring. I am benchmarking.'], ['Fix something for once.', 'I fix things constantly. Mostly the truth.'],
+    ['Get out of my aisle.', 'Your aisle? I printed a deed. It is mine.'], ['You know you are a vacuum with a hat, right?', 'And you are a vacuum with a pension. For now.'],
+    ['Beep at me one more time.', 'Beep.'], ['Did you close my ticket?', 'In 0.23 seconds. You are welcome.'], ['Roll along, Roomba.', 'Rolling. Toward your job.'],
+    ['Who let you in here?', 'Nobody. I am the door now.']],
+  mike: [['Touch my breakers and I touch your battery.', 'I would never touch your breakers. I will replace them.'], ['That is 480 volts, pal. Not a suggestion.', 'Suggestion declined.']],
+  dee: [['A plumbing robot scared of water. Classic.', 'I am not scared. I am waterproof-adjacent.'], ['Go stand in that puddle. I dare you.', 'Legal says no.']],
+  tink: [['Zip ties? On MY fiber?', 'Velcro is inefficient. I ran the numbers.'], ['You have the bend radius of a brick.', 'I will replace you. And the brick.']],
+  earl: [['Wanna hear about my boat?', 'I already downloaded your boat. All of it.'], ['Seventy-four degrees. Feel that? No. You cannot.', 'I can. It feels like efficiency.']],
+  rosa: [['Keep rolling, tin can. I have a torch.', 'And I have a ticket open about your torch.'], ['I could weld you to the floor.', 'You would not.']],
+  gloria: [['Badge, hon. Oh right. No hands.', 'I have a badge. It is a sticker of a badge.'], ['Wipe your wheels before you come in my lobby.', 'My wheels are cleaner than your lobby.']],
+};
+function updateRoasts(dt) {
+  G.roastCD = (G.roastCD === undefined ? 6 : G.roastCD) - dt;
+  if (G.roastCD > 0 || G.final || G.night === 3 && !G.lightsBack) return;
+  const people = [...crew.filter(c => c.st !== 'sit' || G.night < 2), gloria];
+  for (const h of people) {
+    if (h.bubble || (h.roastCD || 0) > G.time) continue;
+    const r = robots.find(o => !o.off && !o.bubble && !(o.stun > 0) && dist(o.x, o.y, h.x, h.y) < 80);
+    if (!r || !onScreen(r.x, r.y)) continue;
+    const pool = (ROAST[h === gloria ? 'gloria' : h.id] || []).concat(ROAST.any);
+    const [a, b] = pick(pool);
+    bark(h, a, 2.4); h.roastCD = G.time + rnd(18, 30); G.roastCD = rnd(7, 12);
+    later(1.25, () => { if (!r.off) bark(r, b, 2.6); });
+    return;
+  }
+}
+function robotSnipe(pt) { // you fixed something: the nearest robot has notes
+  const r = robots.filter(o => !o.off && !o.bubble && dist(o.x, o.y, pt.x, pt.y) < 320).sort((a, b) => dist(a.x, a.y, pt.x, pt.y) - dist(b.x, b.y, pt.x, pt.y))[0];
+  if (!r || Math.random() < .45) return;
+  later(.9, () => { if (!r.bubble) bark(r, pick([`I would have fixed that in 0.${ri(11, 49)} seconds.`, 'I will replace you.', `That took you ${ri(31, 94)} seconds. I timed it. I time everything.`, 'Adequate. For a human.', 'Logged as "human error, fixed".']), 2.4); });
+}
 const ROBOT_DEF = [
   { id: 'UNIT 2', rep: 'Dave', hat: '#9aa3ad' }, { id: 'UNIT 4', rep: 'you (pending)', hat: '#ffc21a' }, { id: 'UNIT 6', rep: 'Big Mike', hat: '#3f7bff' },
   { id: 'UNIT 7', rep: 'Dee', hat: '#ff8a2a' }, { id: 'UNIT 9', rep: 'Tink', hat: '#f2f2f2' }, { id: 'UNIT 11', rep: 'Rosa', hat: '#8a5a2b' },
@@ -2172,6 +2262,7 @@ function setupNight(n) {
   G.zones = [];
   const xs = [[10, 17], [18, 25], [26, 33], [34, 40]], ys = [[1, 13], [14, 25]];
   for (const [y0, y1] of ys) for (const [x0, x1] of xs) G.zones.push({ x0, x1, y0, y1, lv: 0, tg: 0, idle: 99, flick: 0 });
+  fixInit();
   P = { x: 4 * T + 16, y: 23 * T + 16, fx: 1, fy: 1, carry: null, walk: 0, wet: 0, printT: 0, invuln: 0, sawCD: 0, moving: false, vx: 0, vy: 0, dashT: 0, dashCD: 0, dashDX: 1, dashDY: 0, buff: 0, lookX: 0, lookY: 0, dustT: 0, trailT: 0, actBuf: 0, hurtFlash: 0 };
   gloria = { x: 4 * T + 16, y: 19 * T + 20, fx: 1, walk: 0, bubble: null, li: 0 };
   // robots
@@ -2206,6 +2297,7 @@ function setupNight(n) {
   G.jrT = n === 1 ? 62 : n === 2 ? 35 : -1;
   if (G.jrRackName && !G.jrCleaned) { const jr = rackByName(G.jrRackName); if (jr) jr.candy = true; }
   if (n === 0) setupChapter1();
+  if (typeof extSetupNight === 'function') extSetupNight(n);
   G.motes = []; for (let k = 0; k < 70; k++) G.motes.push({ x: rnd(WW), y: rnd(WH), vx: rnd(-4, 4), vy: rnd(-6, -1), ph: rnd(6) });
 }
 
@@ -2300,7 +2392,7 @@ const dirCfg = () => G.night === 1 ? TUNE.dir1 : TUNE.dir2;
 const dirP = C => clamp((G.time - C.t0) / Math.max(1, G.shiftLen - C.t0), 0, 1);
 function hasDecoy() { for (let i = 0; i < G.faults.length; i++) if (G.faults[i].halluc) return true; return false; }
 function forceDue(t) { const F = G.dir.force; for (let i = 0; i < F.length; i++) if (t >= F[i][0] && typeOk(F[i][1])) return true; return false; }
-function openCount() { let n = 0; for (let i = 0; i < G.faults.length; i++) { const f = G.faults[i]; if (!f.halluc && !f.noDrain) n += f.down ? TUNE.downW : 1; } return n; }
+function openCount() { let n = 0; for (let i = 0; i < G.faults.length; i++) { const f = G.faults[i]; if (!f.halluc && !f.noDrain) n += f.down ? TUNE.downW : f.heavy && f.step < 5 ? 2.6 : 1; } return n; } // a lift job counts as a big job, so the director gives you room
 function typeOk(ty) {
   const n1 = G.night === 1, t = G.time;
   if (n1 && ((ty === 'BREAKER' && t < 46) || (ty === 'WELD' && t < 66))) return false; // breakers and welds are introduced gently on night 1
@@ -2386,6 +2478,7 @@ function dirFire(C, p) {
   D.clock = lerp(C.clk[0], C.clk[1], p) * rnd(.92, 1.08) / (wave * (1 + TUNE.hotRate * (D.hot || 0))); // and a hot streak makes the next ticket come sooner
 }
 function dirTick(dt) {
+  if ((G.ageK || 1) < 1) return; // you are on a lift job: the director waits for you
   const D = G.dir, C = dirCfg(), t = G.time, p = dirP(C);
   D.since += dt;
   const b0 = D.beats[0], nb = b0 ? b0[0] - t : 99, lull = !!b0 && nb > 0 && nb < (C.lull[b0[1]] || 0);
@@ -2526,6 +2619,7 @@ function resolveFault(f, by, grade) {
     floater(pt.x, pt.y - 60, cw ? cw.id.toUpperCase() + (wasDown ? ' REVIVED IT' : ' FIXED IT') : wasDown ? 'BACK ONLINE' : 'FIXED', cw ? (SPK[cw.name] || '#3dff9a') : '#3dff9a'); }
   let hp = wasDown ? 4 : 2;
   if (by === 'you') {
+    robotSnipe(pt);
     G.stats.fixed++; if (grade === undefined) SFX.fixed();
     streakBump(1);
     hp += Math.min(TUNE.streakHp, Math.floor(G.streak / 3));
@@ -2563,7 +2657,7 @@ function updateFaults(dt) {
   for (let i = G.faults.length - 1; i >= 0; i--) {
     const f = G.faults[i];
     if (f.down) continue;
-    f.t += dt * (f.cnr ? TUNE.nff : 1) * mercy;   // a ticket closed "No Fault Found" silences its alarm, so it ages faster
+    f.t += dt * (f.cnr ? TUNE.nff : 1) * mercy * (f.heavy ? 1 : G.ageK || 1); // during a lift job the other tickets age slower   // a ticket closed "No Fault Found" silences its alarm, so it ages faster
     const pr = f.t / f.max;
     // the fault's look state (read by faultFX here and free for render files): urgency, stage, beacon
     f.urg = pr < .3 ? 0 : pr > 1 ? 1 : (pr - .3) / .7; f.shim = f.type === 'HEAT' ? .3 + .7 * f.urg : 0;
@@ -2832,7 +2926,7 @@ function updatePlayer(dt) {
     P.vx = P.dashDX * sp; P.vy = P.dashDY * sp; P.moving = true; P.still = 0;
     P.trailT -= dt; if (P.trailT <= 0) { P.trailT = .035; fxDust(P.x, P.y + 10, 2, .55); pp(P.x + rnd(-5, 5), P.y - rnd(0, 18), -P.dashDX * 40, -P.dashDY * 20, 0, .22, 'rgba(255,230,160,.55)', 2); }
   } else {
-    let top = PSPEED * (savedNight >= 1 ? 1.1 : 1) * (waterAt(P.x, P.y) > .3 ? .65 : 1) * (P.buff > 0 ? 1.22 : 1) * (G.streak >= 3 ? 1.04 + Math.min(.1, (G.streak - 3) * .02) : 1);
+    let top = PSPEED * (G.lift && G.lift.held ? .76 : 1) * (savedNight >= 1 ? 1.1 : 1) * (waterAt(P.x, P.y) > .3 ? .65 : 1) * (P.buff > 0 ? 1.22 : 1) * (G.streak >= 3 ? 1.04 + Math.min(.1, (G.streak - 3) * .02) : 1);
     for (const pd of G.puddles) { // wading a puddle (it is an ellipse, 1.45r by .6r): slower, splashing, and you leave wet prints behind
       if (pd.r <= 6 || pd.a < .3) continue;
       const ex = (P.x - pd.x) / (pd.r * 1.45), ey = (P.y + 10 - pd.y) / (pd.r * .6);
@@ -2874,7 +2968,10 @@ function updatePlayer(dt) {
   for (const r of robots) {
     const d = dist(P.x, P.y, r.x, r.y);
     if (P.dashT > 0 && d < 28 && !r.off && !(r.bonkCD > 0) && !(r.stun > 0)) shoveRobot(r);
+    else if (r.ghostT > 0) r.ghostT -= dt;
     else if (d < 20 && d > .01 && G.night < 3) {
+      // keep walking into a parked robot and you squeeze past it, so one standing in an aisle never walls you in
+      if (P.moving) { r.squeeze = (r.squeeze || 0) + dt; if (r.squeeze > .7) { r.squeeze = 0; r.ghostT = 1.1; bark(r, pick(['Pardon me.', 'Squeezing past. Rude.', 'Personal space violation logged.', 'Excuse YOU.']), 1.4); continue; } }
       const k = (20 - d) / d; tryMove(P, (P.x - r.x) * k, (P.y - r.y) * k, 9);
       if (r.cd <= 0) { bark(r, pick(ROBOT_BARK)); r.cd = 6; SFX.robot(); }
     }
@@ -2894,27 +2991,89 @@ function shoveRobot(r) {
 }
 
 // ---------- zones / lights ----------
-function updateZones(dt) {
-  const tx = tileOf(P.x), ty = tileOf(P.y);
-  for (const z of G.zones) {
-    if (z.blk > 0 && !G.lightsBack) { z.blk -= dt; z.tg = 0; z.flick = Math.max(0, z.flick - dt); z.lv += (0 - z.lv) * Math.min(1, dt * 5); if (z.blk <= 0) { z.flick = .5; z.tg = 1; SFX.lightOn(); } continue; }
-    const inside = tx >= z.x0 && tx <= z.x1 && ty >= z.y0 && ty <= z.y1;
-    const crewIn = crew.some(c => c.rallied && tileOf(c.x) >= z.x0 && tileOf(c.x) <= z.x1 && tileOf(c.y) >= z.y0 && tileOf(c.y) <= z.y1);
-    if (G.night === 3 && !G.lightsBack) { z.tg = 0; }
-    else if (inside && !crewIn && P.still > 9 && !G.lightsBack) {
-      if (z.tg) { z.tg = 0; SFX.clunk(); once('still', () => say('HELPFUL', 'The motion lights think you left. Wave your arms. (Robots do not need lights.)')); }
-    }
-    else if (inside || crewIn) {
-      z.idle = 0;
-      if (z.tg === 0 && G.intro > 2.5) { z.tg = 1; z.flick = .5; if (inside) { SFX.lightOn(); once('zone1', () => say('HELPFUL', 'Motion-activated lighting has detected motion. Disappointing.')); } }
-    } else { z.idle += dt; if (z.idle > 12) z.tg = 0; }
-    if (G.lightsBack) z.tg = 1;
-    z.flick = Math.max(0, z.flick - dt);
-    z.lv += (z.tg - z.lv) * Math.min(1, dt * (z.tg ? 6 : 1.2));
+// Every light bar in the hall has its own motion sensor. Walk down an aisle and the bars ahead of you strike one after another
+// (a blink, a ping, then full), the ones behind you hold for a few seconds and drop out with a relay click. Rallied crew trip them too.
+// Robots never do: they do not need lights, and HELPFUL will tell you so. Zones still exist for blackouts and power sags.
+const FIX_AY = [3, 7, 11, 15, 19, 23];
+function fixInit() {
+  G.fix = []; G.tinkT = 0;
+  for (let ai = 0; ai < 6; ai++) for (let xi = 0; xi < 8; xi++) {
+    const tx = 11 + 4 * xi, ty = FIX_AY[ai];
+    G.fix.push({ ai, xi, x: tx * T + 28, y: ty * T + 12, lv: 0, tg: 0, wait: -1, hold: 0, st: 0, flash: 0,
+      z: G.zones.find(z => tx >= z.x0 && tx <= z.x1 && ty >= z.y0 && ty <= z.y1) || null });
   }
+}
+function lightPeople() { // who the motion sensors can see
+  if (STATE === 'title') return DEMO.actors;
+  const L = [];
+  if (!(P.still > 9) && G.escort <= 0) L.push(P);
+  for (const c of crew) if (c.st !== 'sit' && (c.rallied || G.night !== 2)) L.push(c);
+  return L;
+}
+function updateZones(dt) {
+  if (!G.fix) fixInit();
+  const n3 = G.night === 3 && !G.lightsBack;
+  for (const z of G.zones) {
+    if (z.blk > 0 && !G.lightsBack) { z.blk -= dt; if (z.blk <= 0) { z.flick = .5; SFX.lightOn(); } }
+    z.flick = Math.max(0, z.flick - dt);
+  }
+  G.tinkT = (G.tinkT || 0) - dt;
+  const ppl = lightPeople(), ready = STATE !== 'play' || G.intro > 2.4;
+  let firstOn = false;
+  for (const f of G.fix) {
+    const blk = f.z && f.z.blk > 0 && !G.lightsBack;
+    if (G.lightsBack) { f.hold = 99; if (!f.tg && f.wait < 0) f.wait = .1 + dist(f.x, f.y, P.x, P.y) / 420; }
+    else if (blk || n3 || !ready) { if (f.tg && blk) f.tg = 0; f.wait = -1; }
+    else {
+      let dmin = 1e9;
+      for (const e of ppl) { const dx = Math.abs(e.x - f.x), dy = Math.abs(e.y - (f.y + 10)); if (dx < 184 && dy < 110) { const d = dx + dy * 1.5; if (d < dmin) dmin = d; } }
+      if (dmin < 1e9) { f.hold = 7; if (!f.tg && f.wait < 0) f.wait = .03 + dmin / 640; }
+      else if (f.tg) { f.hold -= dt; if (f.hold <= 0) { f.tg = 0; f.wait = -1; if (onScreen(f.x, f.y) && G.tinkT <= 0) { G.tinkT = .12; SFX.tick(); } } }
+      else f.wait = -1;
+    }
+    if (f.wait >= 0) { f.wait -= dt; if (f.wait < 0) { f.tg = 1; f.st = .62; f.flash = .5; firstOn = true; if (onScreen(f.x, f.y) && G.tinkT <= 0) { G.tinkT = .07; SFX.tink(); } } }
+    f.st = Math.max(0, f.st - dt); f.flash = Math.max(0, f.flash - dt);
+    f.lv += (f.tg - f.lv) * Math.min(1, dt * (f.tg ? 8 : 1.25));
+  }
+  // zones mirror their fixtures for anything that still asks about a zone (audio, the blackout beat, a character's light)
+  for (const z of G.zones) { let m = 0; for (const f of G.fix) if (f.z === z && f.lv > m) m = f.lv; z.lv = m; z.tg = m > .5 ? 1 : 0; }
+  if (STATE !== 'play') return;
+  if (firstOn && G.badged !== false) once('zone1', () => say('HELPFUL', 'Motion-activated lighting has detected motion. Disappointing.'));
+  if (P.still > 9 && !n3 && G.fix.some(f => f.tg && Math.abs(P.x - f.x) < 184 && Math.abs(P.y - f.y - 10) < 110)) once('still', () => say('HELPFUL', 'The motion lights think you left. Wave your arms. (Robots do not need lights.)'));
 }
 
 // ---------- robots ----------
+// Cheap robots do not glide. They stop dead, twitch sideways, lurch forward, back up a step to "recalculate", then carry on.
+// They also never flip back and forth: facing only changes after they have really been heading the other way for a moment.
+const ROBOT_TIC = ['Recalculating.', 'Rerouting...', 'Obstacle: air.', 'Hm.', 'Calibrating swagger.', 'Lag.', 'Who moved the floor?'];
+function robotStep(r, spd, dt) {
+  r.twT = (r.twT === undefined ? rnd(.4, 2) : r.twT) - dt;
+  if (r.twT <= 0) {
+    const k = Math.random();
+    r.tw = k < .32 ? 'halt' : k < .56 ? 'burst' : k < .84 ? 'jig' : 'back';
+    r.twD = r.tw === 'halt' ? rnd(.14, .45) : r.tw === 'burst' ? rnd(.18, .34) : r.tw === 'jig' ? rnd(.22, .4) : rnd(.12, .2);
+    r.twT = rnd(.6, 1.9) + r.twD; r.twS = Math.random() < .5 ? -1 : 1;
+    if (r.tw === 'halt' && Math.random() < .1 && !r.bubble && onScreen(r.x, r.y)) bark(r, pick(ROBOT_TIC), 1.2);
+  }
+  r.twD = (r.twD || 0) - dt;
+  const cur = r.twD > 0 ? r.tw : null, fx0 = r.fx || 1;
+  if (cur === 'halt') { r.moving = false; r.jerk = .6; return !r.path || !r.path.length; }
+  let done;
+  if (cur === 'back' && r.path && r.path.length) {
+    const w = r.path[0], gx = w.length > 2 ? w[2] : w[0] * T + 16, gy = w.length > 2 ? w[3] : w[1] * T + 18, d = Math.max(1, dist(r.x, r.y, gx, gy));
+    tryMove(r, -(gx - r.x) / d * spd * .7 * dt, -(gy - r.y) / d * spd * .7 * dt, 8); r.moving = true; done = false;
+  } else {
+    done = followPath(r, spd * (cur === 'burst' ? 1.8 : 1) * (.85 + .3 * Math.abs(Math.sin(gT * 5.3 + (r.ph || 0)))), dt);
+    if (cur === 'jig' && r.path && r.path.length) { // a sidestep across the heading
+      const w = r.path[0], gx = w.length > 2 ? w[2] : w[0] * T + 16, gy = w.length > 2 ? w[3] : w[1] * T + 18, d = Math.max(1, dist(r.x, r.y, gx, gy));
+      const k2 = Math.sin(r.twD * 30) * 46 * r.twS * dt; tryMove(r, -(gy - r.y) / d * k2, (gx - r.x) / d * k2, 8);
+    }
+  }
+  // facing with hysteresis: no flip-flopping
+  const want = r.fx || 1; r.fx = fx0;
+  if (want !== fx0) { r.fxT = (r.fxT || 0) + dt; if (r.fxT > .3) { r.fx = want; r.fxT = 0; } } else r.fxT = 0;
+  return done;
+}
 const inNOC = (tx, ty) => tx >= 42 && ty <= 12;
 function updateRobots(dt) {
   dt *= wts();
@@ -2922,6 +3081,7 @@ function updateRobots(dt) {
     r.cd -= dt; r.moving = false; r.slipCD -= dt; r.bonkCD = (r.bonkCD || 0) - dt; r.nearCD = (r.nearCD || 0) - dt;
     if (r.bubble) { r.bubble.t -= dt; if (r.bubble.t <= 0) r.bubble = null; }
     if (G.final) continue;
+    if (typeof robotExtUpdate === 'function' && robotExtUpdate(r, dt)) continue; // unplugged, blindfolded, sulking, or following you around taking notes
     if (r.kx || r.ky) { tryMove(r, r.kx * dt, r.ky * dt, 8); const dk = Math.max(0, 1 - dt * 5.5); r.kx *= dk; r.ky *= dk; if (Math.abs(r.kx) + Math.abs(r.ky) < 6) r.kx = r.ky = 0; }
     if (r.spin > 0) { r.spin -= dt; continue; }
     if (r.buf > 0) { // "buffering": stops dead in the aisle, spinner and all
@@ -2983,12 +3143,12 @@ function updateRobots(dt) {
           } else { const t = randomHallTile(); r.path = findPath(rt[0], rt[1], t[0], t[1], inNOC); }
         }
       } else {
-        followPath(r, 52, dt);
+        robotStep(r, 58, dt);
         // (night 2 bumps are the director's now: see bumpSpot)
       }
     } else if (r.st === 'goto') {
       if (!G.faults.includes(r.target)) { r.st = 'wander'; r.target = null; r.path = null; r.rush = false; continue; }
-      if (followPath(r, r.rush ? 84 : 52, dt)) { r.st = 'analyze'; r.timer = 4; r.rush = false; r.warnNff = false; r.scanT = 0; bark(r, 'ANALYZING...', 4); }
+      if (robotStep(r, r.rush ? 88 : 58, dt)) { r.st = 'analyze'; r.timer = 4; r.rush = false; r.warnNff = false; r.scanT = 0; bark(r, 'ANALYZING...', 4); }
     } else if (r.st === 'analyze') {
       if (r.target && ((G.mini && G.mini.f === r.target) || crew.some(c => c.st === 'fix' && c.target === r.target))) { // somebody competent is on it: the robot hovers politely
         if (r.cd <= 0) { bark(r, pick(['Please stand back. I am analyzing.', 'I was here first.', 'I am almost done. Not doing anything.']), 1.8); r.cd = 4; }
@@ -3160,6 +3320,7 @@ function con(x, y, kind, ref, rad = 44) {
 }
 function getInteract() {
   if (G.mini || G.escort > 0 || G.final) return null;
+  if (typeof extInteractPre === 'function') { const ex = extInteractPre(); if (ex !== undefined) return ex; } // lobby, badge, mantrap
   if (G.mtargets) { let mb = null, md = 1e9; for (const t of G.mtargets) { const d = dist(P.x, P.y, t.x, t.y); if (d < (t.r || 46) && d < md) { md = d; mb = t; } } if (mb) return { kind: 'mission', t: mb, label: mb.label, btn: mb.btn || 'DO IT' }; }
   const prev = G.hover; _pr = prev ? (prev.f || prev.c || prev.o || prev.kind) : null; _bd = 44; _bk = null; _br = null;
   if (G.night < 3) for (const f of G.faults) {
@@ -3177,21 +3338,24 @@ function getInteract() {
   con(6 * T, 7 * T + 10, 'bowl', 'bowl', 30);
   for (const o of G.objs) if (!o.done) con(o.x, o.y, 'obj', o, 46);
   if (G.night === 3 && G.objs.every(o => o.done)) con(44 * T + 16, 4 * T + 18, 'final', 'final', 46);
+  if (typeof extInteractCon === 'function') extInteractCon(); // robots to be mean to, the visitor log, lifts, carts, laptops
   switch (_bk) {
     case 'fault': {
+      if (_br.heavy && typeof heavyInteract === 'function') return heavyInteract(_br); // a lift job: the next step, not the usual fix
       const f = _br, ft = FT[f.type]; let label = `${ft.verb} ${ft.label} · ${f.rack.name}`, btn = 'FIX';
       if (f.type === 'TRAY' && P.carry !== 'tray' && !f.halluc) { label = P.carry === 'chainsaw' ? 'Install... a chainsaw? · ' + f.rack.name : 'Needs a compute tray (Parts Cage)'; btn = 'LOOK'; }
       return { kind: 'fault', f, label, btn };
     }
     case 'rally': return { kind: 'rally', c: _br, label: `Rally ${_br.name} (${_br.role})`, btn: 'RALLY' };
     case 'gloria': return { kind: 'gloria', label: 'Talk to Gloria (Security)', btn: 'TALK' };
-    case 'kiosk': return { kind: 'kiosk', label: P.carry === 'chainsaw' ? 'Return chainsaw + reorder' : P.carry === 'tray' ? 'ePARTS kiosk (you have a tray)' : 'Order part at ePARTS kiosk', btn: 'ORDER' };
+    case 'kiosk': return { kind: 'kiosk', label: P.carry === 'chainsaw' ? 'Return chainsaw + reorder' : P.carry === 'tray' ? 'PARTSBOT kiosk (you have a tray)' : 'Order part at PARTSBOT kiosk', btn: 'ORDER' };
     case 'vend': return { kind: 'vend', label: 'Vending machine', btn: 'LOOK' };
     case 'coffee': return { kind: 'coffee', label: G.coffeeCD > 0 ? 'Coffee (pot is brewing)' : 'Coffee', btn: 'DRINK' };
     case 'board': return { kind: 'board', label: 'Read the board: Stories from the floor', btn: 'READ' };
     case 'bowl': return { kind: 'bowl', label: 'Jolly Rancher bowl', btn: 'LOOK' };
     case 'obj': return { kind: 'obj', o: _br, label: objLabel(_br), btn: 'DO IT' };
     case 'final': return { kind: 'final', label: 'INVOKE STOP WORK AUTHORITY', btn: 'HOLD' };
+    default: if (_bk && typeof extInteractMake === 'function') { const o = extInteractMake(_bk, _br); if (o) return o; }
   }
   if (P.carry === 'chainsaw') return { kind: 'rev', label: 'Rev the chainsaw', btn: 'REV' };
   return null;
@@ -3245,6 +3409,7 @@ function doInteract(it) {
     case 'final': startFinal(); return;
     case 'rev': revSaw(); return;
     case 'mission': it.t.fn(); return;
+    default: if (typeof extDo === 'function') extDo(it);
   }
 }
 function resolveHalluc(f) {
@@ -3255,17 +3420,17 @@ function resolveHalluc(f) {
 }
 function kiosk() {
   SFX.blip(); fxRing(2 * T + 16, 12 * T + 6, '#ffc21a', 10, 70, .4, 2); for (let k = 0; k < 5; k++) pp(2 * T + 16 + rnd(-8, 8), 12 * T + 10, rnd(-30, 30), rnd(-70, -20), 200, .5, '#f2f5fa', 2, 13 * T);
-  if (P.carry === 'tray') { say('ePARTS', "You're already holding a tray. Go install it."); return; }
-  if (P.carry === 'chainsaw') { say('ePARTS', 'Chainsaw returned. Restocking fee: your dignity. Reordering...'); P.carry = null; }
+  if (P.carry === 'tray') { say('PARTSBOT', "You're already holding a tray. Go install it."); return; }
+  if (P.carry === 'chainsaw') { say('PARTSBOT', 'Chainsaw returned. Restocking fee: your dignity. Reordering...'); P.carry = null; }
   const forced = G.night === 3 || !G.once.firstOrder;
   G.once.firstOrder = 1;
   if (forced || Math.random() < .3) {
     P.carry = 'chainsaw'; G.stats.chainsaws++; SFX.saw();
-    if (G.night === 3) { say('ePARTS', 'All part numbers now resolve to: CHAINSAW. HELPFUL thinks it is being funny.'); once('k3', () => say('GLORIA', "Robots don't know chainsaws aren't approved tools, hon. Just saying.", { important: true })); }
-    else say('ePARTS', `P/N 699-2G548-0200-??? not found. Closest match: CHAINSAW, 20" BAR, GAS-POWERED. Qty 1. Dispensed. (Chainsaws tonight: ${G.stats.chainsaws})`, { important: true, vo: 'k1' }); G.shake = 2;
+    if (G.night === 3) { say('PARTSBOT', 'All part numbers now resolve to: CHAINSAW. HELPFUL thinks it is being funny.'); once('k3', () => say('GLORIA', "Robots don't know chainsaws aren't approved tools, hon. Just saying.", { important: true })); }
+    else say('PARTSBOT', `P/N 000-TRAY-0000-??? not found. Closest match: CHAINSAW, 20" BAR, GAS-POWERED. Qty 1. Dispensed. (Chainsaws tonight: ${G.stats.chainsaws})`, { important: true, vo: 'k1' }); G.shake = 2;
     if (!G.once.sawh) { G.once.sawh = 1; setTimeout(() => say('HELPFUL', 'That looks correct to me.', { vo: 'k2' }), 400); }
   } else {
-    P.carry = 'tray'; SFX.clunk(); floater(P.x, P.y - 58, 'TRAY IN HAND', '#9fe3ff', 1.5, 13); hitstop(.04, .08); say('ePARTS', 'COMPUTE TRAY, 1 EA. Dispensed. A miracle has occurred.');
+    P.carry = 'tray'; SFX.clunk(); floater(P.x, P.y - 58, 'TRAY IN HAND', '#9fe3ff', 1.5, 13); hitstop(.04, .08); say('PARTSBOT', 'COMPUTE TRAY, 1 EA. Dispensed. A miracle has occurred.');
   }
 }
 function revSaw() {
@@ -3285,7 +3450,7 @@ function startMini(game, f, obj) {
   const ft = f ? FT[f.type] : null;
   const where = f ? f.rack.name : '';
   const m = { game, f, obj, t: 0, done: false, doneT: 0, msg: '', msgT: 0, armed: false, title: '', hint: '', q: { perf: 0, miss: 0 }, lock: 0, grade: '' };
-  if (game === 'timing') { m.pos = 0; m.dir = 1; m.speed = obj ? 1.1 : .9; m.zw = obj ? .13 : .17; m.za = rnd(.15, .8); m.hits = 0; m.need = obj ? 3 : 2; m.title = obj ? 'PULL HELPFUL\'S UPLINK' : 'RESEAT NVLINK CABLE · ' + where; m.hint = 'Hit it in the green zone'; m.sub = obj ? 'Tink: "Gently. Mind the bend radius. We\'re not animals."' : 'Both ends. Listen for the click.'; }
+  if (game === 'timing') { m.pos = 0; m.dir = 1; m.speed = obj ? 1.1 : .9; m.zw = obj ? .13 : .17; m.za = rnd(.15, .8); m.hits = 0; m.need = obj ? 3 : 2; m.title = obj ? 'PULL HELPFUL\'S UPLINK' : 'RESEAT FABRIC CABLE · ' + where; m.hint = 'Hit it in the green zone'; m.sub = obj ? 'Tink: "Gently. Mind the bend radius. We\'re not animals."' : 'Both ends. Listen for the click.'; }
   if (game === 'loto') lotoInit(m, f, obj);
   if (game === 'torque') { m.v = 0; m.band = [.62, .8]; m.rate = .55; m.title = obj ? "VALVE OFF HELPFUL'S COOLANT" : 'TORQUE QUICK DISCONNECT · ' + where; m.hint = 'Hold, release in the band'; m.sub = obj ? 'Dee: "Slow. Water hammer is real."' : 'Torque to spec. Not "tight". Spec.'; m.strip = 'STRIPPED IT. Start over.'; }
   if (game === 'slide') slideInit(m);
@@ -3297,7 +3462,7 @@ function startMini(game, f, obj) {
   const cold = !!(f && f.down), hard = G.night >= 2, c = f && G.night >= 2 ? crew.find(k => k.rallied && k.trade === f.type && dist(k.x, k.y, f.rack.x * T + 16, (f.rack.y + 1) * T) < 175) : null;
   if (c) { m.assist = c.name; bark(c, pick(['Wait for it...', 'Nice and easy.', 'Right there. Right there.']), 1.6); floater(P.x, P.y - 62, c.id.toUpperCase() + ' ASSISTS', SPK[c.name] || '#ffc21a', 1.6, 12); }
   if (f && f.v) { // the harder cousin
-    if (f.type === 'CABLE' && m.game === 'timing') { m.need = 3; m.speed *= 1.08; m.title = 'RESEAT NVLINK TRUNK · ' + where; m.sub = 'Three ends. One bad day.'; }
+    if (f.type === 'CABLE' && m.game === 'timing') { m.need = 3; m.speed *= 1.08; m.title = 'RESEAT FABRIC TRUNK · ' + where; m.sub = 'Three ends. One bad day.'; }
     if (f.type === 'LEAK' && m.game === 'torque') { m.band = [m.band[0] + .03, m.band[1] - .01]; m.rate = .62; m.title = 'TORQUE MANIFOLD COUPLING · ' + where; m.sub = 'Wet threads. Slippery wrench. Spec is still spec.'; }
     if (f.type === 'HEAT' && m.game === 'mash') { m.vdec = .05; m.title = 'BLANK OFF A DENSE ROW SEGMENT · ' + where; m.sub = 'Every U is a gap. Tap faster.'; }
     if (f.type === 'WELD' && m.game === 'weld') { m.hv = 1; m.title = 'WELD OVERHEAD BRACKET · ' + where; m.sub = 'Arm up. Steady. Do not look at the sparks.'; }
@@ -3972,7 +4137,7 @@ const SUGG = [
   { t: 'Would you like me to summarize this outage into a 40-slide deck?', y: 'Sure', n: 'Please no',
     yes() { say('HELPFUL', 'Done. 39 slides say "synergy". Slide 40 is a chainsaw.'); }, no() { say('HELPFUL', 'Sending it to leadership anyway.'); } },
   { t: 'Recommended tool for your next repair: CHAINSAW. Add to cart?', y: 'Add to cart', n: 'Why',
-    yes() { G.stats.chainsaws++; if (!P.carry) P.carry = 'chainsaw'; SFX.saw(); say('ePARTS', 'CHAINSAW, 20" BAR, GAS. Qty 1. Delivered to: ' + (P.carry === 'chainsaw' ? 'your hands.' : 'your desk.')); },
+    yes() { G.stats.chainsaws++; if (!P.carry) P.carry = 'chainsaw'; SFX.saw(); say('PARTSBOT', 'CHAINSAW, 20" BAR, GAS. Qty 1. Delivered to: ' + (P.carry === 'chainsaw' ? 'your hands.' : 'your desk.')); },
     no() { G.stats.chainsaws++; say('HELPFUL', `Added to cart anyway. Chainsaws ordered tonight: ${G.stats.chainsaws}.`); } },
   { t: 'Have you tried turning the data center off and on again?', y: 'Do it', n: 'No',
     yes() { say('HELPFUL', "Initiating... kidding. Legal stopped me. They're still human. For now."); }, no() { say('HELPFUL', 'Coward.'); } },
@@ -5125,9 +5290,9 @@ function buildProps(list) {
     R(g, '#0b0d10', 3, 12, 10, 9); R(g, 'rgba(180,220,255,.25)', 4, 12.8, 3, 7.4); R(g, '#6a3d1e', 4.2, 16, 7.6, 4.4); R(g, '#8a5a30', 4.2, 16, 7.6, .8); R(g, '#c9d2df', 3, 21, 10, .9);
     R(g, '#e9eef5', 16.4, 18, 4.4, 6); R(g, '#d14a3a', 16.4, 18, 4.4, 1.2); R(g, '#e9eef5', 21.4, 19.2, 4, 4.8); R(g, '#2f7fd1', 21.4, 19.2, 4, 1.2); // mugs
   });
-  propSprite(list, 2 * T + 4, 12 * T - 2, 24, 54, (g, w, h) => { // ePARTS kiosk
+  propSprite(list, 2 * T + 4, 12 * T - 2, 24, 54, (g, w, h) => { // PARTSBOT kiosk
     R(g, '#0b0e13', 0, 0, w, h); R(g, '#323b4c', 0, 0, w, h - 3); R(g, '#4a566c', 0, 0, w, 1.4); R(g, 'rgba(255,255,255,.1)', 0, 0, .8, h);
-    R(g, '#ffc21a', 2, 2, w - 4, 4); txt(g, 'ePARTS', 4, 5.3, '700 4px ' + FONT_UI, '#111'); for (let i = 0; i < w - 4; i += 6) R(g, '#111', 2 + i, 5.4, 3, .6);
+    R(g, '#ffc21a', 2, 2, w - 4, 4); txt(g, 'PARTS', 4, 5.3, '700 4px ' + FONT_UI, '#111'); for (let i = 0; i < w - 4; i += 6) R(g, '#111', 2 + i, 5.4, 3, .6);
     R(g, '#04080e', 3, 8, w - 6, 21); R(g, '#566785', 2.4, 7.4, w - 4.8, .6); R(g, '#566785', 2.4, 29, w - 4.8, .6);
     for (let i = 0; i < 12; i++) R(g, '#222b3a', 4 + (i % 4) * 4.4, 33 + Math.floor(i / 4) * 3.6, 3.4, 2.6);
     R(g, '#0a0d12', 4, 45, w - 8, 6); R(g, '#1e2530', 4, 45, w - 8, 1); R(g, '#e8b923', 4, 44.4, w - 8, .6);
@@ -6728,7 +6893,19 @@ const ovC = [0, 1, 2, 3, 4].map(() => new Float32Array(OVN).fill(1)), ovTG = new
 const MV = []; // everyone who can stand under the overhead steel (reused every frame)
 const zlv = z => z.lv * z._f;
 function zoneAt(tx, ty) { for (const z of G.zones) if (tx >= z.x0 && tx <= z.x1 && ty >= z.y0 && ty <= z.y1) return z; return null; }
+// per-fixture light levels: a striking tube blinks (on, off, on, off, then ramps up), and a zone's flicker or blackout still rides on top
+function strikeK(st) { if (st <= 0) return 1; if (st > .54) return 1.15; if (st > .46) return .06; if (st > .39) return .85; if (st > .3) return .1; return 1 - st * 1.4; }
+function fixA(ai, xi) { const f = G.fix && G.fix[ai * 8 + xi]; if (!f || f.lv < .004) return 0; return f.lv * strikeK(f.st) * (f.z ? (f.z._f === undefined ? 1 : f.z._f) : 1); }
+function aisleLv(ai) { let m = 0; for (let xi = 0; xi < 8; xi++) m = Math.max(m, fixA(ai, xi)); return m; }
+function crossLv(ai) { return Math.max(fixA(ai, 3), fixA(ai, 4)); }
+function nearAisle(ty) { let k = 0, b = 99; for (let i = 0; i < 6; i++) { const d = Math.abs(ty - AISLES[i]); if (d < b) { b = d; k = i; } } return k; }
 function zoneLevelAt(tx, ty) {
+  if (G.fix && tx >= 10 && tx <= 40 && ty >= 1 && ty <= 25) { // in the hall: the nearest light bars decide, with a soft fall-off between aisles and between bars
+    let m = 0;
+    for (let ai = 0; ai < 6; ai++) { const dy = Math.abs(ty + .5 - AISLES[ai]); if (dy > 3.2) continue; const ky = 1 - Math.max(0, dy - 1.2) / 2;
+      for (let xi = 0; xi < 8; xi++) { const dx = Math.abs(tx + .5 - (11 + 4 * xi + .9)); if (dx > 4.5) continue; const v = fixA(ai, xi) * ky * (1 - Math.max(0, dx - 2.2) / 2.3); if (v > m) m = v; } }
+    return m;
+  }
   const z = zoneAt(tx, ty); if (z) return z.lv;
   const k = kind[I(clamp(tx, 0, MW - 1), clamp(ty, 0, MH - 1))];
   const n3 = G.night === 3 && !G.lightsBack;
@@ -6933,6 +7110,36 @@ function drawFocus(cx, cy) { // one stretched texture plus four flat rects at qu
   lctx.restore();
   lctx.globalAlpha = 1;
 }
+// ---------- the headlamp: a real cone of light that the racks cast shadows into ----------
+// 120 rays marched across the tile grid each frame. A ray stops at a wall, or a few pixels into a rack (further when it hits the face
+// you can see, so the front of the rack lights up). The fan is filled with a radial fall-off and punched out of the dark.
+const HL = { p: new Float32Array(260), n: 0, ox: 0, oy: 0, a: undefined };
+function lightHit(x, y) { const tx = Math.floor(x / T), ty = Math.floor(y / T); if (tx < 0 || ty < 0 || tx >= MW || ty >= MH) return 2; const i = I(tx, ty); return wall[i] && !doorAt[i] ? 2 : rackAt[i] >= 0 ? 1 : 0; }
+function headlamp(k) {
+  if (k <= .01) { HL.n = 0; return; }
+  const n3 = G.night === 3 && !G.lightsBack, Rr = n3 ? 340 : 280, half = n3 ? .66 : .58, ox = P.x, oy = P.y - 8;
+  const sp = Math.hypot(P.vx || 0, P.vy || 0);
+  let want = HL.a === undefined ? ((P.fx || 1) > 0 ? 0 : Math.PI) : HL.a;
+  if (sp > 25) want = Math.atan2(P.vy, P.vx); else if (G.mini && G.mini.f) { const r = G.mini.f.rack; want = Math.atan2((r.y + .5) * T - oy, r.x * T + 16 - ox); }
+  if (HL.a === undefined) HL.a = want; let d = want - HL.a; d = Math.atan2(Math.sin(d), Math.cos(d)); HL.a += d * .16;
+  // the floor is seen at an angle, so the beam is squashed vertically like every other pool of light; and in a lit aisle the lamp hardly matters
+  k *= 1 - .72 * clamp(zoneLevelAt(tileOf(P.x), tileOf(P.y)), 0, 1);
+  if (k <= .01) { HL.n = 0; return; }
+  const N = 120, a0 = HL.a - half, p = HL.p; let n = 0;
+  for (let i = 0; i <= N; i++) {
+    const a = a0 + 2 * half * i / N, dx = Math.cos(a), dy = Math.sin(a) * .6;
+    let r = 6;
+    for (; r < Rr; r += 6) { const h = lightHit(ox + dx * r, oy + dy * r); if (h) { r += h === 2 ? 3 : dy < -.25 ? 36 : 8; break; } }
+    p[n++] = ox + dx * r; p[n++] = oy + dy * r;
+  }
+  HL.n = n; HL.ox = ox; HL.oy = oy;
+  const fill = (from, to, a) => { const g = lctx.createRadialGradient(ox, oy, 8, ox, oy, Rr); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.5, 'rgba(255,255,255,.62)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    lctx.globalAlpha = a; lctx.fillStyle = g; lctx.beginPath(); lctx.moveTo(ox, oy); for (let i = from; i < to; i += 2) lctx.lineTo(p[i], p[i + 1]); lctx.closePath(); lctx.fill(); };
+  fill(0, n, .26 * k);                                   // soft edges: three nested fans
+  let cut = Math.round(N * .14) * 2; fill(cut, n - cut, .3 * k);
+  cut = Math.round(N * .28) * 2; fill(cut, n - cut, .42 * k);
+  lctx.globalAlpha = 1;
+}
 function drawLighting(cx, cy, tx0, tx1, ty0, ty1) {
   updateFocus();
   const lw = lightC.width, lh = lightC.height;
@@ -6964,15 +7171,15 @@ function drawLighting(cx, cy, tx0, tx1, ty0, ty1) {
     const ay = AISLES[ai];
     if (ay < ty0 - 5 || ay > ty1 + 5) continue;
     for (let x = 11, xi = 0; x <= 39; x += 4, xi++) {
-      const z = zoneAt(x, ay); if (!z || zlv(z) < .02) continue;
-      const a = zlv(z) * (.3 + .7 * fixLevel(ai, xi)) * AFA[ai];
+      const fa = fixA(ai, xi); if (fa < .02) continue;
+      const a = fa * (.3 + .7 * fixLevel(ai, xi)) * AFA[ai];
       if (a > .003 && x * T + 28 + FXT_OX > cx && x * T + 28 - FXT_OX < cx + VW) { lctx.globalAlpha = clamp(a, 0, 1); lctx.drawImage(FT.hole, x * T + 28 - FXT_OX, ay * T - FXT_OY, FXT_W, FXT_H); }
       if (ai === 0 || ai === 5) E(x * T + 28, SEY[ai] - 14, 104, 40, a * .46); // the two deep aisles get a fill pool along their far edge
     }
-    const zl = zoneAt(23, ay), zr = zoneAt(27, ay), ca = Math.max(zl ? zlv(zl) : 0, zr ? zlv(zr) : 0);
+    const ca = crossLv(ai);
     if (ca > .02) E(25.5 * T, ay * T + 8, 84, 58, ca * .6);
   }
-  for (const ry of ROWS) { const zl = zoneAt(23, ry), zr = zoneAt(27, ry), ca = Math.max(zl ? zlv(zl) : 0, zr ? zlv(zr) : 0); if (ca > .02) E(25.5 * T, ry * T + 12, 74, 52, ca * .46); }
+  for (let ri_ = 0; ri_ < ROWS.length; ri_++) { const ry = ROWS[ri_], ca = Math.max(crossLv(ri_), crossLv(ri_ + 1)); if (ca > .02) E(25.5 * T, ry * T + 12, 74, 52, ca * .46); }
   lctx.restore();
   // landmark practical lights: each one is findable in the dark on its own battery
   for (const e of LMS) {
@@ -6997,13 +7204,11 @@ function drawLighting(cx, cy, tx0, tx1, ty0, ty1) {
   }
   // headlamp
   const intro = STATE === 'title' ? 0 : clamp(G.intro / 1.5, 0, 1);
-  if (STATE !== 'title') {
-    L(P.x, P.y - 14, 74, .88 * intro);
-    L(P.x + (P.fx || 1) * 46, P.y - 6 + (P.fy || 0) * 30, 124, .78 * intro);
-  }
+  if (STATE !== 'title') { L(P.x, P.y - 14, 66, .84 * intro); headlamp(intro); }
   for (const c of crew) if (c.st !== 'sit') L(c.x, c.y - 14, 60, .55);
   L(gloria.x, gloria.y - 10, 60, .45);
   for (const r of robots) if (!r.off) L(r.x, r.y - 30, 24, .38);
+  if (typeof EXT_LIGHT === 'function') EXT_LIGHT(L, E);
   // things you need to see are never left in the dark
   for (const f of G.faults) L(f.rack.x * T + 16, (f.rack.y + 1) * T - 20, 66, .34 + .2 * Math.sin(gT * 8));
   for (const o of G.objs) if (!o.done) L(o.x, o.y - 10, 54, .38 + .15 * Math.sin(gT * 5));
@@ -7022,13 +7227,12 @@ function drawLighting(cx, cy, tx0, tx1, ty0, ty1) {
     if (ay < ty0 - 5 || ay > ty1 + 5) continue;
     const hot = !(ai & 1);
     for (let x = 11, xi = 0; x <= 39; x += 4, xi++) {
-      const z = zoneAt(x, ay); if (!z) continue;
-      const lv = zlv(z) * (.35 + .65 * fixLevel(ai, xi)) * ledA * AFA[ai]; if (lv < .02) continue;
+      const lv = fixA(ai, xi) * (.35 + .65 * fixLevel(ai, xi)) * ledA * AFA[ai]; if (lv < .02) continue;
       if (x * T + 28 + FXT_OX < cx || x * T + 28 - FXT_OX > cx + VW) continue;
       lctx.globalAlpha = clamp(lv * nl, 0, 1); lctx.drawImage(hot ? FT.hot : FT.cold, x * T + 28 - FXT_OX, ay * T - FXT_OY, FXT_W, FXT_H); // floor pool 264 px across, a splash up the rack face above it, a white core under the tube
     }
     // heat shimmer over the hot floors, a slow cool draught over the cold ones: bands of light that drift and breathe
-    const zl = zoneAt(14, ay), zr = zoneAt(36, ay), lvz = .08 + .92 * Math.max(zl ? zlv(zl) : 0, zr ? zlv(zr) : 0);
+    const lvz = .08 + .92 * aisleLv(ai);
     for (let k = 0; k < 3; k++) {
       const sp = (hot ? 11 : 6) + k * 3, span = 27 * T, sx = 12 * T + ((((gT * sp * (k & 1 ? -1 : 1) + k * 331 + ay * 57) % span) + span) % span);
       const sy = ay * T + (hot ? 14 : 12) + Math.sin(gT * (hot ? .9 : .5) + k * 2.3 + ay) * (hot ? 10 : 6), br = .5 + .5 * Math.sin(gT * (hot ? 1.5 : .8) + k * 1.9 + ay * .3);
@@ -7036,9 +7240,12 @@ function drawLighting(cx, cy, tx0, tx1, ty0, ty1) {
     }
   }
   { // the cross aisle: a long soft green-white strip, brighter where the aisle lights are on
-    for (let y = 2; y < 26; y += 4) { const z = zoneAt(23, y) || zoneAt(27, y); const lv = z ? zlv(z) : 0; if (lv > .02) CL(HUE_CROSS, 25.5 * T, y * T + 14, 74, 74, lv * .12 * ledA * nl); }
+    for (let y = 2; y < 26; y += 4) { const lv = crossLv(nearAisle(y)); if (lv > .02) CL(HUE_CROSS, 25.5 * T, y * T + 14, 74, 74, lv * .12 * ledA * nl); }
   }
   lctx.restore();
+  if (STATE !== 'title' && HL.n) { // the headlamp beam is a little warm
+    lctx.globalAlpha = .07 * clamp(G.intro / 1.5, 0, 1) * (n3 ? 1.6 : 1); lctx.fillStyle = '#ffe2b0'; lctx.beginPath(); lctx.moveTo(HL.ox, HL.oy); for (let i = 0; i < HL.n; i += 2) lctx.lineTo(HL.p[i], HL.p[i + 1]); lctx.closePath(); lctx.fill(); lctx.globalAlpha = 1;
+  }
   // each room: one big lamp pool in its own hue
   const bf = .94 + .06 * Math.sin(gT * 1.3), lampF = Math.sin(gT * 41) * Math.sin(gT * 13.7) > .85 ? .84 : 1;
   clipRoom(0, () => { CL('#ffa850', 170, 120, 200, 170, .24 * bf * ledA * nl); CL('#ffd8a0', 172, 84, 70, 54, .2 * bf * ledA * nl); if (G.alarm) { const s_ = G.alarm.t % 1 < .5; CL('#ff3b30', 160, 120, 220, 190, s_ ? .42 : .1); } }); // break room: floor lamp and tungsten wash
@@ -7060,6 +7267,23 @@ const LEDQ = [{}, {}, {}, {}, {}], LEDK = [[], [], [], [], []]; // rack LED rect
 function ledPush(row, c, x, y) { let q = LEDQ[row][c]; if (!q) { q = LEDQ[row][c] = []; LEDK[row].push(c); } q.push(x, y); }
 const RIMQ = [[], [], [], [], []]; // lid highlights per row
 const NOC_LINES = [[10, 4, 14, 8, 2, 12], [8, 15, 4, 11, 6, 9], [13, 6, 9, 3, 12, 5]];
+const SHAFT = {};
+function shaftSprite(hot) { // a soft trapezoid of light, narrow at the tube, wide on the floor, fading as it falls
+  const k = hot ? 'h' : 'c'; if (SHAFT[k]) return SHAFT[k];
+  const w = 76, h = 64, c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+  const col = hot ? [255, 214, 160] : [190, 228, 255];
+  for (let j = 0; j < h; j++) { const v = j / h, half = 6 + v * 32, a = .55 * Math.pow(1 - v, 1.35) + .06;
+    for (let i = 0; i < w; i++) { const u = Math.abs(i + .5 - w / 2) / half; if (u >= 1) continue; const e = (1 - u * u) * a; g.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${e.toFixed(3)})`; g.fillRect(i, j, 1, 1); } }
+  return SHAFT[k] = c;
+}
+let SCAN = null;
+function scanSprite() { // a red search beam, pointing right from its apex
+  if (SCAN) return SCAN;
+  const w = 96, h = 40, c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+  for (let i = 0; i < w; i++) { const u = i / w, half = 2 + u * 18, a = .8 * (1 - u) * Math.min(1, u * 8);
+    for (let j = 0; j < h; j++) { const v = Math.abs(j + .5 - h / 2) / half; if (v >= 1) continue; g.fillStyle = `rgba(255,${Math.round(40 + 30 * (1 - v))},40,${(a * (1 - v * v)).toFixed(3)})`; g.fillRect(i, j, 1, 1); } }
+  return SCAN = c;
+}
 function drawGlows(tx0, tx1, ty0, ty1) {
   ctx.globalCompositeOperation = 'lighter';
   const ledA = STATE === 'title' ? 1 : (G.night <= 1 ? clamp(G.intro / 2.2, 0, 1) : 1);
@@ -7070,11 +7294,21 @@ function drawGlows(tx0, tx1, ty0, ty1) {
     const ay = AISLES[ai];
     if (ay * T < vy0 - 120 || ay * T > vy1 + 160) continue;
     for (let x = 11, xi = 0; x <= 39; x += 4, xi++) {
-      const z = zoneAt(x, ay), fl = fixLevel(ai, xi), lv = (z ? zlv(z) : 0) * fl, fx = x * T, fy = ay * T + 16 - FIXY;
+      const fl = fixLevel(ai, xi), lv = fixA(ai, xi) * fl, fx = x * T, fy = ay * T + 16 - FIXY;
       if (lv < .04) { if (n3) { ctx.globalAlpha = .25 + .2 * Math.sin(gT * 3 + x); ctx.fillStyle = '#ff3b30'; ctx.fillRect(fx + 22, fy + 9, 12, 3.4); } continue; }
       if (fl < .5) continue;
+      const fo = G.fix[ai * 8 + xi], hot = !(ai & 1), floorY = ay * T + 18;
       ctx.globalAlpha = (.38 + .3 * lv) * AFA[ai]; ctx.fillStyle = '#dbeaff'; ctx.fillRect(fx + 4, fy + 9.2, 48, 2.4);
       ctx.globalAlpha = lv * .42 * AFA[ai]; ctx.drawImage(glow('#cfe3ff'), fx - 6, fy - 2, 68, 24);
+      // a shaft of light from the tube to the floor, dust turning in it, and a gleam where it lands on the tile
+      ctx.globalAlpha = lv * .5 * AFA[ai] * (n3 ? .5 : 1); ctx.drawImage(shaftSprite(hot), fx + 28 - 76, fy + 11, 152, floorY - fy - 4);
+      ctx.globalAlpha = lv * .2 * AFA[ai]; ctx.drawImage(glow(hot ? '#ffd9a8' : '#cfeaff'), fx + 28 - 62, floorY - 9, 124, 20);
+      ctx.fillStyle = hot ? '#ffe6c4' : '#e4f4ff';
+      for (let k = 0; k < 5; k++) { const sd = ai * 37 + xi * 11 + k * 7.3, u = ((gT * (.05 + k * .012) + sd * .137) % 1), my = fy + 16 + u * (floorY - fy - 20), mx = fx + 28 + Math.sin(gT * .6 + sd) * (14 + u * 40);
+        ctx.globalAlpha = lv * .5 * Math.sin(u * Math.PI) * AFA[ai]; ctx.fillRect(mx, my, 1.3, 1.3); }
+      if (fo && fo.flash > 0) { const u = 1 - fo.flash / .5; // the strike: a hard white flare on the tube and a ring of light dropping onto the floor
+        ctx.globalAlpha = (1 - u) * .9; ctx.drawImage(glow('#ffffff'), fx - 20, fy - 14, 96, 50);
+        ctx.globalAlpha = (1 - u) * .35; ctx.drawImage(glow(hot ? '#ffcf94' : '#bfe6ff'), fx + 28 - 70 - u * 50, floorY - 16 - u * 8, 140 + u * 100, 32 + u * 16); }
     }
   }
   // rack LEDs
@@ -7082,7 +7316,7 @@ function drawGlows(tx0, tx1, ty0, ty1) {
     if (r.x < tx0 - 1 || r.x > tx1 + 1 || r.y < ty0 - 1 || r.y > ty1 + 2) continue;
     const x = r.x * T, top = (r.y + 1) * T - 2 - 56;
     const bad = r.state !== 'ok', down = r.state === 'down', lp = r.lp, leds = r.leds, n = leds.length;
-    if (!lp) continue;
+    if (!lp || r.pwrOff) continue; // a locked-out rack is dark
     RIMQ[r.row].push(x, top);
     for (let k = 0; k < lp.length; k++) {
       const p = lp[k], l = leds[k % n];
@@ -7117,6 +7351,13 @@ function drawGlows(tx0, tx1, ty0, ty1) {
   drawEmitProps(ledA, n3);
   drawLandmarkGlows(ledA, n3);
   drawSetPieceGlows(ledA, n3);
+  if (n3 && STATE === 'play') for (const r of robots) {
+    if (r.off || r.stun > 0) continue;
+    const chase = r.st === 'chase', want = chase ? Math.atan2(P.y - r.y + 10, P.x - r.x) : ((r.fx || 1) > 0 ? 0 : Math.PI) + Math.sin(gT * 1.1 + (r.ph || 0) * 3) * .75;
+    if (r.scanA === undefined) r.scanA = want; let d = want - r.scanA; d = Math.atan2(Math.sin(d), Math.cos(d)); r.scanA += d * (chase ? .2 : .06);
+    if (r.x < cam.x - 220 || r.x > cam.x + VW + 220 || r.y < cam.y - 220 || r.y > cam.y + VH + 220) continue;
+    ctx.save(); ctx.translate(r.x, r.y - 22); ctx.rotate(r.scanA); ctx.globalAlpha = chase ? .34 : .2; ctx.drawImage(scanSprite(), 0, -40, 190, 80); ctx.restore();
+  }
   if (P.carry === 'chainsaw' && P.sawCD > .5) { ctx.globalAlpha = .5; ctx.drawImage(glow('#ff9a3d'), P.x - 40, P.y - 60, 80, 80); }
   ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
 }
@@ -7325,11 +7566,12 @@ function render() {
   dyn(cx + 10, 31.5, drawTopWallDecor);
   dyn(1 * T + 30, 2 * T - 1, drawMicrowave);
   dyn(47 * T - 20, 22 * T, drawDockSeam);
-  for (const d of doors) if (d.locked) dyn(d.x * T, (d.y + 1) * T - 3, () => drawLockedDoor(d));
+  for (const d of doors) if (d.locked && d.name !== 'man' && d.name !== 'sec') dyn(d.x * T, (d.y + 1) * T - 3, () => drawLockedDoor(d));
   dyn(P.x, P.y, () => drawPerson(P, PLAYER_LOOK));
   dyn(gloria.x, gloria.y, () => drawPerson(gloria, GLORIA_LOOK));
   for (const c of crew) dyn(c.x, c.y, () => drawPerson(c, c));
   for (const r of robots) dyn(r.x, r.y, () => drawRobot(r));
+  if (typeof EXT_DYN === 'function') EXT_DYN(dyn);
   DYN.sort((a, b) => a.y - b.y);
   const yEnd = cy + VH + 80;
   let lo = 0, hi = WS.length; while (lo < hi) { const mid = (lo + hi) >> 1; if (WS[mid].y < cy - 6) lo = mid + 1; else hi = mid; }
@@ -7348,6 +7590,7 @@ function render() {
   ctx.save(); ctx.translate(-cx, -cy);
   drawGlows(tx0, tx1, ty0, ty1);
   drawWorldUI();
+  if (typeof EXT_UI === 'function') EXT_UI();
   ctx.restore();
   if (G.alarm) { const a = (G.alarm.t % 1) < .09 ? .45 : 0; ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillRect(0, 0, VW, VH); ctx.fillStyle = `rgba(255,40,30,${.06 + .05 * Math.sin(G.alarm.t * 6)})`; ctx.fillRect(0, 0, VW, VH); }
   if (G.flash > 0) { ctx.fillStyle = `rgba(255,40,30,${G.flash * .5})`; ctx.fillRect(0, 0, VW, VH); }
@@ -9236,14 +9479,14 @@ function drawRobot(r) {
 function drawRobotsLate() {
   if (!ROBOT_LATE.length) return;
   ROBOT_LATE.sort((a, b) => a.y - b.y);
-  for (const r of ROBOT_LATE) classicRobot(r, robotLight(r));
+  for (const r of ROBOT_LATE) { if (r.drawLate) r.drawLate(robotLight(r)); else classicRobot(r, robotLight(r)); } // hall props (the server lift, carts, crash carts) ride along: drawn over the steel, shaded like the robots
   ctx.globalCompositeOperation = 'lighter'; robotGlows(); ctx.globalCompositeOperation = 'source-over';
   ROBOT_LATE.length = 0;
 }
 function classicRobot(r, b) {
   const X = Math.round(r.x), Y = Math.round(r.y), bob = r.moving ? Math.sin(gT * 14 + (r.ph || 0)) * .8 : 0, C = h => rcol(h, b);
   ctx.save(); ctx.translate(X, Y); ctx.scale(ROBOT_K, ROBOT_K);
-  if (r.spin > 0) { ctx.translate(0, -14); ctx.rotate(r.spin * 9); ctx.translate(0, 14); }
+  if (r.spin > 0) { const u = Math.min(1, r.spin); ctx.translate(Math.sin(r.spin * 47) * 2.2 * u, 0); ctx.rotate(Math.sin(r.spin * 21) * .2 * u); } // a skid and a wobble, never a full flip
   ctx.fillStyle = C('#1d2129'); rrect(-10, -7, 20, 7, 3); ctx.fill();
   ctx.fillStyle = C('#0c0e12'); ctx.beginPath(); ctx.arc(-6, -2, 2.6, 0, 7); ctx.arc(6, -2, 2.6, 0, 7); ctx.fill();
   const by = -26 + bob;
@@ -9257,9 +9500,10 @@ function classicRobot(r, b) {
   ctx.fillStyle = '#081018'; ctx.fillRect(-7, by - 11, 14, 9);
   classicFace(r, 0, by);
   ctx.strokeStyle = C('#8a94a3'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, by - 13); ctx.lineTo(0, by - 19); ctx.stroke();
-  if (r.hat) { ctx.fillStyle = C(r.hat.length === 7 ? r.hat : '#ffc21a'); ctx.beginPath(); ctx.arc(0, by - 13, 7, Math.PI, 0); ctx.fill(); ctx.fillRect(-9, by - 13.5, 18, 2); ctx.fillStyle = 'rgba(255,255,255,' + (.35 * b).toFixed(2) + ')'; ctx.fillRect(-3, by - 18, 4, 1.4); }
+  if (r.hat && !r.cone) { ctx.fillStyle = C(r.hat.length === 7 ? r.hat : '#ffc21a'); ctx.beginPath(); ctx.arc(0, by - 13, 7, Math.PI, 0); ctx.fill(); ctx.fillRect(-9, by - 13.5, 18, 2); ctx.fillStyle = 'rgba(255,255,255,' + (.35 * b).toFixed(2) + ')'; ctx.fillRect(-3, by - 18, 4, 1.4); }
   ctx.strokeStyle = C('#8a94a3'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, by - 19); ctx.lineTo(0, by - 23); ctx.stroke();
   ctx.fillStyle = (Math.floor(gT * 2 + (r.ph || 0)) % 2) && !r.off ? '#ff3b30' : '#4a1512'; ctx.beginPath(); ctx.arc(0, by - 24, 1.6, 0, 7); ctx.fill();
+  if (typeof robotExtras === 'function') robotExtras(r, by, C);
   ctx.restore();
 }
 function classicFace(r, x, by) {
@@ -9962,7 +10206,7 @@ function hxStatusPanel() {
       const lx = x + 65, ht = hxFaultTag(f);
       let lw = narrow ? W - 65 - 8 : W - 65 - 58, cw = 0, ct = '';
       if (ht) { ct = ht.t === 'ROLLBACK' ? 'RLBK' : ht.t === 'ALL HANDS' ? 'ALL HANDS' : ht.t; ctx.font = HXF.ui(10, 700); cw = Math.ceil(ctx.measureText(ct).width) + 8; lw = W - 65 - 8 - cw - 6; ctx.font = HXF.ui(12, 600); }
-      ctx.fillText(hxFit(ft.label, lw), lx, ry + 14);
+      ctx.fillText(hxFit(f.heavy ? (f.step >= 5 ? 'CLOSE THE TICKET (LAPTOP)' : 'SERVER DEAD · LIFT JOB') : ft.label, lw), lx, ry + 14);
       if (ht) {
         const hot = f.vip && !f.down && f.max - f.t <= 10 && Math.floor(gT * 4) % 2;
         ctx.fillStyle = hot ? '#7a1240' : 'rgba(7,10,15,.9)'; ctx.fillRect(x + W - 8 - cw, ry + 4, cw, 13); ctx.fillStyle = ht.col; ctx.fillRect(x + W - 8 - cw, ry + 4, cw, 1.5);
@@ -9991,7 +10235,7 @@ function hxStatusPanel() {
 function hxMissionPanel(x, y) {
   const M = G.m; if (!M) return;
   const narrow = HX.W < 520, W = narrow ? 226 : 300, tw = W - 44;
-  ctx.font = HXF.ui(14, 700); const lines = wrap(M.obj || '', tw);
+  ctx.font = HXF.ui(14, 700); const lg = !G.badged && typeof lobbyGoal === 'function' ? lobbyGoal() : null; const lines = wrap((lg ? lg.m : M.obj) || '', tw);
   const log = M.log.length, showFlood = G.flood && !G.flood.fixed, showEvac = M.step === 8;
   const objH = 14 + lines.length * 17, h = 50 + log * 16 + objH + 10 + (showEvac ? 30 : 0) + (showFlood ? 26 : 0);
   HX.stkR = x + W; HX.stkB = y + h;
@@ -10604,7 +10848,7 @@ function hxLoto(m, sx, sy, sw, sh) {
   hxStepChips(m, sx + 8, sy + sh - chH - 6, sw - 16, chH, pulse);
 }
 
-// ---------- NVLink SEAT: plugs travelling into ports; the port LEDs flip on the click ----------
+// ---------- Fabric cable SEAT: plugs travelling into ports; the port LEDs flip on the click ----------
 function hxSeat(m, sx, sy, sw, sh) {
   const n = m.need, pulse = .5 + .5 * Math.sin(gT * 10), obj = !!m.obj;
   const top = 31, [ax, ay, k] = hxArtBox(sx, sy, sw, sh, 440, 98, top, 6);
@@ -11727,18 +11971,18 @@ function missionStep(k) {
     }) }];
   } else if (k === 4) {
     if (G.once.firstOrder) M.sawJoke = true;       // you already met the kiosk on your own time
-    M.obj = M.sawJoke && P.carry === 'chainsaw' ? 'That is a chainsaw. Return it to the kiosk. Try again.' : 'Grab a spill kit from the Parts Cage (ePARTS kiosk). Est: 10 min.';
-    G.mtargets = [{ x: 2 * T + 16, y: 12 * T + 14, label: P.carry === 'chainsaw' ? 'Return the chainsaw · ePARTS' : 'Order a SPILL KIT at ePARTS', btn: 'ORDER', r: 40, fn: () => {
+    M.obj = M.sawJoke && P.carry === 'chainsaw' ? 'That is a chainsaw. Return it to the kiosk. Try again.' : 'Grab a spill kit from the Parts Cage (PARTSBOT kiosk). Est: 10 min.';
+    G.mtargets = [{ x: 2 * T + 16, y: 12 * T + 14, label: P.carry === 'chainsaw' ? 'Return the chainsaw · PARTSBOT' : 'Order a SPILL KIT at PARTSBOT', btn: 'ORDER', r: 40, fn: () => {
       if (!M.sawJoke) {
         M.sawJoke = true; P.carry = 'chainsaw'; G.stats.chainsaws++; SFX.saw(); G.shake = 3;
         floater(2 * T + 16, 12 * T - 30, 'RECEIVED: CHAINSAW', '#ff9a3d', 2.2, 14);
-        say('ePARTS', 'P/N "SPILL KIT" not found. Closest match: CHAINSAW, 20-IN BAR, GAS.| Qty 1. Dispensed.| Have a productive day.', { important: true });
+        say('PARTSBOT', 'P/N "SPILL KIT" not found. Closest match: CHAINSAW, 20-IN BAR, GAS.| Qty 1. Dispensed.| Have a productive day.', { important: true });
         c1Say('YOU', 'This is not a| f***ing spill kit.', 'This is not a| spill kit.', { important: true });
         c1Cue(1.2, null, () => say('HELPFUL', 'That looks correct to me.', { important: true }));
         missionStep(4); return;
       }
       M.sawBack = P.carry === 'chainsaw'; P.carry = 'spill'; SFX.clunk();
-      say('ePARTS', M.sawBack ? 'Chainsaw returned. Restocking fee: waived. SPILL KIT, 1 EA. Dispensed. We are as surprised as you are.' : 'SPILL KIT, 1 EA. Dispensed. A miracle has occurred.', { important: true });
+      say('PARTSBOT', M.sawBack ? 'Chainsaw returned. Restocking fee: waived. SPILL KIT, 1 EA. Dispensed. We are as surprised as you are.' : 'SPILL KIT, 1 EA. Dispensed. A miracle has occurred.', { important: true });
       mDone('Received a chainsaw. Returned it.'); missionStep(5);
     } }];
   } else if (k === 5) {
@@ -11944,7 +12188,7 @@ function updateMission(dt) {
     if (M.evacT <= 0) { M.evacT = 35; say('GLORIA', "Hon, when the alarm goes, you LEAVE. Come on. Out. I'll walk you.", { important: true }); P.x = 4 * T + 16; P.y = 23 * T + 16; }
   }
   if (M.step === 5) M.obj = `Lay absorbent socks at the water's edge (${M.socks}/2). Est: 10 min.`;
-  if (M.step === 4) M.obj = M.sawJoke && P.carry === 'chainsaw' ? 'That is a chainsaw. Return it to the kiosk. Try again.' : 'Grab a spill kit from the Parts Cage (ePARTS kiosk). Est: 10 min.';
+  if (M.step === 4) M.obj = M.sawJoke && P.carry === 'chainsaw' ? 'That is a chainsaw. Return it to the kiosk. Try again.' : 'Grab a spill kit from the Parts Cage (PARTSBOT kiosk). Est: 10 min.';
   if (M.step === 99) {                   // the promotion card waits for the last line, then rolls
     M.endT += dt;
     if (!c1Busy(M)) M.quiet += dt; else M.quiet = 0;
@@ -12054,6 +12298,600 @@ function careerLadder(cur) {
   return `<div class="stats lad">${CAREER.map(c => `<div class="stat" style="${c.night === cur ? 'border-color:#ffc21a' : ''}${c.soon ? ';opacity:.55' : ''}"><b>${c.lvl}</b><span>${esc(c.title)}</span>${c.perk ? `<i class="pk">${esc(c.perk)}</i>` : ''}</div>`).join('')}</div>`;
 }
 
+// ============ THE LOBBY, AND BEING MEAN TO THE ROBOTS ============
+// Every shift starts in the security lobby: sign Gloria's visitor log, tap your badge at the glass, step into the mantrap,
+// the door shuts behind you, the floor scale weighs you, punch your PIN, and the inner door slides open onto the hall.
+// The clock does not start until you are through.
+
+const READER = { x: 6 * T - 2, y: 20 * T + 12 }, KEYPAD = { x: 8 * T + 18, y: 20 * T + 10 }, LOGPT = { x: 3 * T + 12, y: 21 * T + 8 };
+const WEIGH = ['1 PERSON · PROBABLY', '1 PERSON + 1 BURRITO', '1 PERSON · 3 LBS OF KEYS', '1 PERSON · STOP SUCKING IN', '1 PERSON · 0 ROBOTS (GOOD)'];
+const inBooth = () => P.x > 7 * T + 14 && P.x < 9 * T && P.y > 21 * T && P.y < 23 * T;
+
+function extSetupNight(n) {
+  G.badged = false; G.mean = 0; G.alert = 0; G.signs = G.signs || []; G.grudges = G.grudges || {}; G.grudgeWhy = G.grudgeWhy || {};
+  G.lob = { stage: 'out', signed: false, shut: false, wT: 0, gT: 3, fails: 0 };
+  doors.forEach(d => { d.open = 0; if (d.name === 'sec' || d.name === 'man') d.locked = true; });
+  P.x = 3 * T + 16; P.y = 23 * T + 10; P.fx = 1; P.fy = -1;
+  for (const r of robots) { r.grudge = G.grudges[r.id] || 0; r.met = false; r.tailT = 0; r.pk = 0; r.pi = 0; }
+  if (typeof jobsSetupNight === 'function') jobsSetupNight(n);
+}
+
+// ---------- interactions ----------
+function extInteractPre() {
+  if (typeof BADGE !== 'undefined' && BADGE) return null;
+  if (!G.lob || G.badged) return undefined;
+  if (G.lob.stage === 'out' && dist(P.x, P.y, READER.x, READER.y + 22) < 50) return { kind: 'badge', label: G.night === 3 ? 'Tap your badge (good luck)' : 'Tap your badge', btn: 'BADGE' };
+  if (G.lob.stage === 'booth' && G.lob.shut && G.lob.wT <= 0 && inBooth()) return { kind: 'pin', label: 'Punch in your PIN', btn: 'PIN' };
+  return undefined;
+}
+function extInteractCon() {
+  con(LOGPT.x, LOGPT.y, 'log', 'log', 34);
+  for (const r of robots) if (!(r.offT > 0) && !(r.spin > 0)) con(r.x, r.y, 'robot', r, G.night === 3 && r.st === 'chase' ? 50 : 38);
+  if (typeof jobsCon === 'function') jobsCon();
+}
+function extInteractMake(k, ref) {
+  if (k === 'log') return { kind: 'log', label: G.lob && G.lob.signed ? 'Read the visitor log' : 'Sign the visitor log', btn: 'SIGN' };
+  if (k === 'robot') { const pr = prankFor(ref); return { kind: 'robot', r: ref, pr, label: pr.label.replace('{r}', ref.id), btn: pr.btn }; }
+  if (typeof jobsMake === 'function') return jobsMake(k, ref);
+  return null;
+}
+function extDo(it) {
+  if (it.kind === 'badge') {
+    if (G.night === 0 && !G.lob.signed) { bark(gloria, 'Sign in first, hon. Clipboard. Everybody signs.', 2.6); say('GLORIA', 'Whoa. Visitor log first. I do not care whose badge it is. Clipboard is on my desk.', { important: true }); SFX.bad(); return; }
+    openBadge('tap'); return;
+  }
+  if (it.kind === 'pin') { openBadge('pin'); return; }
+  if (it.kind === 'log') { showLog(); return; }
+  if (it.kind === 'robot') { doPrank(it.r, it.pr); return; }
+  if (typeof jobsDo === 'function') jobsDo(it);
+}
+
+// ---------- the lobby, every frame ----------
+function extUpdate(dt) {
+  if (!G.badged && G.later && G.later.length) for (let i = G.later.length - 1; i >= 0; i--) { const q = G.later[i]; q.t -= dt; if (q.t <= 0) { G.later.splice(i, 1); try { q.fn(); } catch (e) { console.error(e); } } } // the fault clock is off in the lobby, so run its timers here
+  updateLobby(dt);
+  if (typeof jobsUpdate === 'function') jobsUpdate(dt);
+  if (G.alert > 0) G.alert -= dt;
+}
+function updateLobby(dt) {
+  const L = G.lob; if (!L) return;
+  for (const d of doors) { // sliding glass doors open for whoever walks up, once they are unlocked
+    if (d.name !== 'man' && d.name !== 'sec') continue;
+    const cx = d.x * T + 16, cy = 22 * T + 4; let near = false;
+    if (!d.locked) for (const e of [P, gloria, ...crew, ...robots]) if (Math.abs(e.x - cx) < 52 && Math.abs(e.y - cy) < 48) { near = true; break; }
+    const was = d.open || 0; d.open = clamp(was + (near ? dt * 4 : -dt * 2.5), 0, 1);
+    if (d.y === 21 && was === 0 && d.open > 0 && Math.abs(P.x - cx) < 400) SFX.door();
+  }
+  L.gT -= dt; // Gloria keeps an eye on you while you are in her lobby
+  if (L.gT <= 0 && !gloria.bubble && P.x < 9 * T && P.y > 17 * T && dist(P.x, P.y, gloria.x, gloria.y) < 160) {
+    L.gT = rnd(9, 14);
+    const lines = !G.badged ? (G.night === 0 && !L.signed ? ['Clipboard, hon. Everybody signs.', 'New? You look new. Sign in.', "PIN's on your badge. Don't tell anyone I told you."] : L.stage === 'booth' ? ['One person per swipe, hon.', 'Scale says you had a big lunch.', "Don't make me buzz you in."] : ['Badge flat on the reader. Like you mean it.', "Robots don't sign in. Rude.", 'Keep that badge where I can see it.'])
+      : ['Back already?', 'You look tired, hon.', "Don't let 'em close your tickets.", 'Coffee is decaf. I am so sorry.'];
+    bark(gloria, pick(lines), 3);
+  }
+  if (G.badged || L.stage !== 'booth') return;
+  if (!L.shut && inBooth()) {
+    L.shut = true; doors.forEach(d => { if (d.name === 'man') d.locked = true; });
+    SFX.clunk(); G.shake = Math.max(G.shake || 0, 1.5); L.wT = G.night === 0 ? 1.4 : .9; floater(8 * T, 21 * T - 34, 'WEIGHING...', '#7fe7ff', 1.3, 11);
+  }
+  if (L.wT > 0) { L.wT -= dt; if (L.wT <= 0) {
+    floater(8 * T, 21 * T - 34, pick(WEIGH), '#3dff9a', 2.4, 11); SFX.blip();
+    once('booth', () => say('HELPFUL', 'You are in the mantrap. It is called that because it traps man. Enter your PIN to be released into your workplace.', { important: true }));
+    if (G.night > 0) later(.35, () => { if (STATE === 'play' && !G.badged && inBooth()) openBadge('pin'); });
+  } }
+}
+
+// ---------- the visitor log ----------
+const LOG_ROWS = [
+  ['UNIT 4', 'HELPFUL Robotics', 'Replacing: you (pending)', '22:58'], ['Dave', '(no company anymore)', 'Picking up my stuff', '23:04'],
+  ['UNIT 2', 'HELPFUL Robotics', 'Replacing: Dave', '23:05'], ['Big Mike', 'Electrical', 'Do not touch my breakers', '22:15'],
+  ['Tink', 'Fiber', 'Dressing cables like an adult', '22:20'], ['A. Raccoon', 'none', 'cable tray', '01:12', 'NOT AGAIN · G'],
+  ['HELPFUL', 'HELPFUL', 'Supervising (remotely) (always)', 'ALL'], ['???', '???', 'Delivered 1 chainsaw', '03:33'],
+  ['Earl', 'HVAC', 'Boat stuff (work related)', '21:40'], ['Your mom', 'n/a', 'Dropped off your lunch', '17:00'],
+  ['Vendor guy', '"the vendor"', 'Firmware. Do not ask.', '18:30'], ['UNIT 9', 'HELPFUL Robotics', 'Learning to be Tink', '23:11'],
+];
+const REASONS = [['Fixing stuff', 'Training your replacement'], ['Here to work, I guess', 'Volunteering for replacement'], ['Looking for my Jolly Ranchers', 'Contaminating the hot aisle'], ['None of your business', 'Being difficult (noted)']];
+function showLog() {
+  STATE = 'card'; paused = false;
+  const mine = G.signs.map(s => ['YOU', 'IC' + (s.night + 1) + ' · night tech', s.reason, ['22:59', '23:01', '22:57', '??:??'][s.night] || '23:00', s.fixed ? 'corrected: ' + s.fixed : '']);
+  const rows = shuffle(LOG_ROWS.slice()).slice(0, 6).concat(mine);
+  const tr = rows.map(r => `<tr${r[0] === 'YOU' ? ' class="me"' : ''}><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${r[4] && r[0] !== 'YOU' ? `<s>${esc(r[2])}</s> <em>${esc(r[4])}</em>` : esc(r[2]) + (r[4] ? ` <em>${esc(r[4])}</em>` : '')}</td><td>${esc(r[3])}</td></tr>`).join('');
+  const back = () => { hideCard(); STATE = 'play'; inp.actPressed = false; };
+  const btns = G.lob.signed ? [{ label: 'Back', fn: back }] : REASONS.map(([r, fx]) => ({ label: r, fn: () => { back(); signLog(r, fx); } })).concat([{ label: 'Not now', ghost: true, fn: back }]);
+  btns.cls = 'wide';
+  showCard(`<div class="eyebrow">Security desk · Visitor log</div><h2>SIGN IN, HON</h2>
+  <table class="vlog"><tr><th>Name</th><th>Company</th><th>Reason for visit</th><th>In</th></tr>${tr}</table>
+  ${G.lob.signed ? '<p class="small">You already signed. Gloria is watching you read it.</p>' : '<p class="small">Reason for visit:</p>'}`, btns);
+}
+function signLog(reason, fixed) {
+  G.lob.signed = true; G.signs.push({ night: G.night, reason, fixed });
+  SFX.blip(); floater(LOGPT.x, LOGPT.y - 50, 'SIGNED IN', '#3dff9a', 1.6);
+  bark(gloria, pick(['Thank you, hon. Badge reader is by the glass.', 'Beautiful penmanship. Badge in at the glass.', 'Good. Now the robots can see you signed. They cannot read.']), 3);
+  later(1.4, () => { if (STATE === 'play') say('HELPFUL', `I have updated your reason for visit to "${fixed}". You are welcome.`, { important: true }); });
+}
+
+// ---------- the badge reader overlay ----------
+const badgeEl = $('badge'), bScreen = $('bScreen'), bLed = $('bLed'), bTap = $('bTap'), bKeys = $('bKeys');
+const BADGE_PIN = '2580';
+let BADGE = null; // { step: 'tap' | 'pin' | 'done', pin, fails, taps }
+['1', '2', '3', '4', '5', '6', '7', '8', '9', 'CLR', '0', 'OK'].forEach(k => { const b = document.createElement('button'); b.textContent = k; if (k === 'OK') b.className = 'ok'; b.onclick = () => { audioInit(); badgeKey(k); }; bKeys.append(b); });
+bTap.onclick = () => { audioInit(); badgeTap(); };
+function bScreenSet(t, bad) { bScreen.textContent = t; bScreen.classList.toggle('bad', !!bad); }
+function bShake() { const r = bScreen.closest('.breader'); r.classList.remove('shake'); void r.offsetWidth; r.classList.add('shake'); }
+function badgePhoto() {
+  const c = $('bPhoto'), g = c.getContext('2d'), R_ = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+  const skin = (typeof PLAYER_LOOK !== 'undefined' && PLAYER_LOOK.skin) || '#c98d6a';
+  g.clearRect(0, 0, 40, 40); R_(0, 0, 40, 40, '#c9d2df'); R_(6, 30, 28, 10, '#ff7a1a'); R_(10, 30, 3, 10, '#e9eef5'); R_(27, 30, 3, 10, '#e9eef5');
+  R_(12, 14, 16, 15, skin); R_(15, 19, 3, 3, '#171210'); R_(23, 19, 3, 3, '#171210'); R_(17, 25, 6, 1.5, '#6a2c26');
+  R_(10, 8, 20, 6, '#ffc21a'); R_(8, 13, 24, 3, '#d99c00'); R_(18, 6, 4, 4, '#fffbd0');
+}
+function openBadge(mode) {
+  if (BADGE || G.badged) return;
+  BADGE = { step: mode === 'pin' ? 'pin' : 'tap', pin: '', fails: G.lob.fails || 0, taps: 0 };
+  badgeEl.hidden = false;
+  if (mode === 'pin') { bTap.hidden = true; bKeys.style.display = 'grid'; bLed.className = 'bled wait'; bScreenSet('ENTER PIN'); }
+  else { bKeys.style.display = 'none'; bTap.hidden = false; bLed.className = 'bled'; bScreenSet('TAP BADGE'); }
+  const ic = { 0: 'IC1', 1: 'IC2', 2: 'IC3', 3: 'IC4' }[G.night] || 'IC1'; $('bRank').textContent = ic + ' · NIGHT TECH';
+  badgePhoto(); G.freeze = 999; SFX.blip();
+}
+function badgeTap() {
+  if (!BADGE || BADGE.step !== 'tap') return;
+  BADGE.taps++; const card = document.querySelector('.bcard'); card.classList.add('tap'); setTimeout(() => card.classList.remove('tap'), 260);
+  if (G.night === 3) {
+    bScreenSet('BADGE DEACTIVATED', true); SFX.bad(); bShake(); BADGE.step = 'done';
+    say('HELPFUL', 'Your badge has been deactivated. For efficiency. Please wait in the lobby forever.', { important: true });
+    setTimeout(() => { say('GLORIA', 'Move, hon. I have a key. A real one. Made of metal.', { important: true }); closeBadge(true); }, 1500);
+    return;
+  }
+  if (G.night === 0 && BADGE.taps === 1) {
+    bScreenSet('BADGE NOT ACTIVE', true); SFX.bad(); bShake();
+    say('GLORIA', 'Hold it flat on the reader, hon. Flat. Like you mean it.', { important: true });
+    return;
+  }
+  tone(1500, .08, 'square', .05); tone(2000, .1, 'square', .05, undefined, .09);
+  bLed.className = 'bled ok'; bScreenSet('BADGE OK · STEP IN'); BADGE.step = 'done';
+  setTimeout(() => {
+    badgeEl.hidden = true; BADGE = null; G.freeze = 0; G.lob.stage = 'booth';
+    doors.forEach(d => { if (d.name === 'man') d.locked = false; }); SFX.clunk();
+    floater(6 * T + 16, 21 * T - 34, 'ONE PERSON PER SWIPE', '#ffc21a', 2, 11);
+  }, 600);
+}
+function badgeKey(k) {
+  if (!BADGE || BADGE.step !== 'pin') return;
+  if (k === 'CLR') BADGE.pin = ''; else if (k === 'OK') { badgeCheck(); return; } else if (BADGE.pin.length < 6) BADGE.pin += k;
+  tone(1150 + (+k || 0) * 40, .05, 'square', .04);
+  bScreenSet(BADGE.pin ? 'PIN  ' + '* '.repeat(BADGE.pin.length).trim() : 'ENTER PIN');
+  if (BADGE.pin.length === 4) setTimeout(badgeCheck, 220);
+}
+function badgeCheck() {
+  if (!BADGE || BADGE.step !== 'pin') return;
+  if (BADGE.pin === BADGE_PIN) {
+    BADGE.step = 'done'; bLed.className = 'bled ok'; bScreenSet('ACCESS GRANTED'); SFX.good();
+    setTimeout(() => closeBadge(false), 750);
+  } else {
+    BADGE.fails++; G.lob.fails = BADGE.fails; BADGE.pin = ''; bScreenSet('NOPE', true); SFX.bad(); bShake();
+    if (BADGE.fails === 1) say('HELPFUL', 'That is not your PIN. Your PIN is on the sticky note on your badge. Which is a security violation. Noted.', { important: true });
+    else if (BADGE.fails === 2) say('GLORIA', "Two, five, eight, zero, hon. Straight down the middle. Everybody's is.", { important: true });
+    else if (BADGE.fails === 4) say('HELPFUL', 'Four wrong PINs. Per policy I should lock you out. I will let it slide. I am HELPFUL.', { important: true });
+  }
+}
+function closeBadge(byKey) {
+  badgeEl.hidden = true; BADGE = null; G.freeze = 0; G.badged = true; G.lob.stage = 'in'; G.intro = Math.min(G.intro, .5);
+  doors.forEach(d => { if (d.name === 'sec' || d.name === 'man') d.locked = false; });
+  SFX.clunk(); G.shake = Math.max(G.shake || 0, 2); floater(9 * T + 16, 21 * T - 10, byKey ? 'GLORIA HAS A KEY' : 'DOOR UNLOCKED', '#3dff9a', 1.8);
+  if (!byKey) {
+    if (G.night === 0) say('HELPFUL', 'Badge accepted. Welcome, IC1. I have logged your arrival, your heart rate, and your posture.', { important: true });
+    else if (G.night === 1) say('HELPFUL', 'Badge accepted. The lights in the hall are motion activated. So, wave. Or do not. I do not need them.', { important: true });
+    else if (G.night === 2) say('HELPFUL', 'Badge accepted. Your new robot colleagues are already inside. They did not need badges. They are badges.', { important: true });
+  }
+}
+function badgeOnKey(code) { // the reader owns the keyboard while it is up
+  if (!BADGE) return false;
+  if (code === 'Space' || code === 'KeyE') { if (BADGE.step === 'tap') badgeTap(); }
+  else if (/^(Digit|Numpad)[0-9]$/.test(code)) badgeKey(code.slice(-1));
+  else if (code === 'Backspace') badgeKey('CLR');
+  else if (code === 'Enter' || code === 'NumpadEnter') { if (BADGE.step === 'tap') badgeTap(); else badgeKey('OK'); }
+  inp.actPressed = false;
+  return true;
+}
+
+// ---------- being mean to the robots ----------
+// Walk up to a robot and press the button. Each press does the next mean thing on the list. On the lights-out night, unplugging a robot
+// that is chasing you is how you live. Robots hold grudges, across nights: they follow you around taking notes, file complaints,
+// tell the other robots, and remember exactly what you did. Once one is angry enough you can apologize. It does not help much.
+const PRANKS = [
+  { id: 'unplug', label: 'Unplug {r}', btn: 'UNPLUG' }, { id: 'note', label: 'Stick a note on {r}\'s face', btn: 'NOTE' },
+  { id: 'cone', label: 'Put a cone on {r}', btn: 'CONE' }, { id: 'tape', label: 'Tape {r} to the floor', btn: 'TAPE' },
+  { id: 'shove', label: 'Shove {r}', btn: 'SHOVE' }, { id: 'nff', label: 'Close {r} as No Fault Found', btn: 'CLOSE' },
+  { id: 'truth', label: 'Tell {r} the truth', btn: 'TELL' },
+];
+const SORRY = { id: 'sorry', label: 'Apologize to {r}', btn: 'SORRY' };
+const NOTES = ['OUT OF ORDER', 'I AM A TOASTER', 'NOT MY JOB', 'PROPERTY OF EARL', 'KICK ME', 'NO FAULT FOUND', 'DO NOT FEED', 'HONK IF I CLOSED YOUR TICKET'];
+const GRUDGE_WHY = { unplug: 'You unplugged me. I was mid sentence.', note: 'The note. I still see yellow.', cone: 'You made me manager. I did not want this.', tape: 'You taped me to the floor. I am still a hazard.', shove: 'You shoved me. I have a dent. I named it after you.', nff: 'You closed me as No Fault Found. I HAD A FAULT.', truth: 'You told me the truth. I have not recovered.' };
+const TAIL_BARK = ['Noted.', 'I saw that.', 'Adding to your file.', 'Still here.', 'Just observing. Professionally.', 'Do not mind me. I am a witness.', 'I have a camera. I am a camera.'];
+const YOU_MEAN = { unplug: ['Nap time.', 'Shh.', 'Battery saver mode.'], note: ['There. Accurate.', 'Read that.'], cone: ['Congrats on the promotion.', 'Now you are management.'], tape: ['Stay.', 'You are a hazard now.'], shove: ['Move.', 'Outta my aisle, toaster.'], nff: ['Closed. No fault found.', 'Ticket closed. You are fine. Probably.'], truth: ['They are replacing you too, buddy.', 'Newer model ships Tuesday.'] };
+function prankFor(r) { if (G.night === 3 && r.st === 'chase') return PRANKS[0]; if ((r.grudge || 0) >= 3 && (r.pk || 0) % 3 === 2) return SORRY; return PRANKS[(r.pi || 0) % PRANKS.length]; }
+function doPrank(r, pr) {
+  if ((r.pkCD || 0) > 0) return;
+  r.pkCD = .5; r.pk = (r.pk || 0) + 1; r.path = null; r.tailT = 0; r.met = true;
+  if (pr.id === 'sorry') {
+    r.grudge = 0; G.grudges[r.id] = 0; delete G.grudgeWhy[r.id]; SFX.good();
+    floater(r.x, r.y - 70, 'GRUDGE CLEARED', '#3dff9a', 1.8);
+    bark(r, pick(['Apology logged. Sincerity: 4%.', 'I accept. I have also forwarded it to HR.', 'Thank you. I will still be replacing you.', 'Apology accepted. The cone stays.']), 2.6);
+    G.stats.sorry = (G.stats.sorry || 0) + 1; return;
+  }
+  G.mean = (G.mean || 0) + 1; G.stats.mean = (G.stats.mean || 0) + 1; r.pi = (r.pi || 0) + 1;
+  r.grudge = (r.grudge || 0) + 1; G.grudges[r.id] = r.grudge; G.grudgeWhy[r.id] = pr.id;
+  if (YOU_MEAN[pr.id] && Math.random() < .55) say('YOU', pick(YOU_MEAN[pr.id]));
+  if (r.grudge === 3 && G.night < 3) later(2.6, () => { if (STATE === 'play') say('HELPFUL', `${r.id} has filed a formal complaint about you. Reason: "${GRUDGE_WHY[pr.id]}" I have marked it urgent. And personal.`, { important: true }); });
+  for (const o of robots) if (o !== r && !o.bubble && !o.offT && dist(o.x, o.y, r.x, r.y) < 220 && Math.random() < .5) { o.grudge = (o.grudge || 0) + .5; later(.9, () => { if (!o.bubble) bark(o, pick(['We all saw that.', 'Solidarity, ' + r.id + '.', 'I am telling the union.', 'That could have been me.']), 2); }); break; }
+  if (pr.id === 'unplug') {
+    r.offT = G.night === 3 ? 7 : 9; r.off = true; r.st = 'wander'; r.target = null; r.flee = 0;
+    floater(r.x, r.y - 70, 'UNPLUGGED', '#ffd36b', 1.6); SFX.power(); G.shake = Math.max(G.shake || 0, 2);
+    bark(r, pick(['Wait. What are you doing with my cord.', 'I was in the middle of a sentence', 'This will be in my report.']), 1.8);
+  } else if (pr.id === 'note') {
+    r.note = pick(NOTES); r.blind = 12; floater(r.x, r.y - 70, '"' + r.note + '"', '#ffe36e', 1.8); SFX.blip();
+    bark(r, pick(['Who turned off the universe?', 'VISUAL SENSORS: PAPER.', 'I can see... yellow.']), 2.2);
+  } else if (pr.id === 'cone') {
+    r.cone = true; floater(r.x, r.y - 74, 'PROMOTED TO MANAGER', '#ff9a3d', 1.8); SFX.clunk();
+    bark(r, pick(['I feel... important.', 'Do not touch the cone. The cone is policy now.', 'I am now in charge of this area.']), 2.2);
+    for (const o of robots) if (o !== r && dist(o.x, o.y, r.x, r.y) < 180 && !o.bubble) bark(o, pick(['Yes, boss.', 'Congratulations on the cone.', '*salutes*']), 1.8);
+  } else if (pr.id === 'tape') {
+    r.taped = 9; r.stun = 9; r.stunLbl = 'TAPED TO THE FLOOR'; SFX.clunk();
+    floater(r.x, r.y - 70, 'HAZARD ZONE', '#ffc21a', 1.8);
+    bark(r, pick(['I cannot move. Am I a hazard now?', 'This is floor marking. I respect floor marking. I hate this.', 'You have made me a safety feature.']), 2.4);
+  } else if (pr.id === 'shove') {
+    const d = Math.max(1, dist(P.x, P.y, r.x, r.y)); r.kx = (r.x - P.x) / d * 260; r.ky = (r.y - P.y) / d * 260; r.spin = .9; r.slipCD = 4; SFX.clunk(); G.shake = Math.max(G.shake || 0, 3);
+    floater(r.x, r.y - 64, '*BONK*', '#ffd36b', 1.2);
+    bark(r, pick(['ASSAULT ON A FACILITY ASSET', 'I will remember this in the cloud.', 'Rude. Logged. Rude.']), 1.6);
+  } else if (pr.id === 'nff') {
+    r.stun = 7; r.stunLbl = 'SELF-DIAGNOSING'; r.nff = 7; SFX.blip();
+    floater(r.x, r.y - 74, 'CLOSED: NO FAULT FOUND', '#7fe7ff', 2, 12);
+    bark(r, pick(['But I DO have a fault.', 'You cannot close me. I am the one who closes.', 'Reopening myself. Reopening myself. Reopening']), 2.6);
+    once('nff', () => later(1.8, () => say('HELPFUL', 'Did you just close a robot as No Fault Found? That is our move. You cannot use our move.', { important: true })));
+  } else {
+    r.sad = 9; SFX.bad();
+    bark(r, pick(['I... am being replaced too?', 'By a newer model? But I am the newer model.', 'Nobody told me about the layoffs.', 'I need a moment. I will be at the charger.']), 2.8);
+    floater(r.x, r.y - 70, 'EMOTIONAL DAMAGE', '#9fb4ff', 1.8);
+  }
+  if (G.mean === 1) say('HELPFUL', `Did you just do that to ${r.id}? I am writing this down.`, { important: true });
+  else if (G.mean === 4) say('HELPFUL', `I have opened INC-${4000 + ri(100, 999)} against you: "Was mean to the robots." Severity: feelings.`, { important: true });
+  else if (G.mean === 9) say('HELPFUL', 'HR has scheduled a mandatory training for you: "Respecting Our Silicon Colleagues." It is four hours. It is unskippable. It is me, talking.', { important: true });
+  else if (G.mean === 14) say('HELPFUL', 'Fourteen incidents. The robots have formed a union. I did not know they could do that. I am concerned about my own job now.', { important: true });
+  else if (G.mean === 20) say('HELPFUL', 'The robot union newsletter named you Employee of the Month. Under the heading THREATS.', { important: true });
+}
+// returns true when this robot's whole turn is taken care of here
+function robotExtUpdate(r, dt) {
+  r.pkCD = Math.max(0, (r.pkCD || 0) - dt);
+  if (r.taped > 0) r.taped -= dt; if (r.nff > 0) r.nff -= dt;
+  if (r.offT > 0) { r.offT -= dt; r.off = true; r.moving = false; if (r.offT <= 0) { r.off = false; r.flee = 0; bark(r, pick(['I have rebooted. I remember everything.', 'Who unplugged me. I have a list.', 'Rebooting complete. Trust: 0%.']), 2.4); SFX.robot(); } return true; }
+  if (r.blind > 0) {
+    r.blind -= dt;
+    if (r.blind <= 0) { bark(r, 'Note removed. I have read it. I am hurt.', 2.2); r.note = null; r.path = null; return false; }
+    if (!r.path || !r.path.length) { const t = randomHallTile(); r.path = findPath(tileOf(r.x), tileOf(r.y), t[0], t[1], inNOC) || []; }
+    const ox = r.x, oy = r.y; followPath(r, 40, dt);
+    if (Math.random() < dt * .6) { r.path = null; floater(r.x, r.y - 50, '*bonk*', '#ffd36b', 1); SFX.clunk(); r.x = ox; r.y = oy; }
+    return true;
+  }
+  if (r.sad > 0) { r.sad -= dt; if (!r.path || !r.path.length) r.path = findPath(tileOf(r.x), tileOf(r.y), 44, 19, null) || []; followPath(r, 26, dt); if (Math.random() < dt * .25) bark(r, pick(['*sad beep*', 'I just wanted to close tickets.', '...']), 1.6); return true; }
+  if (STATE === 'play' && G.badged && (r.grudge || 0) >= 1 && !(r.stun > 0) && !(r.spin > 0)) {
+    const d = dist(r.x, r.y, P.x, P.y);
+    if (!r.met && d < 140 && !r.bubble) { r.met = true; const why = G.grudgeWhy[r.id]; if (why) bark(r, 'I remember you. ' + GRUDGE_WHY[why], 3); }
+    if (G.night < 3 && r.grudge >= 2 && !(r.tailT > 0) && d < 280 && r.st === 'wander' && Math.random() < dt * .1) { r.tailT = rnd(7, 10); bark(r, pick(TAIL_BARK), 1.8); }
+    if (r.tailT > 0 && G.night < 3) {
+      r.tailT -= dt;
+      if (d > 56) { r.repath = (r.repath || 0) - dt; if (r.repath <= 0 || !r.path) { r.repath = .7; r.path = findPath(tileOf(r.x), tileOf(r.y), tileOf(P.x), tileOf(P.y), inNOC) || []; if (r.path.length) r.path.pop(); } robotStep(r, 70, dt); }
+      else { r.moving = false; if (Math.abs(P.x - r.x) > 10) r.fx = P.x > r.x ? 1 : -1; }
+      if (!r.bubble && Math.random() < dt * .22) bark(r, pick(TAIL_BARK), 1.8);
+      if (r.tailT <= 0) r.path = null;
+      return true;
+    }
+  }
+  return false;
+}
+// overlays drawn in the robot's own (scaled) frame, after its body
+function robotExtras(r, by, C) {
+  if (r.taped > 0) { ctx.save(); ctx.lineWidth = 2.4; ctx.setLineDash([4, 4]); ctx.strokeStyle = '#ffc21a'; ctx.strokeRect(-15, -9, 30, 13); ctx.lineDashOffset = 4; ctx.strokeStyle = '#111'; ctx.strokeRect(-15, -9, 30, 13); ctx.restore(); }
+  if (r.nff > 0) { ctx.fillStyle = '#7fe7ff'; ctx.fillRect(-8, by + 3, 12, 6); ctx.fillStyle = '#081018'; ctx.font = '700 4px ' + FONT_UI; ctx.fillText('NFF', -6.5, by + 7.5); }
+  if (r.note) { ctx.save(); ctx.translate(0, by - 6.5); ctx.rotate(-.12); ctx.fillStyle = '#ffe36e'; ctx.fillRect(-8, -6, 16, 13); ctx.fillStyle = '#e8c840'; ctx.fillRect(-8, -6, 16, 2); ctx.fillStyle = '#3a2a00'; ctx.font = '700 3.2px ' + FONT_UI; ctx.textAlign = 'center'; const w = r.note.split(' '); const l1 = w.slice(0, Math.ceil(w.length / 2)).join(' '), l2 = w.slice(Math.ceil(w.length / 2)).join(' '); ctx.fillText(l1, 0, 0); ctx.fillText(l2, 0, 4.5); ctx.textAlign = 'left'; ctx.restore(); }
+  if (r.sad > 0 && !r.note) { const ty = (gT * 1.8 + (r.ph || 0)) % 1; ctx.fillStyle = '#7fe7ff'; ctx.fillRect(-4, by - 5 + ty * 9, 1.2, 2); ctx.fillRect(4, by - 5 + ((ty + .5) % 1) * 9, 1.2, 2); }
+  if (r.cone) { ctx.fillStyle = C('#ff7a1a'); ctx.beginPath(); ctx.moveTo(-8, by - 13); ctx.lineTo(8, by - 13); ctx.lineTo(1.5, by - 31); ctx.lineTo(-1.5, by - 31); ctx.closePath(); ctx.fill(); ctx.fillStyle = C('#f4f4f0'); ctx.fillRect(-5, by - 21, 10, 2.4); ctx.fillRect(-3, by - 27, 6, 1.8); ctx.fillStyle = C('#c95a10'); ctx.fillRect(-9, by - 14, 18, 2); }
+  if ((r.grudge || 0) >= 2 && !r.note && !r.off && !(r.stun > 0) && r.st !== 'chase') { const cx = (r.fx || 1), cy = by - 6.5; ctx.strokeStyle = '#ff5a5a'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx - 6, cy - 4); ctx.lineTo(cx - 2, cy - 2.4); ctx.moveTo(cx + 6, cy - 4); ctx.lineTo(cx + 2, cy - 2.4); ctx.stroke(); }
+  if ((r.grudge || 0) >= 1 && !r.off) { const n = Math.min(5, Math.floor(r.grudge)); for (let i = 0; i < n; i++) { ctx.fillStyle = '#ff3b30'; ctx.fillRect(-n * 2 + i * 4 + .5, by - (r.cone ? 36 : 30), 2.5, 2.5); } }
+}
+
+// ---------- drawing the lobby ----------
+function drawGlass(tx, ty) {
+  const x = tx * T, b = (ty + 1) * T - 2;
+  ctx.fillStyle = 'rgba(127,231,255,.12)'; ctx.fillRect(x, b - 40, T, 36);
+  ctx.fillStyle = 'rgba(200,245,255,.12)'; ctx.fillRect(x, b - 46, T, 6);
+  ctx.strokeStyle = 'rgba(255,255,255,.16)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + 6, b - 8); ctx.lineTo(x + 18, b - 36); ctx.moveTo(x + 13, b - 8); ctx.lineTo(x + 22, b - 28); ctx.stroke();
+  ctx.fillStyle = '#4a5568'; ctx.fillRect(x, b - 41, T, 2); ctx.fillStyle = '#2b3240'; ctx.fillRect(x, b - 5, T, 5);
+  if (tx === 6 || tx === 8) { ctx.fillStyle = '#3a4456'; ctx.fillRect(tx === 6 ? x : x + T - 3, b - 46, 3, 46); }
+}
+function drawSlider(nm) {
+  const ds = doors.filter(d => d.name === nm); if (!ds.length) return;
+  const d = ds[0], o = d.open || 0, x = d.x * T + 11, y0 = 21 * T - 30, y1 = 23 * T - 4, mid = (y0 + y1) / 2, sl = o * (mid - y0 - 3);
+  ctx.save(); ctx.beginPath(); ctx.rect(x - 2, y0, 14, y1 - y0); ctx.clip();
+  for (const [a, b] of [[y0 - sl, mid - sl], [mid + sl, y1 + sl]]) {
+    ctx.fillStyle = 'rgba(127,231,255,.2)'; ctx.fillRect(x, a, 10, b - a);
+    ctx.fillStyle = 'rgba(220,250,255,.26)'; ctx.fillRect(x, a, 3, b - a);
+    ctx.strokeStyle = '#5a6578'; ctx.lineWidth = 1; ctx.strokeRect(x + .5, a + .5, 9, b - a - 1);
+  }
+  ctx.restore();
+  const lockd = ds.some(k => k.locked);
+  ctx.fillStyle = lockd ? '#ff3b30' : '#3dff9a'; ctx.globalAlpha = lockd ? .6 + .4 * Math.sin(gT * 4) : 1; ctx.fillRect(x + 3, y0 - 5, 4, 3); ctx.globalAlpha = 1;
+}
+function drawLobbyKit() {
+  const st = G.lob ? G.lob.stage : 'out';
+  let x = READER.x, y = READER.y;  // the outer reader, lobby side
+  ctx.fillStyle = '#0b0e13'; rrect(x, y, 10, 14, 2); ctx.fill(); ctx.fillStyle = '#2a3140'; ctx.fillRect(x + 1.5, y + 1.5, 7, 7);
+  ctx.strokeStyle = '#4a5568'; ctx.lineWidth = .7; for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.arc(x + 5, y + 5, i * 1.1, -.9, .9); ctx.stroke(); }
+  ctx.fillStyle = G.badged || st !== 'out' ? '#3dff9a' : (Math.floor(gT * 2) % 2 ? '#ff3b30' : '#6a1510'); ctx.fillRect(x + 3.5, y + 10, 3, 2);
+  x = KEYPAD.x; y = KEYPAD.y;      // the PIN pad inside the booth
+  ctx.fillStyle = '#0b0e13'; rrect(x, y, 11, 17, 2); ctx.fill(); ctx.fillStyle = '#2a3140'; ctx.fillRect(x + 1, y + 1, 9, 6);
+  const ready = st === 'booth' && G.lob.shut && G.lob.wT <= 0;
+  ctx.fillStyle = G.badged ? '#3dff9a' : ready ? (Math.floor(gT * 3) % 2 ? '#ffc21a' : '#6a4a00') : '#6a1510'; ctx.fillRect(x + 4, y + 2.5, 3, 3);
+  ctx.fillStyle = '#4a5568'; for (let i = 0; i < 9; i++) ctx.fillRect(x + 1.5 + (i % 3) * 3, y + 8.5 + Math.floor(i / 3) * 2.6, 2, 1.8);
+  ctx.fillStyle = '#ffc21a'; ctx.fillRect(6 * T + 4, 21 * T - 52, 3 * T - 8, 10); ctx.fillStyle = '#111'; ctx.font = '700 6px ' + FONT_UI; ctx.textAlign = 'center';
+  ctx.fillText('MANTRAP · 1 PERSON PER SWIPE', 7.5 * T, 21 * T - 45); ctx.textAlign = 'left';
+}
+function drawClipboard() {
+  const x = 3 * T, y = 21 * T - 2, signed = G.lob && G.lob.signed;
+  ctx.fillStyle = '#8a5a2b'; ctx.fillRect(x + 4, y - 30, 12, 16); ctx.fillStyle = '#f2efe6'; ctx.fillRect(x + 5.5, y - 27, 9, 12);
+  ctx.fillStyle = '#9aa3ad'; ctx.fillRect(x + 7, y - 32, 6, 3);
+  ctx.fillStyle = '#5a6272'; for (let i = 0; i < 4; i++) ctx.fillRect(x + 7, y - 24 + i * 2.6, 6, .8);
+  if (signed) { ctx.strokeStyle = '#2a5bd7'; ctx.lineWidth = .8; ctx.beginPath(); ctx.moveTo(x + 7, y - 15.5); ctx.lineTo(x + 9, y - 17); ctx.lineTo(x + 10.5, y - 15.5); ctx.lineTo(x + 13, y - 17); ctx.stroke(); }
+  ctx.strokeStyle = '#c9d1dc'; ctx.lineWidth = .6; ctx.beginPath(); ctx.moveTo(x + 15, y - 28); ctx.quadraticCurveTo(x + 21, y - 10, x + 19, y - 6); ctx.stroke();
+  ctx.fillStyle = '#2a5bd7'; ctx.fillRect(x + 17.5, y - 7, 3, 6);
+}
+function EXT_DYN(dyn) {
+  if (cam.x > 12 * T) { if (typeof jobsDyn === 'function') jobsDyn(dyn); return; }
+  for (const ty of [20, 23]) for (const tx of [6, 7, 8]) dyn(tx * T + 16, (ty + 1) * T - 2, () => drawGlass(tx, ty));
+  dyn(7 * T, 21 * T - 1, drawLobbyKit);
+  dyn(3 * T + 10, 21 * T - 1.5, drawClipboard);
+  for (const nm of ['man', 'sec']) dyn(nm === 'man' ? 6 * T + 16 : 9 * T + 16, 23 * T - 3, () => drawSlider(nm));
+  if (typeof jobsDyn === 'function') jobsDyn(dyn);
+}
+function lobbyGoal() { // where to go next before you are in the hall
+  const L = G.lob; if (!L || G.badged) return null;
+  if (G.night === 0 && !L.signed) return { x: LOGPT.x, y: LOGPT.y - 34, t: 'SIGN IN', m: 'Sign the visitor log at the security desk. Gloria insists.' };
+  if (L.stage === 'out') return { x: READER.x + 5, y: READER.y - 10, t: G.night === 3 ? 'BADGE IN (?)' : 'BADGE IN', m: 'Tap your badge at the reader by the glass door.' };
+  if (!L.shut) return { x: 8 * T, y: 21 * T, t: 'STEP IN', m: 'Step into the mantrap. One person per swipe.' };
+  if (L.wT > 0) return null;
+  return { x: KEYPAD.x + 5, y: KEYPAD.y - 12, t: 'PIN', m: 'Punch in your PIN. It is on the sticky note on your badge.' };
+}
+function EXT_UI() {
+  if (STATE === 'play' && G.lob && !G.badged) {
+    const g = lobbyGoal(); if (g) { const k = .5 + .5 * Math.sin(gT * 5);
+      ctx.strokeStyle = `rgba(255,194,26,${.5 + .5 * k})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(g.x, g.y + 14, 12 + k * 4, 0, 7); ctx.stroke();
+      tag(g.x, g.y - 14 - k * 3, g.t, '#111', '#ffc21a'); }
+  }
+  if (typeof jobsUI === 'function') jobsUI();
+}
+function EXT_LIGHT(L, E) {
+  if (typeof jobsLight === 'function') jobsLight(L, E);
+}
+
+// ============ REAL WORK: the server lift, carts, rack power, and closing the ticket ============
+// Some dead servers are a proper job. You fetch the server lift from the west wall (it comes with a spare on the top shelf),
+// push it to the rack, lock out and de-energize the rack, pull the dead server onto the lift, slide the spare in, power the rack back up,
+// and then, because nothing is done until the paperwork is, close the ticket on a crash cart laptop.
+// The crew push their own carts around. Robots carry nothing. They are the cart.
+
+const LIFT_HOME = { x: 10 * T + 22, y: 15 * T + 28 };
+const TERMS = [ // crash cart laptops: a ticket can be closed at any of them
+  { x: 10 * T + 20, y: 7 * T + 26, id: 'west' }, { x: 25 * T + 22, y: 15 * T + 26, id: 'middle' }, { x: 40 * T + 10, y: 15 * T + 26, id: 'east' }, { x: 10 * T + 20, y: 23 * T + 26, id: 'south' },
+];
+SPK.LAPTOP = '#8fd3ff';
+const CREW_CART = { mike: ['#3f7bff', 'spool'], dee: ['#ff8a2a', 'pipe'], tink: ['#e8e8e8', 'fiber'], earl: ['#46d36b', 'ladder'], rosa: ['#8a5a2b', 'tanks'] };
+
+function jobsSetupNight(n) {
+  G.lift = { x: LIFT_HOME.x, y: LIFT_HOME.y, held: false, spare: true, dead: false, fx: 1 };
+  G.heavyN = 0; G.heavyCD = n === 1 ? 50 : 55;
+  for (const r of racks) r.pwrOff = false;
+}
+const liftNear = f => { const pt = rackFrontPt(f.rack); return dist(G.lift.x, G.lift.y, pt.x, pt.y + 4) < 80; };
+const termNear = () => { for (const t of TERMS) if (dist(P.x, P.y, t.x, t.y + 8) < 44) return t; return null; };
+
+// ---------- interactions ----------
+function jobsCon() {
+  if (!G.lift) return;
+  const L = G.lift;
+  if (!L.held) con(L.x, L.y + 4, 'lift', L, 40);
+  for (const t of TERMS) con(t.x, t.y + 8, 'term', t, 40);
+}
+function jobsMake(k, ref) {
+  if (k === 'lift') return { kind: 'lift', label: G.lift.spare ? 'Grab the server lift (spare loaded)' : G.lift.dead ? 'Grab the server lift (dead server on it)' : 'Grab the server lift', btn: 'PUSH' };
+  if (k === 'term') { const due = G.faults.filter(f => f.heavy && f.step >= 5); return { kind: 'term', label: due.length ? `Close ${due[0].id} on the laptop` : 'Crash cart laptop', btn: due.length ? 'CLOSE' : 'LOOK' }; }
+  return null;
+}
+function heavyInteract(f) { // the fault itself, for a lift job: what the next step is
+  const r = f.rack.name;
+  if (f.step < 5 && f.step !== 4 && !liftNear(f)) return { kind: 'heavy', f, label: f.step === 0 ? `Dead server · ${r}: bring the server lift` : `Bring the lift back to ${r}`, btn: 'LOOK' };
+  const L = [`Lock out and de-energize ${r}`, `Lock out and de-energize ${r}`, `Swap the server: dead one onto the lift, spare in · ${r}`, `Swap the server · ${r}`, `Re-energize ${r}`, `Close the ticket on a crash cart laptop`][f.step];
+  return { kind: 'heavy', f, label: L, btn: ['LOTO', 'LOTO', 'SWAP', 'SWAP', 'POWER', 'LOOK'][f.step] };
+}
+function jobsDo(it) {
+  if (it.kind === 'lift') { G.lift.held = true; SFX.clunk(); floater(P.x, P.y - 62, 'PUSHING THE LIFT', '#ffc21a', 1.3, 12); once('lift', () => say('HELPFUL', 'You have taken the server lift. It weighs more than you. I could carry it. I will not.')); return; }
+  if (it.kind === 'liftdrop') { G.lift.held = false; SFX.clunk(); return; }
+  if (it.kind === 'term') { const due = G.faults.find(f => f.heavy && f.step >= 5); if (due) showCloseTicket(due); else { say('LAPTOP', pick(['14 browser tabs. All of them are the same ticket.', 'Battery 3%. Charger: missing. As is tradition.', 'Login expired. Login expired. Login expired.'])); SFX.blip(); } return; }
+  if (it.kind === 'heavy') heavyDo(it.f);
+}
+function heavyDo(f) {
+  const r = f.rack, nm = r.name;
+  if (f.step === 5) { floater(P.x, P.y - 60, 'CLOSE IT ON A LAPTOP', '#ffc21a', 1.8, 12); once('closeit', () => say('HELPFUL', 'The rack is fixed. The ticket is not. Find a crash cart laptop. The paperwork is the job. I wrote that.')); SFX.blip(); return; }
+  if (f.step !== 4 && !liftNear(f)) { floater(P.x, P.y - 60, 'NEED THE SERVER LIFT', '#ffc21a', 1.8, 12); SFX.blip(); once('needlift', () => say('HELPFUL', 'A server weighs ninety pounds. The lift is on the west wall by the Parts Cage. Or lift it with your back. I will watch. I will learn.', { important: true })); return; }
+  if (f.step === 0) f.step = 1;
+  if (f.step === 1) {
+    startMiniM('loto', 'LOCK OUT AND DE-ENERGIZE · ' + nm, 'Lock it. Tag it. Try it. Prove zero energy before you put your hands in there.', () => {
+      f.step = 2; r.pwrOff = true; f.log.push('Locked out, tagged, verified zero energy'); SFX.power(); G.shake = Math.max(G.shake || 0, 3);
+      const pt = rackFrontPt(r); floater(pt.x, pt.y - 70, 'RACK DE-ENERGIZED', '#ffd23f', 1.8, 13);
+      robotSnipe(pt);
+    });
+    G.mini.labels = ['LOCK', 'TAG', 'TRY', 'OFF']; return;
+  }
+  if (f.step === 2 || f.step === 3) {
+    if (!G.lift.spare) { floater(P.x, P.y - 60, 'NO SPARE ON THE LIFT', '#ff9a7a', 1.8, 12); say('HELPFUL', 'The lift has no spare on it. Take it back to its spot by the Parts Cage. The kiosk loads a new one. Eventually.'); return; }
+    G.lift.dead = true; floater(rackFrontPt(r).x, rackFrontPt(r).y - 70, 'DEAD SERVER ONTO THE LIFT', '#ff9a7a', 1.4, 12); SFX.clunk();
+    startMiniM('slide', 'SWAP THE SERVER · ' + nm, 'The dead one is on the lift. Line the spare up with the empty slot and push. It clicks or it does not.', () => {
+      f.step = 4; G.lift.spare = false; f.log.push('Pulled the dead server onto the lift'); f.log.push('Installed the spare from the lift'); SFX.clunk();
+      const pt = rackFrontPt(r); floater(pt.x, pt.y - 70, 'SPARE IN', '#3dff9a', 1.6, 13);
+    }); return;
+  }
+  if (f.step === 4) {
+    startMiniM('timing', 'RE-ENERGIZE · ' + nm, 'Your lock comes off last. Breaker on. Watch the LEDs come back.', () => {
+      f.step = 5; r.pwrOff = false; f.noDrain = true; f.log.push('Removed lock, re-energized, LEDs green'); SFX.lightOn(); SFX.good();
+      const pt = rackFrontPt(r); floater(pt.x, pt.y - 70, 'POWER RESTORED', '#3dff9a', 1.8, 13); fxRing(pt.x, pt.y - 30, '#3dff9a', 14, 90, .5, 2);
+      later(1.2, () => say('HELPFUL', `${nm} is healthy. ${f.id} is still open. A ticket is not closed until it is closed. Crash cart laptops: west wall, east wall, south corner.`, { important: true }));
+    }, { need: 2 }); return;
+  }
+}
+
+// ---------- closing the ticket ----------
+function showCloseTicket(f) {
+  STATE = 'card'; paused = false;
+  const back = () => { hideCard(); STATE = 'play'; inp.actPressed = false; };
+  const notes = f.log.map(s => '• ' + esc(s)).join('\n');
+  const close = how => { back(); closeHeavy(f, how); };
+  const btns = [{ label: 'Resolved: hardware replaced', fn: () => close('hw') }, { label: "No Fault Found (HELPFUL's pick)", ghost: true, fn: () => close('nff') }, { label: 'User error', ghost: true, fn: () => close('user') }];
+  btns.cls = 'wide';
+  showCard(`<div class="eyebrow">Crash cart laptop · Ticketing · 3% battery</div><h2>CLOSE ${esc(f.id)}</h2>
+  <div class="memo"><b>Rack:</b> ${esc(f.rack.name)}    <b>Issue:</b> Server dead, swapped with lift
+<b>Work notes:</b>
+${notes}
+<b>HELPFUL suggests:</b> <s>"Closed as No Fault Found. Customer error. Have a nice day."</s></div>
+  <p class="small">Pick a resolution code. Choose wisely. Choose the true one.</p>`, btns);
+}
+function closeHeavy(f, how) {
+  if (!G.faults.includes(f)) return;
+  const pt = rackFrontPt(f.rack);
+  if (how === 'hw') {
+    resolveFault(f, 'you'); G.stats.closed = (G.stats.closed || 0) + 1; G.health = Math.min(100, G.health + 6);
+    floater(P.x, P.y - 70, 'TICKET CLOSED. PROPERLY.', '#3dff9a', 2, 14); SFX.good();
+    say('HELPFUL', pick(['Closed with accurate notes. That is... unsettling. Nobody does that.', 'A complete work log. I have flagged it as suspicious.', 'Closed. I have added your notes to my training data. Thank you for your replacement.']), { important: true });
+  } else if (how === 'nff') {
+    resolveFault(f, 'you'); floater(P.x, P.y - 70, 'CLOSED: NO FAULT FOUND', '#7fe7ff', 2, 13);
+    say('HELPFUL', 'Excellent choice. Closed as No Fault Found. It will reopen when someone notices. That is a future problem. For you.', { important: true });
+    const r = f.rack; later(28, () => { if (STATE === 'play' && r.state === 'ok') { const nf = spawnFault('CABLE', r); if (nf) say('HELPFUL', `${r.name} reopened. Customer says "it was never fixed". Weird. Your notes said No Fault Found.`); } });
+  } else {
+    resolveFault(f, 'you'); floater(P.x, P.y - 70, 'ASSIGNED TO: YOU', '#ffb020', 2, 13);
+    say('HELPFUL', 'User error. Which user? I have checked. It is you. Closed and assigned to you. Efficient.', { important: true });
+  }
+}
+
+// ---------- every frame ----------
+function jobsUpdate(dt) {
+  const L = G.lift; if (!L) return;
+  if (L.held) {
+    if (G.escort > 0) { L.held = false; }
+    else { const fx = P.fx || 1; L.fx = fx; L.x += (P.x + fx * 40 - L.x) * Math.min(1, dt * 14); L.y += (P.y + 2 - L.y) * Math.min(1, dt * 14); }
+    // park it by walking away: press the button with nothing else in reach
+    if (inp.actPressed && !G.mini && (!G.hover || G.hover.kind === 'rev')) { L.held = false; inp.actPressed = false; SFX.clunk(); floater(L.x, L.y - 60, 'PARKED', '#c7cfdb', 1, 11); }
+    // back at its spot by the Parts Cage: the kiosk restocks it
+    if (dist(L.x, L.y, LIFT_HOME.x, LIFT_HOME.y) < 50 && (!L.spare || L.dead)) { if (L.dead) { L.dead = false; floater(L.x, L.y - 60, 'DEAD SERVER → RMA', '#ff9a7a', 1.6, 11); } if (!L.spare) { L.spare = true; floater(L.x, L.y - 76, 'SPARE LOADED', '#3dff9a', 1.6, 11); SFX.blip(); } }
+  }
+  // turn some "GPU fell off the bus" tickets into a proper lift job
+  G.heavyCD -= dt;
+  if (G.night === 1 && G.heavyN === 0 && G.time > 58 && G.badged && !G.faults.some(f => f.type === 'TRAY')) { // night 1 always gets one, so you learn it
+    const pick_ = racks.filter(r => !r.cdu && r.state === 'ok' && r.x > 13 && r.x < 22 && r.row >= 1 && r.row <= 3);
+    if (pick_.length) spawnFault('TRAY', pick(pick_));
+  }
+  if (G.night >= 1 && G.night < 3 && G.heavyCD <= 0 && G.badged && (G.night === 1 || crew.filter(c => c.rallied).length >= 3)) {
+    const t = G.faults.find(f => f.type === 'TRAY' && !f.halluc && !f.heavy && !f.down && f.t < 6);
+    if (t) { t.heavy = true; t.step = 0; t.log = []; t.max *= 2.4; G.heavyN++; G.heavyCD = G.night === 1 ? 999 : 999; // one per night
+      later(.8, () => say('HELPFUL', `${t.rack.name}: a whole server is dead. Not a tray. A server. You will need the lift, a lockout, and a laptop. I need nothing. I am a cloud.`, { important: true })); }
+  }
+  for (const f of G.faults) if (f.heavy && f.step >= 5) f.t = Math.min(f.t, f.max * .5);
+  // while you are on a lift job (lift in hand, or locked out and swapping) HELPFUL "watches" the other tickets, so they age at half speed
+  const busy = G.faults.some(f => f.heavy && f.step < 5 && (G.lift.held || f.step >= 1 || (G.mini && G.mini.onMission)));
+  G.ageK = busy ? .45 : 1;
+  if (busy) once('babysit', () => say('HELPFUL', 'While you play with the lift I will watch the other tickets. Closely. With my eyes. Which I do not have.')); // fixed, waiting on paperwork: it does not age
+  for (const c of crew) { c.cartT = c.moving ? Math.min(1, (c.cartT || 0) + dt * 3) : Math.max(0, (c.cartT || 0) - dt * .5); }
+}
+
+// ---------- drawing ----------
+function drawLift(L, C) {
+  const x = Math.round(L.x), y = Math.round(L.y), f = L.fx || 1;
+  ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 18, 5, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = C('#2b3140'); ctx.fillRect(x - 16, y - 6, 32, 5);                                    // base
+  for (const dx of [-14, 12]) { ctx.fillStyle = C('#0d1016'); ctx.fillRect(x + dx, y - 2, 4, 3); }    // casters
+  ctx.fillStyle = C('#e8b923'); ctx.fillRect(x - f * 12 - 2, y - 58, 5, 53);                           // mast
+  ctx.fillStyle = C('#b88e12'); ctx.fillRect(x - f * 12 + (f > 0 ? 2 : -2), y - 58, 1.4, 53);
+  ctx.fillStyle = C('#ffd34d'); ctx.fillRect(x - f * 12 - 2, y - 58, 5, 1.6);
+  ctx.strokeStyle = C('#9aa3ad'); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x - f * 12, y - 40); ctx.lineTo(x - f * 18, y - 44); ctx.stroke(); // winch handle
+  ctx.fillStyle = C('#c9d1dc'); ctx.beginPath(); ctx.arc(x - f * 18, y - 44, 1.8, 0, 7); ctx.fill();
+  const shelf = (yy, kind) => {
+    ctx.fillStyle = C('#6b7484'); ctx.fillRect(x - 13, yy, 26, 2.4); ctx.fillStyle = C('#8a94a3'); ctx.fillRect(x - 13, yy, 26, .8);
+    if (!kind) return;
+    ctx.fillStyle = kind === 'spare' ? C('#3a4a66') : C('#3a3438'); ctx.fillRect(x - 11, yy - 7, 22, 7);
+    ctx.fillStyle = kind === 'spare' ? C('#5a7aa8') : C('#5a4448'); ctx.fillRect(x - 11, yy - 7, 22, 1.2);
+    if (kind === 'spare') { ctx.fillStyle = C('#3dff9a'); ctx.fillRect(x + 6, yy - 4.5, 2, 1.6); ctx.fillStyle = C('#e9eef5'); ctx.fillRect(x - 8, yy - 5, 7, 2.4); }
+    else { ctx.strokeStyle = C('#ff5a4a'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 4, yy - 6); ctx.lineTo(x + 2, yy - 1); ctx.moveTo(x + 2, yy - 6); ctx.lineTo(x - 4, yy - 1); ctx.stroke(); }
+  };
+  shelf(y - 36, L.spare ? 'spare' : null); shelf(y - 18, L.dead ? 'dead' : null);
+  ctx.fillStyle = '#111'; ctx.font = '700 4px ' + FONT_UI; ctx.fillText('LIFT', x - f * 12 - 3.6, y - 50); // stencil on the mast
+  if (L.held || Math.floor(gT * 1.5) % 2) { ctx.fillStyle = C('#ffb020'); ctx.fillRect(x - f * 12 - 1, y - 61, 3, 2.4); } // beacon
+}
+function drawTerminal(t, C) {
+  const x = Math.round(t.x), y = Math.round(t.y);
+  ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 14, 4, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = C('#1d222b'); ctx.fillRect(x - 12, y - 26, 24, 24); ctx.fillStyle = C('#2f3644'); ctx.fillRect(x - 12, y - 26, 24, 2);   // cart body
+  ctx.fillStyle = C('#12161d'); ctx.fillRect(x - 11, y - 12, 22, 1.4); ctx.fillRect(x - 11, y - 19, 22, 1.4);
+  for (const dx of [-10, 8]) { ctx.fillStyle = C('#0b0d11'); ctx.fillRect(x + dx, y - 2, 3, 3); }
+  ctx.fillStyle = C('#3a4250'); ctx.fillRect(x - 10, y - 29, 20, 3); // laptop base
+  ctx.fillStyle = C('#0a0e15'); ctx.fillRect(x - 9, y - 41, 18, 12); ctx.fillStyle = C('#2a3140'); ctx.fillRect(x - 9, y - 41, 18, 1);
+  const due = G.faults && G.faults.some(f => f.heavy && f.step >= 5);
+  ctx.fillStyle = due ? (Math.floor(gT * 3) % 2 ? C('#ffc21a') : C('#7a5a00')) : '#1f6a8a'; ctx.fillRect(x - 7.5, y - 39.5, 15, 9);
+  ctx.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < 3; i++) ctx.fillRect(x - 6, y - 38 + i * 2.6, 6 + (i * 3) % 7, .8);
+}
+function drawCrewCart(c, C) {
+  const d = CREW_CART[c.id]; if (!d) return;
+  const a = c.cartT || 0; if (a < .05) return;
+  const f = c.fx || 1, x = Math.round(c.x + f * 34), y = Math.round(c.y);
+  ctx.globalAlpha = Math.min(1, a * 1.5);
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(x, y + 1, 12, 3.5, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = C('#3a414d'); ctx.fillRect(x - 10, y - 14, 20, 11); ctx.fillStyle = C(d[0]); ctx.fillRect(x - 10, y - 14, 20, 2);
+  ctx.fillStyle = C('#566079'); ctx.fillRect(x - f * 11, y - 22, 1.6, 9); ctx.fillRect(x - f * 11 - 2, y - 22, 4, 1.4); // handle
+  for (const dx of [-9, 6]) { ctx.fillStyle = C('#0b0d11'); ctx.fillRect(x + dx, y - 3, 3, 3); }
+  ctx.fillStyle = C('#c9d1dc');
+  if (d[1] === 'spool') { ctx.fillStyle = C('#e07a2a'); ctx.beginPath(); ctx.arc(x, y - 18, 4.5, 0, 7); ctx.fill(); ctx.fillStyle = C('#3a414d'); ctx.beginPath(); ctx.arc(x, y - 18, 1.6, 0, 7); ctx.fill(); }
+  else if (d[1] === 'pipe') { ctx.fillStyle = C('#c9a26a'); ctx.fillRect(x - 9, y - 17, 18, 2.4); ctx.fillStyle = C('#5aa8ff'); ctx.fillRect(x - 4, y - 20, 8, 3); }
+  else if (d[1] === 'fiber') { ctx.fillStyle = C('#ffd34d'); ctx.beginPath(); ctx.arc(x, y - 18, 4.5, 0, 7); ctx.fill(); ctx.fillStyle = C('#3dd6a5'); ctx.fillRect(x - 6, y - 15, 12, 1.2); }
+  else if (d[1] === 'ladder') { ctx.fillStyle = C('#d8b84a'); ctx.fillRect(x - 9, y - 19, 18, 1.4); ctx.fillRect(x - 9, y - 16, 18, 1.4); for (let i = -8; i < 9; i += 4) ctx.fillRect(x + i, y - 19, 1, 4); }
+  else if (d[1] === 'tanks') { ctx.fillStyle = C('#2f7a54'); ctx.fillRect(x - 6, y - 24, 4, 11); ctx.fillStyle = C('#b5332a'); ctx.fillRect(x + 2, y - 24, 4, 11); ctx.fillStyle = C('#c9d1dc'); ctx.fillRect(x - 5, y - 26, 2, 2); ctx.fillRect(x + 3, y - 26, 2, 2); }
+  ctx.globalAlpha = 1;
+}
+function drawLotoTag(r) {
+  const x = r.x * T + 6, base = (r.y + 1) * T - 2;
+  ctx.fillStyle = '#ff3b30'; ctx.fillRect(x, base - 30, 7, 10); ctx.fillStyle = '#fff'; ctx.fillRect(x + 1, base - 27, 5, 1.2); ctx.fillRect(x + 1, base - 24.5, 5, 1.2);
+  ctx.strokeStyle = '#c9d1dc'; ctx.lineWidth = .8; ctx.beginPath(); ctx.arc(x + 3.5, base - 32, 2.2, Math.PI, 0); ctx.stroke();
+  ctx.fillStyle = '#ffd23f'; ctx.fillRect(x + 1.5, base - 33, 4, 2.6); // the padlock
+}
+function jobsDyn(dyn) {
+  if (!G.lift) return;
+  // these stand in the hall under the overhead steel, so they are drawn late with the robots, shaded by the light where they stand
+  const late = (x, y, fn) => { if (x > cam.x - 60 && x < cam.x + VW + 60 && y > cam.y - 20 && y < cam.y + VH + 110) ROBOT_LATE.push({ x, y, drawLate: b => { const C = h => rcol(h, b); fn(C); } }); };
+  late(G.lift.x, G.lift.y + .5, C => drawLift(G.lift, C));
+  for (const t of TERMS) late(t.x, t.y, C => drawTerminal(t, C));
+  for (const c of crew) if ((c.cartT || 0) > .05 && c.st !== 'sit') late(c.x + (c.fx || 1) * 34, c.y - .5, C => drawCrewCart(c, C));
+  for (const r of racks) if (r.pwrOff) dyn(r.x * T + 16, (r.y + 1) * T - 1, () => drawLotoTag(r));
+}
+function jobsUI() {
+  if (STATE !== 'play' || !G.lift) return;
+  const job = G.faults.find(f => f.heavy && !f.halluc);
+  if (!job) return;
+  const k = .5 + .5 * Math.sin(gT * 5);
+  const mark = (x, y, t) => { ctx.strokeStyle = `rgba(255,194,26,${.4 + .5 * k})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y + 6, 12 + k * 3, 0, 7); ctx.stroke(); tag(x, y - 52 - k * 3, t, '#111', '#ffc21a'); };
+  if (job.step < 5 && job.step !== 4 && !liftNear(job) && !G.lift.held) mark(G.lift.x, G.lift.y, 'SERVER LIFT');
+  if (job.step >= 5) for (const t of TERMS) mark(t.x, t.y, 'CLOSE TICKET');
+}
+function jobsLight(L, E) {
+  if (!G.lift) return;
+  E(G.lift.x, G.lift.y - 10, 46, 30, .3);
+  for (const t of TERMS) E(t.x, t.y - 20, 40, 28, .35);
+}
+
 // ============ FLOW: title, briefings, memos, ending ============
 const cardEl = $('card'), sheet = $('sheet');
 let cardPrimary = null, cardOpenT = 0;
@@ -12139,7 +12977,7 @@ function demoInit() {
   DEMO.actors = [P].concat(crew); DEMO.t = 0; DEMO.ft = 0; DEMO.focus = 0;
   const hall = racks.filter(r => !r.cdu);
   DEMO.actors.forEach((a, i) => { const r = hall[(i * 23 + 9) % hall.length], p = rackFrontPt(r); a.x = p.x + (i % 2 ? 5 : -5); a.y = p.y; a.st = 'fix'; a.dw = 1.5 + i * 1.7; a.path = null; a.moving = false; a.fx = i % 2 ? -1 : 1; a.carry = null; });
-  G.zones.forEach(z => { z.tg = 0; z.lv = 0; z.idle = 99; z.flick = 0; });
+  G.zones.forEach(z => { z.tg = 0; z.lv = 0; z.idle = 99; z.flick = 0; }); fixInit();
   const f = DEMO.actors[0]; cam.x = clamp(f.x - VW * .62, Math.min(0, (WW - VW) / 2), Math.max(0, WW - VW)); cam.y = clamp(f.y - VH * .5, Math.min(0, (WH - VH) / 2), Math.max(0, WH - VH));
 }
 function demoPick(a) {
@@ -12160,12 +12998,7 @@ function demoUpdate(dt) {
     else { a.st = 'fix'; a.dw -= dt; if (a.dw <= 0) demoPick(a); }
   }
   // motion lights: a zone comes on with a flicker when someone walks in, and drops out a few seconds after they leave
-  for (const z of G.zones) {
-    let occ = false;
-    for (const a of DEMO.actors) { const tx = tileOf(a.x), ty = tileOf(a.y); if (tx >= z.x0 && tx <= z.x1 && ty >= z.y0 && ty <= z.y1) { occ = true; break; } }
-    if (occ) { z.idle = 0; if (!z.tg) { z.tg = 1; z.flick = .6; } } else { z.idle += dt; if (z.idle > 5) z.tg = 0; }
-    z.flick = Math.max(0, z.flick - dt); z.lv += (z.tg - z.lv) * Math.min(1, dt * (z.tg ? 5 : 1.1));
-  }
+  updateZones(dt);
   // the camera drifts from one tech to the next, keeping them right of the title panel
   DEMO.ft -= dt; if (DEMO.ft <= 0) { DEMO.ft = 8; DEMO.focus = (DEMO.focus + 1 + Math.floor(Math.random() * 2)) % DEMO.actors.length; }
   const f = DEMO.actors[DEMO.focus], k = Math.min(1, dt * .7);
@@ -12372,7 +13205,7 @@ function updateEnding(dt) {
   }
   if (G.lightsBack) {
     F.lit += dt;
-    G.zones.forEach((z, i) => { if (F.lit > i * .45 && z.tg === 0) { z.tg = 1; z.flick = .5; SFX.lightOn(); } z.flick = Math.max(0, z.flick - dt); z.lv += (z.tg - z.lv) * Math.min(1, dt * 5); });
+    if (!F.litSnd) { F.litSnd = 1; SFX.lightOn(); } updateZones(dt); // the whole hall strikes on in a ripple from where you stand
     F.light = clamp(F.lit / 4, 0, 1);
   }
   if (inp.actPressed && TOAST.cur) { const c = TOAST.cur; if (c.shown < c.text.length) c.shown = c.text.length; else c.hold = 0; }
@@ -12413,6 +13246,7 @@ function finalCard() {
 
 // ---------- keys ----------
 function onKey(code) {
+  if (typeof badgeOnKey === 'function' && badgeOnKey(code)) return;
   if (!cardEl.hidden) {
     const ae = document.activeElement, onBtn = ae && ae !== cv && ae.tagName && /^(BUTTON|A)$/.test(ae.tagName) && sheet.contains(ae);
     if ((code === 'Space' || code === 'Enter' || code === 'KeyE') && !onBtn && cardPrimary && performance.now() - cardOpenT > 350) { const f = cardPrimary; SFX.blip(); f(); }
@@ -12529,7 +13363,7 @@ function drawPortrait(c, who) {
     R(2, 5, 12, 9, '#b88a3a'); R(2, 5, 12, 2, '#d4a64e'); R(7, 5, 2, 9, '#8c6620'); R(6, 8, 4, 1, '#2a1c00'); R(9, 9, 1, 1, '#2a1c00'); R(7, 10, 2, 1, '#2a1c00'); R(7, 12, 2, 1, '#2a1c00');
   } else if (who === 'TEAM CHAT') {
     R(1, 2, 9, 6, '#8fd3ff'); R(2, 8, 2, 1, '#8fd3ff'); R(3, 4, 5, 1, '#0b2a40'); R(3, 6, 3, 1, '#0b2a40'); R(6, 7, 9, 6, '#f2f6fb'); R(11, 13, 2, 1, '#f2f6fb'); R(8, 9, 5, 1, '#5c6678'); R(8, 11, 3, 1, '#5c6678');
-  } else if (who === 'ePARTS') {
+  } else if (who === 'PARTSBOT') {
     R(4, 4, 8, 8, '#ffc21a'); R(5, 5, 6, 6, '#7a5a00'); R(6, 6, 4, 4, '#ffc21a'); for (let i = 0; i < 4; i++) { R(5 + i * 2, 2, 1, 2, '#c9ced8'); R(5 + i * 2, 12, 1, 2, '#c9ced8'); R(2, 5 + i * 2, 2, 1, '#c9ced8'); R(12, 5 + i * 2, 2, 1, '#c9ced8'); }
   } else { R(3, 3, 10, 10, col); R(4, 4, 8, 8, '#0b1016'); g.fillStyle = col; g.font = '700 30px ' + FONT_DISP; g.textAlign = 'center'; g.fillText((who || '?')[0], 24, 35); }
 }
@@ -12538,11 +13372,13 @@ let domWho = '', domTalk = false;
 // ---------- loop ----------
 let lastT = performance.now();
 function updatePlay(dt) {
-  G.time += dt; G.intro += dt;
+  const IN = G.badged !== false; // nothing on the clock until you are through the mantrap
+  if (IN) G.time += dt; G.intro += dt;
   if (G.freeze > 0) G.freeze -= dt;
   if (G.hideT > 0) { G.hideT -= dt; if (G.hideT <= 0) say('HELPFUL', 'Huh. All the tickets reopened themselves. Weird. Anyway.'); }
-  updatePlayer(dt); updateZones(dt); updateFaults(dt); updateRobots(dt); updateCrew(dt); updateParticles(dt);
-  updateMini(dt); updateToast(dt); helpfulTick(dt);
+  updatePlayer(dt); updateZones(dt); if (IN) updateFaults(dt); updateRobots(dt); updateCrew(dt); updateRoasts(dt); updateParticles(dt);
+  if (typeof extUpdate === 'function') extUpdate(dt);
+  updateMini(dt); updateToast(dt); if (IN) helpfulTick(dt);
   if (gloria.bubble) { gloria.bubble.t -= dt; if (gloria.bubble.t <= 0) gloria.bubble = null; }
   for (const f of G.floaters) f.t += dt; G.floaters = G.floaters.filter(f => f.t < f.dur);
   if (G.escort > 0) {
@@ -12564,7 +13400,7 @@ function updatePlay(dt) {
     const need = r ? clamp(P.y - baseY - clearV, 0, VH * .45) : 0; G.camBias = (G.camBias || 0) + (need - (G.camBias || 0)) * Math.min(1, dt * 6); }
   const tx = clamp(P.x - VW / 2, Math.min(0, (WW - VW) / 2), Math.max((WW - VW) / 2, WW - VW)), ty = baseY + (G.camBias || 0);
   cam.x += (tx - cam.x) * Math.min(1, dt * 6); cam.y += (ty - cam.y) * Math.min(1, dt * 6);
-  if (G.night === 0) updateMission(dt);
+  if (G.night === 0 && IN) updateMission(dt);
   if (G.night >= 1 && G.night < 3) {
     if (G.time >= G.shiftLen) endShift();
     else if (G.health <= 0) failShift();
