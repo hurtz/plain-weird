@@ -117,6 +117,14 @@ footer a{color:var(--gold)}
   .dh em{margin-left:0}
   #player .pby{display:none}
 }
+.ha{display:grid;grid-template-columns:168px minmax(0,1fr) auto;align-items:center;gap:16px;margin-top:16px;padding:10px 14px 10px 10px;border:2px solid var(--ink);background:linear-gradient(90deg,#4a1470,#0a2f5c 70%);text-decoration:none;color:var(--ink);box-shadow:5px 5px 0 rgba(0,0,0,.35)}
+.ha img{width:168px;aspect-ratio:16/9;object-fit:cover;display:block;border:1px solid rgba(255,255,255,.3)}
+.ha b{display:block;font:40px/.95 var(--display);font-weight:400}
+.ha small{display:block;font:12px var(--mono);color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.ha em{font-style:normal;color:var(--mute);font-size:15px}
+.ha .go{background:var(--orange);color:#1b1b1b;font:600 14px var(--body);padding:8px 14px;border-radius:3px;white-space:nowrap}
+.ha:hover .go{background:var(--gold)}
+@media (max-width:560px){.ha{grid-template-columns:104px minmax(0,1fr);gap:12px}.ha img{width:104px}.ha b{font-size:30px}.ha .go{grid-column:1/-1;text-align:center}}
 @media (prefers-reduced-motion:reduce){.fc img,.tile img{transition:none}.reel .track{animation:none}}
 </style>
 
@@ -139,6 +147,7 @@ footer a{color:var(--gold)}
 </header>
 <div class="reel" aria-hidden="true"><div class="track" id="reel"></div></div>
 
+<a class="ha" href="https://www.instagram.com/hourlyabsurdity/" target="_blank" rel="noopener"><img src="img/hourly-absurdity.jpg" alt="Hourly Absurdity artwork"><span><small>My Instagram</small><b>Hourly Absurdity</b><em>Absurd ideas, turned into pictures.</em></span><span class="go">Follow @hourlyabsurdity</span></a>
 <main id="main"></main>
 <div id="player" hidden role="dialog" aria-modal="true" aria-labelledby="pname">
   <div class="pb"><b id="pname"></b><span class="pby">a Plain Weird game by Jason O'Connell</span><a class="btn alt" id="ptab" href="#" target="_blank" rel="noopener">Open in its own tab</a><button class="btn" id="pclose" type="button">Close</button></div>
@@ -209,7 +218,7 @@ const P=[
 ["dos","DOS Game Automation",3,"E","One command setup for classic DOS games.",[]],
 ["gamebeater","Gamebeater",3,"E","A ROM archive deduped across three clouds and a NAS.",[]],
 
-["modem-lab","Modem Lab",4,"E","Dial up, slowed down. Pick two real modems and a bad phone line, then hear every stage of the handshake explained. Mom picks up the phone included.",[["Watch the video",YT("-pOcYlXa1QY")]]],
+["modem-lab","Modem Lab",4,"E","Dial up, slowed down. Pick two real modems and a bad phone line, then hear every stage of the handshake explained. Mom picks up the phone included.",[["Watch the video",YT("syQejFP70wM")]]],
 ["phone-caller","Sarah, My AI Phone Caller",4,"V","I ask Claude a question. Sarah, my AI caller, phones the business, asks it, and reports back. Nineteen calls and counting.",[]],
 ["platter","Platter",4,"","A menu bar app that makes your silent Mac sound like a 1990s hard drive again. Floppy, SCSI, IDE. Free and open source.",[["Get it","https://hurtz.github.io/platter/"],["Code","https://github.com/hurtz/platter"]]],
 ["tvargenta","TVArgenta",4,"HV","A 3D printed retro TV. Swear at it and it puts Johnny Carson, cartoons, or the news on.",[]],
@@ -218,7 +227,7 @@ const P=[
 ["trendhunter","Trendhunter",4,"","Spots emerging trends on Hacker News, Reddit and Google, pitches what to build to catch each one, and scores how ripe it is.",[]],
 
 ["tape","The Tape That Loaded Again",5,"Y","Recovering 40 year old Commodore 64 programs from cassette, with AI, and proving every byte.",[["Watch",YT("TLCCnDBVDiY")]]],
-["vid-modem","Every Dial Up Modem Sound, Explained",5,"Y","Every screech and hiss of a dial up handshake, slowed down and explained step by step.",[["Watch",YT("-pOcYlXa1QY")],["Try Modem Lab","play/modem-lab.html"]]],
+["vid-modem","Every Dial Up Modem Sound, Explained",5,"Y","Every screech and hiss of a dial up handshake, slowed down and explained step by step.",[["Watch",YT("syQejFP70wM")]]],
 ["denise","DeniseITX Quick Overview",5,"Y","A quick look at the DeniseITX, a brand new Amiga motherboard.",[["Watch",YT("nQnLxcAOYGY")]]],
 
 ["hourly-absurdity","Hourly Absurdity",6,"","An Instagram account that turns absurd ideas into pictures.",[["Instagram","https://www.instagram.com/hourlyabsurdity/"],["Gallery","https://hourly-absurdity.hurtz.chatgpt.site/"]]],
@@ -235,6 +244,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const WATCH=k=>k.startsWith("vid-");
 const chip=t=>TAG[t]?`<span class="tag" style="color:var(${TAG[t][1]})">${TAG[t][0]}</span>`:"";
 const VNAME={"vid-hotaisle":"Hot Aisle trailer","vid-catbird":"Catbird Over Des Moines trailer","vid-platter":"Platter: Do You Miss Hard Drive Sounds?"};
+const APPKEY={"vid-modem":["modem-lab","Run Modem Lab"]};
 const TRAILKEY={"hot-aisle":"vid-hotaisle","catbird":"vid-catbird","platter":"vid-platter"};
 // hover action: real gameplay clips, trailers where a game has one
 const CLIPS=["clauderooms","life-simulator","choppricer","cascade","play-with-me","nice-truck","vine-runner","plumbing","going-down","uber-ride","w0725b","they-saw-us","little-tempest","ascii-cat","tape"];
@@ -264,7 +274,7 @@ function card(p,r){const[k,n,,t,d]=p;const a=action(p);const clip=CLIP[k];
   const rk=r?`<span class="rank${r<4?" g"+r:""}">#${r}</span>`:"";
   const tv=clip?`<video muted loop playsinline preload="none" data-src="${clip}"></video><span class="hov">hover for action</span>`:"";
   const first=a.lab?(a.href?`<a class="act ${a.cls}" href="${esc(a.href)}" target="_blank" rel="noopener">&#9654; ${esc(a.lab)}</a>`:`<button class="act ${a.cls}" type="button" ${a.attr}>&#9654; ${esc(a.lab)}</button>`):`<span class="soon">${p[2]===4?"Runs at my house":"In the works"}</span>`;
-  const second=watchBtn(p,a,0);
+  const second=watchBtn(p,a,0)+(APPKEY[k]?`<button class="act play" type="button" data-play="${APPKEY[k][0]}">&#9654; ${APPKEY[k][1]}</button>`:"");
   const ex=extras(p,a);
   return `<div class="fc${clip?" hasv":""}${a.lab?"":" static"}${r===1?" top":""}" ${a.attr} ${a.lab?`tabindex="0" role="button" aria-label="${esc(a.lab+": "+n)}"`:""}><span class="media"><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360">${tv}${rk}${vidTag(p)}</span><span class="cap"><span class="row1"><b>${esc(n)}</b>${[...t].map(chip).join("")}</span><p>${esc(d)}</p><span class="acts">${first}${second}${ex?`<span class="more">${ex}</span>`:""}</span></span></div>`}
 function tile(p){const[k,n,,t,d]=p;const a=action(p);const ex=extras(p,a);
@@ -296,4 +306,5 @@ if(matchMedia("(hover:hover)").matches){
   document.querySelectorAll(".fc.hasv").forEach(c=>{c.querySelector(".hov").textContent="";io.observe(c)});
 }
 </script>
+
 </html>
