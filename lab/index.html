@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Four old public computers. Sit down, open Notepad, and leave a note on the desktop for the next person to find.">
+<meta property="og:title" content="Plain Weird Computer Lab">
+<meta property="og:description" content="Sit down at an old PC and leave a note on the desktop for a stranger.">
+<meta property="og:image" content="https://jasonoconnell.com/img/computer-lab.jpg">
+<meta property="og:url" content="https://jasonoconnell.com/lab/">
+<meta name="twitter:card" content="summary_large_image">
+<style>*,*::before,*::after{box-sizing:border-box}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
+</head>
+<body>
+<script>window.DESK_API='https://plainweird-lab.jloconne.workers.dev';</script>
+<title>Plain Weird Computer Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap">
+<style>
+/* Layout: a dim school computer lab (lobby) with four beige workstations; click one and it boots into a full-screen 98-era desktop.
+   One deliberate retro look, so no dark/light split: every color is set explicitly. */
+:root {
+  --lab: #1d2330; --lab2: #262e3e; --carpet: #2b3242; --sign: #e9e2c8; --ink: #f2efe4; --dim: #9aa4b6; --hi: #ffd34d;
+  --beige: #d9d2bf; --beige2: #b9b1a0; --beige3: #8d8676;
+  --face: #c0c0c0; --face2: #dfdfdf; --shadow: #808080; --dark: #0a0a0a; --white: #ffffff; --navy: #000080; --navy2: #1084d0; --sel: #000080;
+  --f-ui: Tahoma, "MS Sans Serif", "Segoe UI", Verdana, Geneva, sans-serif;
+  --f-pix: "Silkscreen", "Courier New", monospace;
+  --f-term: "VT323", "Courier New", monospace;
+  --f-mono: "Lucida Console", "Courier New", Courier, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--lab); color: var(--ink); font-family: var(--f-ui); margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px dotted var(--hi); outline-offset: 2px; }
+
+/* ---------- lobby ---------- */
+#lobby { min-height: 100%; box-sizing: border-box; padding-inline: 16px; padding-block: 28px 40px;
+  background: radial-gradient(90% 60% at 50% 0, var(--lab2), transparent 70%), linear-gradient(180deg, var(--lab) 0, var(--carpet) 100%); }
+.wrap { max-width: 1060px; margin: 0 auto; display: grid; gap: 26px; }
+.signboard { justify-self: center; background: var(--sign); color: #2a2418; padding: 14px 22px 12px; border: 3px solid #6b5f45; box-shadow: 0 6px 0 rgba(0,0,0,.35); text-align: center; transform: rotate(-.6deg); max-width: 100%; box-sizing: border-box; }
+.signboard h1 { font-family: var(--f-pix); font-weight: 700; font-size: clamp(20px, 4.4vw, 34px); margin: 0; letter-spacing: 1px; text-wrap: balance; }
+.signboard p { margin: 6px 0 0; font-size: 13px; letter-spacing: .5px; }
+.rules { justify-self: center; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; font-size: 13px; color: var(--dim); max-width: 760px; text-align: center; }
+.rules b { color: var(--ink); font-weight: 700; }
+.pcs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; align-items: start; }
+@media (max-width: 860px) { .pcs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 440px) { .pcs { grid-template-columns: minmax(0, 1fr); } }
+.station { background: none; border: 0; padding: 0; cursor: pointer; display: grid; justify-items: center; gap: 10px; text-align: center; }
+.crt { width: 100%; max-width: 230px; aspect-ratio: 1.12; background: linear-gradient(180deg, var(--beige) 0, var(--beige2) 100%); border-radius: 10px 10px 6px 6px; box-shadow: inset 0 -6px 0 var(--beige3), inset 0 2px 0 #f3eddd, 0 10px 0 -2px #1a1f2a; padding: 14px 16px 26px; box-sizing: border-box; position: relative; }
+.crt::after { content: ""; position: absolute; right: 18px; bottom: 9px; width: 7px; height: 7px; border-radius: 50%; background: #3dff7a; box-shadow: 0 0 6px #3dff7a; }
+.crt::before { content: ""; position: absolute; left: 18px; bottom: 10px; width: 34px; height: 4px; background: var(--beige3); border-radius: 2px; }
+.screen { width: 100%; height: 100%; border-radius: 12px / 16px; border: 6px solid #2b2a26; box-sizing: border-box; position: relative; overflow: hidden; box-shadow: inset 0 0 18px rgba(0,0,0,.55); }
+.screen .mini { position: absolute; inset: 0; }
+.screen .mini i { position: absolute; width: 9%; aspect-ratio: .82; background: var(--white); border-radius: 1px; box-shadow: 1px 1px 0 rgba(0,0,0,.35); }
+.screen .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 10%; background: var(--face); box-shadow: inset 0 1px 0 var(--white); }
+.screen .glare { position: absolute; inset: 0; background: radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,.18), rgba(255,255,255,0) 50%), repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 1px, rgba(0,0,0,0) 1px 3px); pointer-events: none; }
+.station:hover .screen, .station:focus-visible .screen { filter: brightness(1.15) saturate(1.1); }
+.desk { width: 100%; max-width: 260px; height: 14px; background: linear-gradient(#6b5236, #4d3a26); border-radius: 2px; box-shadow: 0 6px 0 #1a1f2a; margin-top: -2px; }
+.label { display: grid; gap: 3px; }
+.label b { font-family: var(--f-pix); font-size: 15px; color: var(--ink); }
+.label span { font-size: 12.5px; color: var(--dim); }
+.label em { font-style: normal; font-size: 12.5px; color: var(--hi); font-variant-numeric: tabular-nums; }
+.foot { text-align: center; font-size: 12px; color: var(--dim); max-width: 640px; justify-self: center; line-height: 1.5; }
+.foot a { color: var(--hi); }
+.mode { justify-self: center; font-size: 12px; background: rgba(0,0,0,.28); border: 1px solid #3a4356; padding: 6px 10px; color: var(--dim); max-width: 100%; box-sizing: border-box; }
+
+/* ---------- boot ---------- */
+#boot { position: fixed; inset: 0; background: #000; color: #c8c8c8; font-family: var(--f-term); font-size: 22px; padding: 24px; box-sizing: border-box; z-index: 50; white-space: pre-wrap; line-height: 1.15; }
+#boot .splash { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 16px; background: #000; }
+#boot .splash b { font-family: var(--f-pix); font-size: clamp(22px, 5vw, 40px); color: #fff; }
+#boot .prog { width: min(320px, 70vw); height: 14px; border: 2px solid #9a9a9a; padding: 2px; box-sizing: border-box; }
+#boot .prog i { display: block; height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--navy2) 0 10px, transparent 10px 13px); }
+
+/* ---------- the desktop ---------- */
+#desk { position: fixed; inset: 0; z-index: 10; display: grid; grid-template-rows: 1fr auto; font-size: 12px; color: var(--dark); -webkit-font-smoothing: none; user-select: none; -webkit-user-select: none; }
+#wall { position: relative; overflow: hidden; touch-action: none; padding-top: env(safe-area-inset-top, 0px); }
+.ico { position: absolute; width: 76px; display: grid; justify-items: center; gap: 4px; padding: 3px; cursor: default; background: none; border: 0; text-align: center; touch-action: none; }
+.ico svg { width: 32px; height: 32px; image-rendering: pixelated; }
+.ico span { color: var(--white); font-size: 11px; line-height: 1.25; padding: 1px 3px; max-width: 72px; overflow-wrap: anywhere; text-shadow: 1px 1px 0 rgba(0,0,0,.6); }
+.ico.sel span { background: var(--sel); text-shadow: none; outline: 1px dotted var(--white); }
+.ico.sel svg { filter: brightness(.7) sepia(1) hue-rotate(185deg) saturate(5); }
+.ico.mine span::after { content: " \2022"; color: var(--hi); }
+.ico.fresh { animation: pop .5s ease-out; }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+
+/* bevels */
+.out { background: var(--face); box-shadow: inset -1px -1px 0 var(--dark), inset 1px 1px 0 var(--white), inset -2px -2px 0 var(--shadow), inset 2px 2px 0 var(--face2); }
+.in { background: var(--white); box-shadow: inset -1px -1px 0 var(--white), inset 1px 1px 0 var(--shadow), inset -2px -2px 0 var(--face2), inset 2px 2px 0 var(--dark); }
+.btn { background: var(--face); border: 0; padding: 5px 14px; min-width: 75px; box-shadow: inset -1px -1px 0 var(--dark), inset 1px 1px 0 var(--white), inset -2px -2px 0 var(--shadow), inset 2px 2px 0 var(--face2); cursor: pointer; color: var(--dark); font-size: 12px; }
+.btn:active { box-shadow: inset 1px 1px 0 var(--dark), inset -1px -1px 0 var(--white), inset 2px 2px 0 var(--shadow); }
+.btn[disabled] { color: var(--shadow); text-shadow: 1px 1px 0 var(--white); cursor: default; }
+
+/* windows */
+.win { position: absolute; display: grid; grid-template-rows: auto auto 1fr auto; padding: 3px; min-width: 240px; max-width: calc(100% - 8px); box-sizing: border-box; }
+.win.max { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; }
+.ttl { display: flex; align-items: center; gap: 4px; height: 20px; padding: 0 2px 0 4px; background: linear-gradient(90deg, var(--navy), var(--navy2)); color: var(--white); font-weight: 700; font-size: 12px; touch-action: none; cursor: default; }
+.win:not(.top) .ttl { background: linear-gradient(90deg, #808080, #b5b5b5); color: #d4d0c8; }
+.ttl svg { width: 16px; height: 16px; flex: none; }
+.ttl b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tb { width: 18px; height: 16px; padding: 0; min-width: 0; display: grid; place-items: center; font-family: var(--f-ui); font-size: 11px; line-height: 1; font-weight: 700; }
+.menu { display: flex; gap: 2px; padding: 2px 0; position: relative; }
+.menu > button { background: none; border: 0; padding: 2px 7px; cursor: default; color: var(--dark); font-size: 12px; }
+.menu > button:hover, .menu > button.open { background: var(--sel); color: var(--white); }
+.drop { position: absolute; top: 100%; min-width: 170px; padding: 2px; z-index: 5; }
+.drop button, .smenu button, #ctx button { display: flex; width: 100%; background: none; border: 0; padding: 4px 18px 4px 22px; text-align: left; cursor: default; color: var(--dark); font-size: 12px; gap: 8px; align-items: center; }
+.drop button:hover, .smenu button:hover, #ctx button:hover, .drop button:focus-visible, .smenu button:focus-visible, #ctx button:focus-visible { background: var(--sel); color: var(--white); outline: 0; }
+.drop hr, .smenu hr, #ctx hr { border: 0; border-top: 1px solid var(--shadow); border-bottom: 1px solid var(--white); margin: 3px 2px; }
+.body { min-height: 0; overflow: auto; }
+.pad { width: 100%; height: 100%; min-height: 160px; box-sizing: border-box; border: 0; resize: none; padding: 6px 8px; font-family: var(--f-mono); font-size: 13px; line-height: 1.35; color: var(--dark); background: var(--white); outline: 0; user-select: text; -webkit-user-select: text; white-space: pre-wrap; overflow-wrap: anywhere; }
+.status { display: flex; gap: 4px; padding-top: 3px; font-size: 11px; }
+.status > span { padding: 2px 6px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: inset -1px -1px 0 var(--white), inset 1px 1px 0 var(--shadow); }
+.status > span.k { flex: none; }
+.row { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 4px 4px; }
+.row label { display: flex; gap: 6px; align-items: center; }
+.row input { font-family: var(--f-ui); font-size: 12px; padding: 3px 4px; border: 0; width: 130px; color: var(--dark); background: var(--white); box-shadow: inset -1px -1px 0 var(--white), inset 1px 1px 0 var(--shadow), inset -2px -2px 0 var(--face2), inset 2px 2px 0 var(--dark); user-select: text; -webkit-user-select: text; }
+.row .grow { flex: 1; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
+.list { width: 100%; border-collapse: collapse; font-size: 12px; background: var(--white); }
+.list th { position: sticky; top: 0; text-align: left; font-weight: 400; padding: 2px 6px; background: var(--face); box-shadow: inset -1px -1px 0 var(--dark), inset 1px 1px 0 var(--white); }
+.list td { padding: 2px 6px; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.list tr:hover td { background: var(--sel); color: var(--white); cursor: default; }
+.dlg { display: grid; grid-template-columns: auto 1fr; gap: 12px; padding: 12px 10px 6px; align-items: start; max-width: 360px; }
+.dlg p { margin: 0 0 6px; line-height: 1.4; }
+.props { padding: 10px 12px; display: grid; gap: 6px; max-width: 380px; line-height: 1.4; }
+.props b { font-weight: 700; }
+
+/* taskbar */
+#bar { display: flex; gap: 4px; align-items: center; padding: 3px 3px calc(3px + env(safe-area-inset-bottom, 0px)); position: relative; z-index: 30; min-width: 0; }
+#start { display: flex; gap: 5px; align-items: center; font-weight: 700; padding: 3px 7px; min-width: 0; }
+#start.on { box-shadow: inset 1px 1px 0 var(--dark), inset -1px -1px 0 var(--white), inset 2px 2px 0 var(--shadow); }
+#start svg { width: 18px; height: 18px; }
+#tasks { flex: 1; display: flex; gap: 3px; min-width: 0; overflow: hidden; }
+#tasks button { flex: 0 1 150px; min-width: 40px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 6px; }
+#tasks button.on { box-shadow: inset 1px 1px 0 var(--dark), inset -1px -1px 0 var(--white), inset 2px 2px 0 var(--shadow); background: repeating-conic-gradient(var(--face) 0 25%, var(--white) 0 50%) 0 0 / 2px 2px; font-weight: 700; }
+#newbtn { white-space: nowrap; }
+#tray { display: flex; gap: 6px; align-items: center; padding: 3px 8px; font-variant-numeric: tabular-nums; box-shadow: inset -1px -1px 0 var(--white), inset 1px 1px 0 var(--shadow); white-space: nowrap; }
+#tray button { background: none; border: 0; padding: 0; cursor: pointer; display: grid; }
+#tray svg { width: 16px; height: 16px; }
+.smenu { position: absolute; left: 3px; bottom: calc(100% - 2px); display: grid; grid-template-columns: 24px 1fr; padding: 3px; min-width: 210px; z-index: 40; }
+.smenu .side { background: linear-gradient(0deg, var(--navy), var(--navy2)); color: var(--face2); writing-mode: vertical-rl; transform: rotate(180deg); font-family: var(--f-pix); font-size: 13px; padding: 6px 4px; display: flex; align-items: center; letter-spacing: 1px; white-space: nowrap; }
+.smenu .side b { color: var(--white); }
+.smenu .items { display: grid; padding-left: 2px; }
+.smenu .items button { padding: 7px 16px 7px 8px; font-size: 12.5px; }
+.smenu .items svg { width: 24px; height: 24px; flex: none; }
+#ctx { position: absolute; z-index: 45; min-width: 150px; padding: 2px; }
+.toast { position: absolute; right: 8px; bottom: 44px; z-index: 46; max-width: min(320px, calc(100% - 16px)); padding: 8px 10px; font-size: 12px; line-height: 1.4; }
+.toast b { display: block; margin-bottom: 2px; }
+@media (max-width: 640px) {
+  .win { left: 2px !important; width: calc(100% - 4px) !important; }
+  #tasks button { flex-basis: 90px; }
+  .ico { width: 68px; }
+}
+@media (prefers-reduced-motion: reduce) { .ico.fresh { animation: none; } }
+</style>
+
+<section id="lobby" aria-label="Computer lab">
+  <div class="wrap">
+    <div class="signboard"><h1>PLAIN WEIRD COMPUTER LAB</h1><p>PUBLIC TERMINALS · LEAVE A NOTE ON THE DESKTOP FOR THE NEXT PERSON</p></div>
+    <div class="rules"><span><b>Pick a computer.</b> Everything on its desktop was left by somebody.</span><span><b>Write a note</b> in Notepad and save it to the desktop.</span><span><b>Be nice.</b> No personal info, no links.</span></div>
+    <div class="pcs" id="pcs"></div>
+    <div class="mode" id="mode">Checking the network cable...</div>
+    <p class="foot">Made by <a href="https://jasonoconnell.com" target="_blank" rel="noopener">Jason O'Connell</a> for <a href="https://jasonoconnell.com" target="_blank" rel="noopener">Plain Weird</a>. Say hi on <a href="https://www.linkedin.com/in/jloconne/" target="_blank" rel="noopener">LinkedIn</a>.<br>Notes are public and anyone can read them. Links, email addresses and phone numbers get stripped out. Three reports and a note disappears. Old notes fall off the back of the desk when a computer gets full.</p>
+  </div>
+</section>
+<div id="boot" hidden></div>
+<section id="desk" hidden aria-label="Desktop">
+  <div id="wall"></div>
+  <div id="bar" class="out">
+    <button id="start" class="btn" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="2" width="14" height="10" fill="#1a1a1a"/><rect x="2" y="3" width="12" height="8" fill="#3aa0a0"/><rect x="4" y="5" width="3" height="4" fill="#fff"/><rect x="5" y="6" width="1" height="1" fill="#1a1a1a"/><rect x="9" y="5" width="3" height="4" fill="#fff"/><rect x="10" y="6" width="1" height="1" fill="#1a1a1a"/><rect x="6" y="12" width="4" height="2" fill="#808080"/><rect x="4" y="14" width="8" height="1" fill="#1a1a1a"/></svg>Start</button>
+    <button id="newbtn" class="btn">New note</button>
+    <div id="tasks"></div>
+    <div id="tray"><button id="snd" aria-label="Sound on" title="Sound"></button><span id="clock">12:00 AM</span></div>
+  </div>
+</section>
+
+<script>
+(() => {
+'use strict';
+// ================= the computers =================
+const PCS = [
+  { id: 'breakroom', name: 'Break Room PC', owner: 'The Break Room', wall: '#008080', pattern: '', cpu: '233 MHz (on a good day)', ram: '64 MB, 3 of them sticky', note: 'Somebody microwaves fish on the other side of this monitor.' },
+  { id: 'library', name: 'Library Computer', owner: 'Public Library, Terminal 3', wall: '#2f4a7a', pattern: 'dots', cpu: '166 MHz', ram: '32 MB', note: '30 minute limit. Please whisper your typing.' },
+  { id: 'grandma', name: "Grandma's Computer", owner: 'Grandma', wall: '#6b3348', pattern: 'flowers', cpu: '200 MHz (do not touch the turbo button)', ram: '48 MB and a recipe for meatloaf', note: 'Grandma says do not click anything.' },
+  { id: 'nightshift', name: 'Night Shift Workstation', owner: 'Data Hall Night Shift', wall: '#13233a', pattern: 'grid', cpu: '450 MHz, runs hot', ram: '128 MB, ECC, labeled DO NOT REMOVE', note: 'Logged in since 2003. Nobody knows the password.' },
+];
+const PAT = {
+  dots: (c) => `radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.4px) 0 0 / 8px 8px, ${c}`,
+  flowers: (c) => `radial-gradient(circle at 8px 8px, rgba(255,214,230,.18) 0 3px, transparent 3.5px) 0 0 / 22px 22px, radial-gradient(circle at 19px 19px, rgba(255,240,180,.12) 0 2px, transparent 2.5px) 0 0 / 22px 22px, ${c}`,
+  grid: (c) => `linear-gradient(rgba(80,160,255,.08) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(80,160,255,.08) 1px, transparent 1px) 0 0 / 24px 24px, ${c}`,
+};
+const wallBg = pc => pc.pattern ? PAT[pc.pattern](pc.wall) : pc.wall;
+
+// ================= cleaning (the server does this too) =================
+const SLUR = /\b(n+[i1!|]+g+[e3a@]*r*s*|f+[a@4]+g+(?:[o0]+t+)?s*|k+[i1]+k+e+s*|sp+[i1]+c+s*|ch+[i1]+n+k+s*|tr+[a@4]+n+(?:n+[iy1]+e*)s*|r+[e3]+t+[a@4]+r+d+s*|w+e+t+b+[a@4]+c+k+s*|k+y+s+)\b/gi;
+function clean(s, max) {
+  s = String(s == null ? '' : s).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u200b-\u200f\u202a-\u202e]/g, '').slice(0, max * 3);
+  s = s.replace(/\b(?:https?:\/\/|www\.)\S+/gi, '[link removed]')
+    .replace(/\b[\w.+-]+@[\w-]+(?:\.[\w-]+)+\b/g, '[email removed]')
+    .replace(/\b[\w-]+\.(?:com|net|org|io|gg|ly|co|me|xyz|ru|tk|app|dev|info|biz|us|tv|link|site|online)\b\S*/gi, '[link removed]')
+    .replace(/(?:\+?\d[\s().-]{0,2}){9,}\d/g, '[number removed]')
+    .replace(SLUR, m => '*'.repeat(m.length));
+  return s.slice(0, max);
+}
+
+// ================= storage: the notes API on the website, the artifact's shared store, or this browser =================
+const API = (window.DESK_API || '').replace(/\/$/, '');
+const ls = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+const Store = {
+  mode: 'local', canWrite: true, admin: false, db: null, user: null, mine: new Set(ls.get('pwlab_mine', [])),
+  remember(id) { this.mine.add(id); ls.set('pwlab_mine', [...this.mine].slice(-300)); },
+  async init() {
+    if (API) { this.mode = 'api'; this.adminKey = ls.get('pwlab_admin', ''); return; }
+    let db = null, user = null;
+    try { if (window.claude && claude.use) { [db, user] = await Promise.all([claude.use('db'), claude.use('user')]); } } catch (e) { }
+    if (db) {
+      this.mode = 'db'; this.db = db; this.user = user;
+      try { this.admin = !!(user && await user.isOwner()); } catch (e) { }
+      try { const c = user ? await user.can('data.write') : null; if (c === false) this.canWrite = false; } catch (e) { }
+    }
+  },
+  watch(pc, cb) {
+    if (this.mode === 'db') {
+      return this.db.collection('desks/' + pc + '/notes').orderBy('ts', 'desc').limit(150).onSnapshot(s => cb(s.docs.map(d => Object.assign({ id: d.id }, d.data()))), () => cb(null));
+    }
+    if (this.mode === 'api') {
+      let dead = false;
+      const go = async () => { if (dead) return; try { const r = await fetch(API + '/api/notes?pc=' + pc, { headers: this.adminKey ? { 'x-admin': this.adminKey } : {} }); const j = await r.json(); if (!dead) { if (j.admin) this.admin = true; cb(j.notes || []); } } catch (e) { if (!dead) cb(null); } };
+      go(); const t = setInterval(go, 20000); return () => { dead = true; clearInterval(t); };
+    }
+    cb(ls.get('pwlab_' + pc, [])); return () => { };
+  },
+  async add(pc, n) {
+    if (this.mode === 'db') { const ref = await this.db.collection('desks/' + pc + '/notes').add(n); this.remember(ref.id); return Object.assign({ id: ref.id }, n); }
+    if (this.mode === 'api') {
+      const r = await fetch(API + '/api/notes', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, this.adminKey ? { 'x-admin': this.adminKey } : {}), body: JSON.stringify(Object.assign({ pc }, n)) });
+      const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'The network ate it. Try again.');
+      this.remember(j.note.id); return j.note;
+    }
+    const list = ls.get('pwlab_' + pc, []); const note = Object.assign({ id: Math.random().toString(36).slice(2, 10) }, n); list.unshift(note); ls.set('pwlab_' + pc, list.slice(0, 150)); this.remember(note.id); return note;
+  },
+  async del(pc, id) {
+    if (this.mode === 'db') return this.db.doc('desks/' + pc + '/notes/' + id).delete();
+    if (this.mode === 'api') { const r = await fetch(API + '/api/delete', { method: 'POST', headers: Object.assign({ 'content-type': 'application/json' }, this.adminKey ? { 'x-admin': this.adminKey } : {}), body: JSON.stringify({ pc, id }) }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Could not delete it.'); return; }
+    ls.set('pwlab_' + pc, ls.get('pwlab_' + pc, []).filter(n => n.id !== id));
+  },
+  async report(pc, id) {
+    if (this.mode === 'api') { await fetch(API + '/api/report', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pc, id }) }); }
+    const r = ls.get('pwlab_reported', []); r.push(pc + ':' + id); ls.set('pwlab_reported', r.slice(-300));
+  },
+  reported(pc, id) { return ls.get('pwlab_reported', []).includes(pc + ':' + id); },
+  canDelete(n) { return this.admin || this.mine.has(n.id); },
+  async counts() {
+    if (this.mode === 'api') { try { const j = await (await fetch(API + '/api/counts')).json(); return j.counts || {}; } catch (e) { return {}; } }
+    if (this.mode === 'db') { const out = {}; await Promise.all(PCS.map(async pc => { try { const s = await this.db.collection('desks/' + pc.id + '/notes').limit(150).get(); out[pc.id] = s.size; } catch (e) { } })); return out; }
+    const out = {}; for (const pc of PCS) out[pc.id] = ls.get('pwlab_' + pc.id, []).length; return out;
+  },
+};
+
+// ================= sound (synth only) =================
+let AC = null, muted = ls.get('pwlab_mute', false);
+function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } } return AC; }
+function tone(f, t0, d, type, v) { const a = ac(); if (!a || muted) return; const o = a.createOscillator(), g = a.createGain(); o.type = type || 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(0, a.currentTime + t0); g.gain.linearRampToValueAtTime(v || .08, a.currentTime + t0 + .02); g.gain.exponentialRampToValueAtTime(.0005, a.currentTime + t0 + d); o.connect(g).connect(a.destination); o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + d + .05); }
+const SND = {
+  boot() { [[392, 0], [523, .18], [659, .36], [784, .54], [1047, .8]].forEach(([f, t], i) => tone(f, t, i === 4 ? 1.6 : .7, 'sine', .07)); tone(196, 0, 2, 'triangle', .04); },
+  click() { tone(1800, 0, .03, 'square', .02); },
+  drive() { const a = ac(); if (!a || muted) return; for (let i = 0; i < 7; i++) tone(90 + Math.random() * 60, i * .07 + Math.random() * .03, .03, 'square', .025); },
+  ding() { tone(880, 0, .35, 'sine', .07); tone(1320, .02, .3, 'sine', .03); },
+  save() { tone(660, 0, .12, 'square', .03); tone(990, .1, .18, 'square', .03); },
+};
+
+// ================= icons (original pixel drawings) =================
+const SVG = {
+  note: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 2h13l6 6v22H7z" fill="#fff" stroke="#000"/><path d="M20 2v6h6" fill="#c0c0c0" stroke="#000"/><path d="M10 12h12M10 15h12M10 18h12M10 21h9M10 24h11" stroke="#1a3ea8"/></svg>`,
+  pc: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="3" width="24" height="18" fill="#d9d2bf" stroke="#000"/><rect x="7" y="6" width="18" height="12" fill="#008080" stroke="#555"/><rect x="9" y="8" width="5" height="3" fill="#fff"/><rect x="12" y="21" width="8" height="3" fill="#b9b1a0" stroke="#000"/><rect x="5" y="24" width="22" height="5" fill="#d9d2bf" stroke="#000"/><rect x="21" y="26" width="3" height="1" fill="#3dff7a"/></svg>`,
+  bin: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 8h16l-2 21H10z" fill="#e8e8e8" stroke="#000"/><path d="M8 8h16" stroke="#000" stroke-width="2"/><path d="M12 11l1 15M16 11v15M20 11l-1 15" stroke="#7a7a7a"/><path d="M11 14h10M11 19h10M12 24h8" stroke="#9a9a9a"/><path d="M13 5c2-2 5-1 6 1" fill="none" stroke="#2a7a2a" stroke-width="2"/></svg>`,
+  pad: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="5" width="19" height="25" fill="#fffbe0" stroke="#000"/><path d="M10 11h13M10 14h13M10 17h13M10 20h10M10 23h12" stroke="#4a6fd8"/><path d="M9 3v4M13 3v4M17 3v4M21 3v4M25 3v4" stroke="#555" stroke-width="2"/><path d="M27 8l3 3-12 12-4 1 1-4z" fill="#ffd34d" stroke="#000"/></svg>`,
+  readme: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 2h13l6 6v22H7z" fill="#fff" stroke="#000"/><path d="M20 2v6h6" fill="#c0c0c0" stroke="#000"/><circle cx="16" cy="18" r="7" fill="#1a3ea8"/><rect x="15" y="17" width="2" height="6" fill="#fff"/><rect x="15" y="13.5" width="2" height="2" fill="#fff"/></svg>`,
+  list: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 8h10l2 3h14v17H3z" fill="#ffd34d" stroke="#000"/><path d="M3 12h26" stroke="#c9a21c"/></svg>`,
+  door: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="8" y="3" width="16" height="26" fill="#8a5a2b" stroke="#000"/><circle cx="20" cy="17" r="1.5" fill="#ffd34d"/><path d="M4 29h24" stroke="#000"/></svg>`,
+  run: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="20" fill="#c0c0c0" stroke="#000"/><rect x="6" y="11" width="20" height="13" fill="#000"/><path d="M8 14l3 2-3 2" stroke="#3dff7a" fill="none"/><rect x="13" y="18" width="5" height="1" fill="#3dff7a"/><rect x="4" y="6" width="24" height="4" fill="#000080"/></svg>`,
+  warn: `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l14 26H2z" fill="#ffd34d" stroke="#000"/><rect x="15" y="11" width="2" height="10" fill="#000"/><rect x="15" y="23" width="2" height="2" fill="#000"/></svg>`,
+  info: `<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="#fff" stroke="#000"/><circle cx="16" cy="16" r="11" fill="#1a3ea8"/><rect x="14.5" y="14" width="3" height="9" fill="#fff"/><rect x="14.5" y="9" width="3" height="3" fill="#fff"/></svg>`,
+  spk: `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#ffd34d" stroke="#000"/><path d="M11 5c1.5 1.5 1.5 4.5 0 6M13 3c3 3 3 7 0 10" fill="none" stroke="#000"/></svg>`,
+  mute: `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#c0c0c0" stroke="#000"/><path d="M11 6l4 4M15 6l-4 4" stroke="#c00" stroke-width="1.5"/></svg>`,
+};
+
+// ================= helpers =================
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const ago = ts => { const s = Math.max(1, (Date.now() - ts) / 1000); if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + ' min ago'; if (s < 86400) return Math.floor(s / 3600) + ' hr ago'; const d = Math.floor(s / 86400); return d < 30 ? d + (d === 1 ? ' day ago' : ' days ago') : new Date(ts).toLocaleDateString(); };
+const stamp = ts => new Date(ts).toLocaleString([], { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ================= lobby =================
+let counts = {};
+function drawLobby() {
+  const box = $('pcs'); box.textContent = '';
+  for (const pc of PCS) {
+    const b = el('button', 'station'); b.type = 'button'; b.setAttribute('aria-label', 'Sit down at the ' + pc.name);
+    const crt = el('div', 'crt'), scr = el('div', 'screen'), mini = el('div', 'mini');
+    scr.style.background = wallBg(pc);
+    const n = counts[pc.id] || 0;
+    for (let i = 0; i < Math.min(n, 14); i++) { const ic = el('i'); const h = (pc.id.charCodeAt(i % pc.id.length) * 37 + i * 61) % 100; ic.style.left = (14 + (h % 74)) + '%'; ic.style.top = (8 + ((h * 7 + i * 13) % 66)) + '%'; mini.appendChild(ic); }
+    for (let i = 0; i < 3; i++) { const ic = el('i'); ic.style.left = '4%'; ic.style.top = (6 + i * 20) + '%'; ic.style.background = '#d9d2bf'; mini.appendChild(ic); }
+    scr.append(mini, el('div', 'bar'), el('div', 'glare')); crt.appendChild(scr);
+    const lab = el('div', 'label'); lab.append(el('b', '', pc.name), el('span', '', pc.note), el('em', '', n ? n + (n === 1 ? ' note on the desktop' : ' notes on the desktop') : 'Nothing on the desktop yet'));
+    b.append(crt, el('div', 'desk'), lab);
+    b.addEventListener('click', () => sitDown(pc));
+    box.appendChild(b);
+  }
+}
+async function refreshCounts() { counts = await Store.counts(); drawLobby(); }
+
+// ================= boot =================
+function boot(pc, done) {
+  const B = $('boot'); B.hidden = false; B.textContent = ''; SND.drive();
+  if (reduced) { setTimeout(() => { B.hidden = true; done(); }, 250); return; }
+  const lines = ['PWBIOS (C) 1998 Plain Weird Labs', '', 'Main Processor : ' + pc.cpu, 'Memory Test    : ' + pc.ram + ' OK', '', 'Detecting IDE Primary Master ... ' + pc.name.toUpperCase().replace(/[^A-Z ]/g, '') + ' DISK', 'Detecting Floppy A: ... 1.44M (there is a sandwich in it)', '', 'Starting up...'];
+  let i = 0; const pre = el('div'); B.appendChild(pre);
+  const t = setInterval(() => { pre.textContent += lines[i++] + '\n'; if (i >= lines.length) { clearInterval(t); setTimeout(splash, 260); } }, 110);
+  function splash() {
+    const s = el('div', 'splash'); const p = el('div', 'prog'), bar = el('i'); p.appendChild(bar);
+    s.append(el('b', '', 'PLAIN WEIRD 98'), el('div', '', pc.name), p); B.appendChild(s); SND.boot();
+    let k = 0; const t2 = setInterval(() => { k += 7 + Math.random() * 9; bar.style.width = Math.min(100, k) + '%'; if (k >= 100) { clearInterval(t2); setTimeout(() => { B.hidden = true; done(); }, 220); } }, 70);
+  }
+}
+
+// ================= the desktop =================
+const D = { pc: null, notes: [], unsub: null, wins: [], z: 10, sel: null, ctxAt: null };
+const SYS = [
+  { k: 'pc', label: 'My Computer', svg: 'pc', open: () => winMyComputer() },
+  { k: 'bin', label: 'Recycle Bin', svg: 'bin', open: () => winBin() },
+  { k: 'pad', label: 'Notepad', svg: 'pad', open: () => winNotepad() },
+  { k: 'readme', label: 'READ ME.txt', svg: 'readme', open: () => winReadMe() },
+  { k: 'list', label: 'All Notes', svg: 'list', open: () => winList() },
+];
+function sitDown(pc) {
+  ac(); SND.click();
+  boot(pc, () => {
+    D.pc = pc; $('lobby').hidden = true; $('desk').hidden = false;
+    $('wall').style.background = wallBg(pc);
+    D.notes = []; drawWall();
+    if (D.unsub) D.unsub();
+    D.unsub = Store.watch(pc.id, list => { if (list === null) { toast('Network trouble', 'Could not reach the other notes. Yours still save when it comes back.'); return; } const fresh = D.notes.length ? list.filter(n => !D.notes.some(o => o.id === n.id)).map(n => n.id) : []; D.notes = list.filter(n => !Store.reported(pc.id, n.id)); drawWall(fresh); refreshList(); });
+    if (!ls.get('pwlab_seen_' + pc.id, false)) { ls.set('pwlab_seen_' + pc.id, true); setTimeout(() => winReadMe(), 400); }
+  });
+}
+function leave() {
+  closeMenus(); for (const w of [...D.wins]) w.close(); if (D.unsub) D.unsub(); D.unsub = null;
+  $('desk').hidden = true; $('lobby').hidden = false; refreshCounts(); SND.drive();
+}
+function wallSize() { const w = $('wall'); return { w: w.clientWidth, h: w.clientHeight }; }
+function drawWall(fresh) {
+  const wall = $('wall'); [...wall.querySelectorAll('.ico')].forEach(e => e.remove());
+  SYS.forEach((s, i) => { const b = icon(s.label, SVG[s.svg], s.open); b.style.left = '6px'; b.style.top = (8 + i * 76) + 'px'; wall.appendChild(b); });
+  const { w, h } = wallSize();
+  const list = D.notes.slice(0, 120);
+  for (const n of list) {
+    const b = icon(n.name, SVG.note, () => winNote(n));
+    const x = 90 + n.x * Math.max(10, w - 90 - 80), y = 8 + n.y * Math.max(10, h - 8 - 80);
+    b.style.left = x + 'px'; b.style.top = y + 'px'; b.title = n.name + ' · left by ' + (n.by || 'Anonymous') + ' · ' + ago(n.ts);
+    if (Store.mine.has(n.id)) b.classList.add('mine');
+    if (fresh && fresh.includes(n.id)) b.classList.add('fresh');
+    wall.appendChild(b);
+  }
+}
+function icon(label, svg, open) {
+  const b = el('button', 'ico'); b.type = 'button'; b.innerHTML = svg; b.appendChild(el('span', '', label));
+  let last = 0;
+  b.addEventListener('click', e => { e.stopPropagation(); closeMenus(); selectIcon(b); const now = performance.now(); if (now - last < 450 || e.detail >= 2 || matchMedia('(pointer: coarse)').matches) { last = 0; SND.click(); open(); } else last = now; });
+  b.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); open(); } });
+  return b;
+}
+function selectIcon(b) { if (D.sel) D.sel.classList.remove('sel'); D.sel = b; if (b) b.classList.add('sel'); }
+
+// ---------- windows ----------
+function makeWin(title, svg, opts) {
+  opts = opts || {};
+  const wall = $('wall'), w = el('div', 'win out'), ttl = el('div', 'ttl');
+  ttl.innerHTML = svg ? svg.replace('viewBox', 'width="16" height="16" viewBox') : ''; const tb = el('b', '', title); ttl.appendChild(tb);
+  const bMin = el('button', 'btn tb', '_'), bMax = el('button', 'btn tb', '\u25a1'), bX = el('button', 'btn tb', '\u00d7');
+  bMin.setAttribute('aria-label', 'Minimize'); bMax.setAttribute('aria-label', 'Maximize'); bX.setAttribute('aria-label', 'Close');
+  ttl.append(bMin, bMax, bX); w.appendChild(ttl);
+  const menu = el('div', 'menu'); w.appendChild(menu);
+  const body = el('div', 'body'); w.appendChild(body);
+  const foot = el('div'); w.appendChild(foot);
+  const { w: W, h: H } = wallSize(), ww = Math.min(opts.w || 440, W - 8), hh = Math.min(opts.h || 320, H - 8);
+  const off = (D.wins.length % 6) * 22;
+  w.style.width = ww + 'px'; if (opts.h) w.style.height = hh + 'px';
+  w.style.left = Math.max(4, Math.min(W - ww - 4, (W - ww) / 2 - 40 + off)) + 'px'; w.style.top = Math.max(4, Math.min(H - hh - 4, (H - hh) / 2 - 30 + off)) + 'px';
+  const task = el('button', 'btn', title); $('tasks').appendChild(task);
+  const win = { el: w, ttl: tb, menu, body, foot, task, min: false,
+    close() { w.remove(); task.remove(); D.wins = D.wins.filter(q => q !== win); topWin(); if (opts.onClose) opts.onClose(); },
+    title(t) { tb.textContent = t; task.textContent = t; } };
+  bX.addEventListener('click', e => { e.stopPropagation(); SND.click(); win.close(); });
+  bMax.addEventListener('click', e => { e.stopPropagation(); w.classList.toggle('max'); });
+  bMin.addEventListener('click', e => { e.stopPropagation(); win.min = true; w.hidden = true; topWin(); });
+  task.addEventListener('click', () => { if (win.min || !w.classList.contains('top')) { win.min = false; w.hidden = false; focusWin(win); } else { win.min = true; w.hidden = true; topWin(); } });
+  w.addEventListener('pointerdown', () => focusWin(win));
+  // drag by the title bar
+  ttl.addEventListener('pointerdown', e => {
+    if (e.target.closest('button') || w.classList.contains('max')) return;
+    const sx = e.clientX, sy = e.clientY, ox = w.offsetLeft, oy = w.offsetTop; ttl.setPointerCapture(e.pointerId);
+    const mv = ev => { const { w: W2, h: H2 } = wallSize(); w.style.left = Math.max(-w.offsetWidth + 60, Math.min(W2 - 60, ox + ev.clientX - sx)) + 'px'; w.style.top = Math.max(0, Math.min(H2 - 24, oy + ev.clientY - sy)) + 'px'; };
+    const up = () => { ttl.removeEventListener('pointermove', mv); ttl.removeEventListener('pointerup', up); };
+    ttl.addEventListener('pointermove', mv); ttl.addEventListener('pointerup', up);
+  });
+  ttl.addEventListener('dblclick', e => { if (!e.target.closest('button')) w.classList.toggle('max'); });
+  wall.appendChild(w); D.wins.push(win); focusWin(win);
+  if (W < 640 && opts.h) w.classList.add('max');
+  return win;
+}
+function focusWin(win) { win.el.style.zIndex = ++D.z; D.wins.forEach(q => { q.el.classList.toggle('top', q === win); q.task.classList.toggle('on', q === win && !q.min); }); }
+function topWin() { const vis = D.wins.filter(q => !q.min); if (vis.length) focusWin(vis.reduce((a, b) => (+a.el.style.zIndex > +b.el.style.zIndex ? a : b))); else D.wins.forEach(q => { q.el.classList.remove('top'); q.task.classList.remove('on'); }); }
+function addMenu(win, name, items) {
+  const b = el('button', '', name); b.type = 'button'; win.menu.appendChild(b);
+  b.addEventListener('click', e => {
+    e.stopPropagation(); const open = b.classList.contains('open'); closeMenus(); if (open) return;
+    b.classList.add('open'); const d = el('div', 'drop out'); d.style.left = b.offsetLeft + 'px';
+    for (const it of items) { if (it === '-') { d.appendChild(el('hr')); continue; } const x = el('button', '', it[0]); x.type = 'button'; if (it[2]) x.disabled = true; x.addEventListener('click', ev => { ev.stopPropagation(); closeMenus(); it[1](); }); d.appendChild(x); }
+    win.menu.appendChild(d);
+  });
+}
+function closeMenus() {
+  document.querySelectorAll('.drop').forEach(d => d.remove()); document.querySelectorAll('.menu > button.open').forEach(b => b.classList.remove('open'));
+  const sm = document.querySelector('.smenu'); if (sm) sm.remove(); $('start').classList.remove('on'); $('start').setAttribute('aria-expanded', 'false');
+  const c = $('ctx'); if (c) c.remove();
+}
+function statusBar(win, parts) { win.foot.className = 'status'; win.foot.textContent = ''; parts.forEach((p, i) => win.foot.appendChild(el('span', i ? 'k' : '', p))); }
+function msgBox(title, text, kind, buttons) {
+  const win = makeWin(title, null, { w: 360 }); win.menu.remove();
+  const d = el('div', 'dlg'); const ic = el('div'); ic.innerHTML = SVG[kind || 'info']; ic.firstChild.style.width = '32px'; ic.firstChild.style.height = '32px';
+  const t = el('div'); (Array.isArray(text) ? text : [text]).forEach(p => t.appendChild(el('p', '', p))); d.append(ic, t); win.body.appendChild(d);
+  const row = el('div', 'row'); row.style.justifyContent = 'center';
+  (buttons || [['OK', () => { }]]).forEach(([l, fn]) => { const b = el('button', 'btn', l); b.addEventListener('click', () => { win.close(); fn(); }); row.appendChild(b); });
+  win.foot.appendChild(row); kind === 'warn' && SND.ding(); setTimeout(() => { const b = row.querySelector('button'); b && b.focus(); }, 30);
+  return win;
+}
+
+// ---------- Notepad: write a new note ----------
+function freeSpot() {
+  const { w, h } = wallSize(); const cw = Math.max(10, w - 170), ch = Math.max(10, h - 88), taken = D.notes.map(n => [n.x * cw, n.y * ch]);
+  for (let tries = 0; tries < 60; tries++) { const x = Math.random() * cw, y = Math.random() * ch; if (taken.every(([a, b]) => Math.abs(a - x) > 70 || Math.abs(b - y) > 66)) return { x: x / cw, y: y / ch }; }
+  return { x: Math.random(), y: Math.random() };
+}
+function winNotepad(at) {
+  if (Store.mode === 'db' && Store.canWrite === false) { msgBox('Read only', ['This copy of the lab is read only for you.', 'The public lab lives on jasonoconnell.com, where anyone can leave a note.'], 'info'); return; }
+  const win = makeWin('Untitled - Notepad', SVG.pad, { w: 460, h: 340 });
+  const ta = el('textarea', 'pad'); ta.id = 'pad-' + Date.now(); ta.maxLength = 600; ta.placeholder = 'Type something for the next person who sits here...'; ta.setAttribute('aria-label', 'Note text'); ta.value = ls.get('pwlab_draft', '');
+  win.body.appendChild(ta); win.body.classList.add('in');
+  ta.addEventListener('input', () => { ls.set('pwlab_draft', ta.value); upd(); });
+  const row = el('div', 'row');
+  const ln = el('label'); ln.append('File name:'); const fn = el('input'); fn.id = 'fn-' + Date.now(); fn.maxLength = 24; fn.value = 'note.txt'; fn.setAttribute('aria-label', 'File name'); ln.appendChild(fn);
+  const lb = el('label'); lb.append('Signed:'); const by = el('input'); by.id = 'by-' + Date.now(); by.maxLength = 24; by.placeholder = 'Anonymous'; by.value = ls.get('pwlab_by', ''); by.setAttribute('aria-label', 'Sign it as'); lb.appendChild(by);
+  const hp = el('input', 'hp'); hp.tabIndex = -1; hp.autocomplete = 'off'; hp.setAttribute('aria-hidden', 'true'); hp.name = 'website';
+  const save = el('button', 'btn', 'Save to Desktop');
+  row.append(ln, lb, hp, el('span', 'grow'), save); win.foot.appendChild(row);
+  const sb = el('div', 'status'); const s1 = el('span'), s2 = el('span', 'k'); sb.append(s1, s2); win.foot.appendChild(sb);
+  function upd() { s1.textContent = 'Saves to the desktop of the ' + D.pc.name + '. Anyone can read it.'; s2.textContent = ta.value.length + ' / 600'; save.disabled = !ta.value.trim(); }
+  upd();
+  const doSave = async () => {
+    if (!ta.value.trim() || save.disabled) return;
+    const body = clean(ta.value, 600).trim(); let name = clean(fn.value, 24).replace(/[\\/:*?"<>|]/g, '').trim() || 'note.txt'; if (!/\.\w{1,4}$/.test(name)) name += '.txt';
+    const spot = at || freeSpot(); ls.set('pwlab_by', by.value);
+    save.disabled = true; save.textContent = 'Saving...'; SND.drive();
+    try {
+      const rec = { x: +spot.x.toFixed(4), y: +spot.y.toFixed(4), name, body, by: clean(by.value, 24).trim() || 'Anonymous', ts: Date.now() }; if (Store.mode === 'api' && hp.value) rec.website = hp.value;
+      const n = await Store.add(D.pc.id, rec);
+      ls.set('pwlab_draft', ''); SND.save(); win.close();
+      if (Store.mode !== 'db') { if (!D.notes.some(q => q.id === n.id)) D.notes.unshift(n); drawWall([n.id]); refreshList(); }
+      toast('Saved', name + ' is on the desktop now. The next person to sit here will see it.');
+    } catch (e) { save.textContent = 'Save to Desktop'; upd(); msgBox('Notepad', [String(e.message || e)], 'warn'); }
+  };
+  save.addEventListener('click', doSave);
+  ta.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); doSave(); } if (e.key === 'F5') { e.preventDefault(); insertAt(ta, stamp(Date.now())); } });
+  addMenu(win, 'File', [['New', () => { ta.value = ''; ls.set('pwlab_draft', ''); upd(); }], ['Save to Desktop', doSave], '-', ['Exit', () => win.close()]]);
+  addMenu(win, 'Edit', [['Select All', () => { ta.focus(); ta.select(); }], ['Time/Date   F5', () => insertAt(ta, stamp(Date.now()))]]);
+  addMenu(win, 'Help', [['About Notepad', () => msgBox('About Notepad', ['Notepad 98, licensed to: ' + D.pc.owner + '.', 'Physical memory available: ' + D.pc.ram + '.'], 'info')]]);
+  setTimeout(() => ta.focus(), 30);
+}
+function insertAt(ta, s) { const a = ta.selectionStart, b = ta.selectionEnd; ta.value = ta.value.slice(0, a) + s + ta.value.slice(b); ta.selectionStart = ta.selectionEnd = a + s.length; ta.dispatchEvent(new Event('input')); }
+
+// ---------- someone's note ----------
+function winNote(n) {
+  const win = makeWin(n.name + ' - Notepad', SVG.note, { w: 440, h: 300 });
+  const p = el('div', 'pad', n.body); p.tabIndex = 0; win.body.appendChild(p); win.body.classList.add('in');
+  const row = el('div', 'row'); row.appendChild(el('span', 'grow'));
+  if (Store.canDelete(n)) { const del = el('button', 'btn', Store.mine.has(n.id) && !Store.admin ? 'Delete my note' : 'Delete'); del.addEventListener('click', () => msgBox('Confirm File Delete', ['Delete ' + n.name + ' for everyone?'], 'warn', [['Yes', async () => { try { await Store.del(D.pc.id, n.id); D.notes = D.notes.filter(q => q.id !== n.id); drawWall(); refreshList(); win.close(); } catch (e) { msgBox('Error', [String(e.message || e)], 'warn'); } }], ['No', () => { }]])); row.appendChild(del); }
+  else { const rep = el('button', 'btn', 'Report'); rep.addEventListener('click', () => msgBox('Report this note', ['Hide this note? It disappears for you now. Three reports and it disappears for everyone.'], 'warn', [['Report', async () => { await Store.report(D.pc.id, n.id); D.notes = D.notes.filter(q => q.id !== n.id); drawWall(); refreshList(); win.close(); toast('Reported', 'Thanks. That note is gone from your screen.'); }], ['Cancel', () => { }]])); row.appendChild(rep); }
+  const close = el('button', 'btn', 'Close'); close.addEventListener('click', () => win.close()); row.appendChild(close);
+  win.foot.appendChild(row);
+  const sb = el('div', 'status'); sb.append(el('span', '', 'Left by ' + (n.by || 'Anonymous')), el('span', 'k', ago(n.ts))); win.foot.appendChild(sb);
+  addMenu(win, 'File', [['Properties', () => msgBox(n.name + ' Properties', ['Type: Text Document', 'Location: ' + D.pc.name + ', Desktop', 'Size: ' + n.body.length + ' bytes', 'Modified: ' + stamp(n.ts), 'Author: ' + (n.by || 'Anonymous')], 'info')], '-', ['Exit', () => win.close()]]);
+  addMenu(win, 'Edit', [['Undo', () => { }, true], ['Cut', () => { }, true], ['Paste', () => { }, true]]);
+  addMenu(win, 'Help', [['Why can I not edit this?', () => msgBox('Notepad', ['Somebody else left this note. You can read it, report it, or leave your own.'], 'info')]]);
+}
+
+// ---------- system windows ----------
+function winReadMe() {
+  const win = makeWin('READ ME.txt - Notepad', SVG.readme, { w: 470, h: 340 });
+  const p = el('div', 'pad'); p.tabIndex = 0; win.body.appendChild(p); win.body.classList.add('in');
+  p.textContent = `Welcome to the ${D.pc.name}.\n\nThis is a public computer. Everything on the desktop was left here by somebody who sat in this chair before you.\n\nTo leave your own note:\n  1. Open Notepad (or right-click the desktop, or press New note).\n  2. Type something.\n  3. Name the file and press Save to Desktop.\n\nHouse rules:\n  * Be nice. This is a goof-around space.\n  * No personal info. No links. They get stripped out anyway.\n  * Three reports and a note disappears.\n  * When the desktop fills up, the oldest notes fall off.\n\n${D.pc.note}\n\n-- Plain Weird`;
+  const row = el('div', 'row'); row.appendChild(el('span', 'grow')); const w2 = el('button', 'btn', 'Write a note'); w2.addEventListener('click', () => { win.close(); winNotepad(); }); const c = el('button', 'btn', 'Close'); c.addEventListener('click', () => win.close()); row.append(w2, c); win.foot.appendChild(row);
+  addMenu(win, 'File', [['Exit', () => win.close()]]);
+}
+function winMyComputer() {
+  const win = makeWin('System Properties', SVG.pc, { w: 400 }); win.menu.remove();
+  const p = el('div', 'props');
+  const add = (k, v) => { const r = el('div'); r.append(el('b', '', k + ': '), v); p.appendChild(r); };
+  add('System', 'Plain Weird 98, Second Edition (probably)'); add('Registered to', D.pc.owner); add('Computer', D.pc.cpu); add('Memory', D.pc.ram);
+  add('Notes on the desktop', String(D.notes.length)); add('Uptime', Math.floor(3 + (Date.now() / 3.6e6) % 900) + ' hours, never rebooted');
+  add('Storage', Store.mode === 'api' ? 'The internet (shared with everybody)' : Store.mode === 'db' ? 'Shared with whoever has this link' : 'This browser only (demo mode)');
+  win.body.appendChild(p);
+  const row = el('div', 'row'); row.appendChild(el('span', 'grow')); const ok = el('button', 'btn', 'OK'); ok.addEventListener('click', () => win.close()); row.appendChild(ok); win.foot.appendChild(row);
+}
+function winBin() {
+  const win = makeWin('Recycle Bin', SVG.bin, { w: 420, h: 250 });
+  const t = el('table', 'list'); t.innerHTML = '<thead><tr><th>Name</th><th>Original location</th><th>Size</th></tr></thead>';
+  const tb = el('tbody'); t.appendChild(tb);
+  for (const [n, loc, s] of [['homework_FINAL_final2.doc', 'C:\\My Documents', '2 KB'], ['diet.txt', 'C:\\Desktop', '1 KB'], ['screensaver_fish.scr', 'C:\\Windows', '340 KB'], ['password_is_password.txt', 'C:\\Desktop', '1 KB'], ['resignation_letter_v7.doc', 'C:\\My Documents', '19 KB']]) {
+    const r = el('tr'); [n, loc, s].forEach(v => r.appendChild(el('td', '', v))); r.addEventListener('dblclick', () => msgBox('Recycle Bin', ['This file is too embarrassing to restore.'], 'warn')); tb.appendChild(r);
+  }
+  win.body.appendChild(t); win.body.classList.add('in');
+  addMenu(win, 'File', [['Empty Recycle Bin', () => msgBox('Recycle Bin', ['Access denied. Grandma is still using these.'], 'warn')], '-', ['Close', () => win.close()]]);
+  statusBar(win, ['5 object(s)', '363 KB']);
+}
+let LISTWIN = null;
+function winList() {
+  if (LISTWIN) { LISTWIN.min = false; LISTWIN.el.hidden = false; focusWin(LISTWIN); return; }
+  const win = LISTWIN = makeWin('All Notes on ' + D.pc.name, SVG.list, { w: 520, h: 300, onClose: () => { LISTWIN = null; } });
+  win.body.classList.add('in'); refreshList();
+  addMenu(win, 'File', [['New note', () => winNotepad()], '-', ['Close', () => win.close()]]);
+}
+function refreshList() {
+  if (!LISTWIN) return; const win = LISTWIN; win.body.textContent = '';
+  const t = el('table', 'list'); t.innerHTML = '<thead><tr><th>Name</th><th>Left by</th><th>When</th><th>Size</th></tr></thead>'; const tb = el('tbody'); t.appendChild(tb);
+  for (const n of D.notes) { const r = el('tr'); [n.name, n.by || 'Anonymous', ago(n.ts), n.body.length + ' B'].forEach(v => r.appendChild(el('td', '', v))); r.addEventListener('click', () => winNote(n)); tb.appendChild(r); }
+  if (!D.notes.length) { const r = el('tr'), c = el('td', '', 'No notes yet. Be the first: File, New note.'); c.colSpan = 4; r.appendChild(c); tb.appendChild(r); }
+  win.body.appendChild(t); statusBar(win, [D.notes.length + ' note(s)', 'Newest first']);
+}
+function winRun() {
+  const win = makeWin('Run', SVG.run, { w: 380 }); win.menu.remove();
+  const d = el('div', 'dlg'); const ic = el('div'); ic.innerHTML = SVG.run; ic.firstChild.style.width = '32px'; ic.firstChild.style.height = '32px';
+  const t = el('div'); t.appendChild(el('p', '', 'Type the name of a program, folder, or document, and Plain Weird 98 will pretend to open it for you.'));
+  const inp = el('input'); inp.id = 'run-' + Date.now(); inp.style.width = '100%'; inp.setAttribute('aria-label', 'Open'); const r0 = el('div', 'row'); r0.style.padding = '0'; r0.appendChild(inp); t.appendChild(r0);
+  d.append(ic, t); win.body.appendChild(d);
+  const row = el('div', 'row'); row.style.justifyContent = 'flex-end';
+  const go = () => { const v = inp.value.trim().toLowerCase(); win.close(); if (!v) return; if (/notepad/.test(v)) return winNotepad(); if (/minesweeper|solitaire|game/.test(v)) return msgBox('Run', ['Somebody uninstalled all the games so people would get work done. It did not work.'], 'warn'); if (/format|del|rm /.test(v)) return msgBox('Run', ['Nice try.'], 'warn'); msgBox('Run', ['Cannot find \'' + inp.value.trim().slice(0, 40) + '\'. Make sure you typed the name correctly, then try again. Or do not. It is a public computer.'], 'warn'); };
+  const ok = el('button', 'btn', 'OK'), cancel = el('button', 'btn', 'Cancel'); ok.addEventListener('click', go); cancel.addEventListener('click', () => win.close()); inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  row.append(ok, cancel); win.foot.appendChild(row); setTimeout(() => inp.focus(), 30);
+}
+
+// ---------- start menu, context menu, toast ----------
+$('start').addEventListener('click', e => {
+  e.stopPropagation(); const was = !!document.querySelector('.smenu'); closeMenus(); if (was) return;
+  $('start').classList.add('on'); $('start').setAttribute('aria-expanded', 'true');
+  const m = el('div', 'smenu out'); m.setAttribute('role', 'menu'); const side = el('div', 'side'); side.innerHTML = '<span>PLAIN WEIRD <b>98</b></span>';
+  const items = el('div', 'items');
+  const add = (svg, label, fn) => { const b = el('button'); b.type = 'button'; b.setAttribute('role', 'menuitem'); b.innerHTML = SVG[svg]; b.appendChild(el('span', '', label)); b.addEventListener('click', ev => { ev.stopPropagation(); closeMenus(); SND.click(); fn(); }); items.appendChild(b); };
+  add('pad', 'New note', () => winNotepad()); add('list', 'All notes on this PC', () => winList()); add('readme', 'Read me', () => winReadMe()); add('run', 'Run...', () => winRun());
+  items.appendChild(el('hr')); add('door', 'Leave this computer...', () => msgBox('Shut Down', ['Get up and go back to the lab?'], 'info', [['Yes', leave], ['No', () => { }]]));
+  m.append(side, items); $('bar').appendChild(m); const f = items.querySelector('button'); f && f.focus();
+});
+$('newbtn').addEventListener('click', () => { SND.click(); winNotepad(); });
+$('wall').addEventListener('click', e => { if (e.target === $('wall')) { closeMenus(); selectIcon(null); } });
+$('wall').addEventListener('contextmenu', e => {
+  if (e.target !== $('wall')) return; e.preventDefault(); closeMenus();
+  const r = $('wall').getBoundingClientRect(), { w, h } = wallSize();
+  const at = { x: Math.max(0, Math.min(1, (e.clientX - r.left - 90) / Math.max(10, w - 170))), y: Math.max(0, Math.min(1, (e.clientY - r.top - 8) / Math.max(10, h - 88))) };
+  const c = el('div', 'out'); c.id = 'ctx'; c.style.left = Math.min(e.clientX - r.left, w - 160) + 'px'; c.style.top = Math.min(e.clientY - r.top, h - 120) + 'px';
+  const add = (label, fn) => { const b = el('button', '', label); b.type = 'button'; b.addEventListener('click', ev => { ev.stopPropagation(); closeMenus(); fn(); }); c.appendChild(b); };
+  add('New text note here', () => winNotepad(at)); add('Arrange icons', () => toast('Arrange icons', 'The icons stay where people left them. That is the whole point.')); c.appendChild(el('hr')); add('Properties', () => winMyComputer());
+  $('wall').appendChild(c);
+});
+document.addEventListener('click', () => closeMenus());
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+let toastT = 0;
+function toast(t, msg) { document.querySelectorAll('.toast').forEach(x => x.remove()); if ($('desk').hidden) return; const d = el('div', 'toast out'); d.append(el('b', '', t), el('div', '', msg)); $('desk').appendChild(d); clearTimeout(toastT); toastT = setTimeout(() => d.remove(), 4200); }
+function drawSnd() { $('snd').innerHTML = muted ? SVG.mute : SVG.spk; $('snd').setAttribute('aria-label', muted ? 'Sound off' : 'Sound on'); }
+$('snd').addEventListener('click', e => { e.stopPropagation(); muted = !muted; ls.set('pwlab_mute', muted); drawSnd(); SND.click(); });
+drawSnd();
+function tick() { $('clock').textContent = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+tick(); setInterval(tick, 15000);
+addEventListener('resize', () => { if (!$('desk').hidden) drawWall(); });
+
+// ================= start =================
+drawLobby();
+(async () => {
+  await Store.init();
+  const M = $('mode');
+  if (Store.mode === 'api') M.textContent = 'Online. Notes you leave here are public.';
+  else if (Store.mode === 'db') M.textContent = Store.canWrite === false ? 'Preview copy: you can read the notes here. The public lab is where everybody writes.' : 'Online. Notes you leave here are shared with everyone who has this link.';
+  else M.textContent = 'Demo mode: notes stay in this browser only.';
+  if (location.hash.startsWith('#admin=') && Store.mode === 'api') { ls.set('pwlab_admin', decodeURIComponent(location.hash.slice(7))); Store.adminKey = ls.get('pwlab_admin', ''); history.replaceState(null, '', location.pathname); M.textContent += ' Admin key saved on this browser.'; }
+  refreshCounts();
+})();
+})();
+</script>
+
+</body>
+</html>
