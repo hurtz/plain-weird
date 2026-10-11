@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="How Dragon's Lair, Space Ace, Time Traveler and other laserdisc arcade games worked, the cut prototype rooms, and every move to finish Dragon's Lair.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Laserdisc Teardown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700&family=Archivo:ital,wght@0,400;0,600;0,700;1,400&family=Red+Hat+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a laserdisc sleeve. Sticky chapter bar, one reading column with wide bands for spec sheets and the move map. */
+:root{
+  --paper:#EDEFF3; --panel:#F8F9FB; --ink:#171A2C; --muted:#585E73; --rule:#CBD0DB;
+  --led:#D1321A; --led-off:#E3D5D3; --led-glow:rgba(209,50,26,.0);
+  --gold:#8E6210; --ok:#2E7A4C; --bad:#B4261A;
+  --irid-1:#C8CBD6; --irid-2:#E6D0EE; --irid-3:#C6E3EF; --irid-4:#E7EEC8; --irid-5:#F0D8C2;
+  --display:"Grenze Gotisch", "Palatino Linotype", Georgia, serif;
+  --body:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"Red Hat Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1121; --panel:#171A2F; --ink:#E8E4D8; --muted:#9BA1B9; --rule:#2B304C;
+    --led:#FF4B2B; --led-off:#2A1C24; --led-glow:rgba(255,75,43,.55);
+    --gold:#E3B54E; --ok:#5EC68A; --bad:#FF6B57; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1121; --panel:#171A2F; --ink:#E8E4D8; --muted:#9BA1B9; --rule:#2B304C;
+  --led:#FF4B2B; --led-off:#2A1C24; --led-glow:rgba(255,75,43,.55);
+  --gold:#E3B54E; --ok:#5EC68A; --bad:#FF6B57; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+a{color:var(--ink);text-decoration-color:var(--gold);text-underline-offset:3px;text-decoration-thickness:2px}
+a:hover{color:var(--gold)}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:0 72px}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* chapter bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.bar-in{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:8px;display:flex;align-items:center;gap:16px}
+.bar nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+.bar nav a{font-family:var(--mono);font-size:.75rem;white-space:nowrap;text-decoration:none;padding:6px 10px;border-radius:4px;color:var(--muted)}
+.bar nav a:hover{color:var(--ink);background:var(--panel)}
+.bar nav a b{color:var(--gold);font-weight:600;margin-right:4px}
+.framebox{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.framebox .label{font-size:.62rem}
+
+/* 7 segment LEDs */
+.seg{display:inline-flex;gap:2px;vertical-align:middle}
+.seg svg{height:var(--h,22px);width:auto;overflow:visible}
+.seg .on{fill:var(--led);filter:drop-shadow(0 0 3px var(--led-glow))}
+.seg .off{fill:var(--led-off)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center;padding-block:48px 40px}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(3.4rem,10vw,7rem);line-height:.86;letter-spacing:.005em}
+.hero h1 span{color:var(--gold);display:block}
+.hero .dek{font-size:1.15rem;max-width:40ch;margin-top:18px;color:var(--muted)}
+.tldr{margin-top:26px;border-left:3px solid var(--led);padding-left:16px;max-width:58ch}
+.tldr p+p{margin-top:8px}
+.scores{display:flex;flex-wrap:wrap;gap:28px;margin-top:26px}
+.scores > div{display:flex;flex-direction:column;gap:6px}
+.disc-col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0;overflow:hidden;padding-block:14px 0}
+.disc{width:min(340px,72vw);aspect-ratio:1;max-width:100%;border-radius:50%;position:relative;
+  background:
+   radial-gradient(circle,var(--paper) 0 6.5%,var(--rule) 6.5% 7.2%,color-mix(in srgb,var(--irid-1) 70%,var(--paper)) 7.2% 17%,transparent 17%),
+   repeating-radial-gradient(circle,rgba(0,0,0,.035) 0 1px,transparent 1px 3px),
+   conic-gradient(from 20deg,var(--irid-1),var(--irid-2),var(--irid-3),var(--irid-4),var(--irid-5),var(--irid-1),var(--irid-3),var(--irid-2),var(--irid-1));
+  box-shadow:0 0 0 1px var(--rule),0 18px 40px -18px rgba(10,12,30,.45);
+  animation:spin 9s linear infinite}
+.disc::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 200deg,transparent 0 30%,rgba(255,255,255,.55) 36%,transparent 44%,transparent 80%,rgba(255,255,255,.35) 86%,transparent 92%)}
+.disc.seeking{animation-duration:.6s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.disc,.disc.seeking{animation:none}}
+.disc-cap{font-size:.82rem;color:var(--muted);max-width:36ch;text-align:center}
+
+/* chapters */
+.chapter{padding-block:56px 8px;border-top:1px solid var(--rule);scroll-margin-top:60px}
+.ch-head{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.ch-head h2{font-family:var(--display);font-weight:700;font-size:clamp(2.2rem,5.5vw,3.4rem);line-height:1}
+.ch-head p{max-width:66ch;color:var(--muted);font-size:1.05rem}
+.prose{max-width:68ch}
+.prose p+p{margin-top:12px}
+
+/* signal chain */
+.chain{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;counter-reset:c}
+.chain li{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px;position:relative;counter-increment:c;min-width:0}
+.chain li::before{content:counter(c);font-family:var(--mono);font-size:.7rem;color:var(--led);font-weight:600;display:block;margin-bottom:6px}
+.chain li:not(:last-child)::after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:2px;background:var(--muted)}
+.chain h3{font-size:.98rem;margin-bottom:6px}
+.chain p{font-size:.88rem;color:var(--muted)}
+.branch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.branch div{border:1px dashed var(--rule);border-radius:6px;padding:12px 14px;font-size:.9rem}
+.branch b{font-family:var(--mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.branch .y b{color:var(--ok)} .branch .n b{color:var(--bad)}
+
+/* timing bars */
+.timing{margin-top:34px;max-width:760px}
+.timing h3{font-size:1.05rem;margin-bottom:4px}
+.timing > p{color:var(--muted);font-size:.92rem;margin-bottom:14px}
+.trow{display:grid;grid-template-columns:minmax(0,15rem) 1fr 4.5rem;gap:12px;align-items:center;padding-block:6px;font-size:.9rem}
+.track{height:12px;background:var(--panel);border:1px solid var(--rule);border-radius:2px;position:relative}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--led);border-radius:1px}
+.trow .v{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.axis{display:grid;grid-template-columns:minmax(0,15rem) 1fr 4.5rem;gap:12px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.axis div:nth-child(2){display:flex;justify-content:space-between}
+
+/* game files */
+.game{display:grid;grid-template-columns:270px minmax(0,1fr);gap:36px;padding-block:30px;border-top:2px solid var(--ink)}
+.game:first-of-type{border-top:0}
+.game h3{font-family:var(--display);font-weight:700;font-size:2.4rem;line-height:.95}
+.game .alias{font-family:var(--mono);font-size:.75rem;color:var(--gold);margin-top:8px;letter-spacing:.06em}
+.spec{margin:18px 0 0;display:grid;gap:10px}
+.spec div{display:grid;gap:2px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.spec dt{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.spec dd{margin:0;font-size:.92rem}
+.facts{margin:0;padding-left:18px;display:grid;gap:9px;max-width:70ch}
+.facts li::marker{color:var(--led)}
+.sub{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px}
+.watch{display:flex;flex-wrap:wrap;gap:8px}
+.watch a{font-size:.86rem;text-decoration:none;border:1px solid var(--rule);background:var(--panel);padding:6px 11px;border-radius:999px}
+.watch a:hover{border-color:var(--gold)}
+.watch a::after{content:" \2197";color:var(--gold)}
+
+/* prototype */
+.proto{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px;margin-top:8px}
+.room{padding-block:16px;border-bottom:1px solid var(--rule);min-width:0}
+.room h3{font-size:1.05rem;margin-bottom:6px}
+.room p{font-size:.93rem}
+.ghost{margin-top:8px;font-size:.88rem;color:var(--muted);padding-left:12px;border-left:2px solid var(--gold)}
+.ghost b{color:var(--gold);font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;display:block}
+
+/* move map */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.toggle{font-family:var(--mono);font-size:.8rem;border:1px solid var(--rule);background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:6px;cursor:pointer}
+.toggle[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.82rem;color:var(--muted);margin-bottom:18px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.map{border-top:2px solid var(--ink)}
+.mrow{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 6.5rem;gap:16px;padding-block:12px;border-bottom:1px solid var(--rule);align-items:center}
+.mrow .nm{font-weight:600;font-size:.98rem;line-height:1.25}
+.mrow .nk{display:block;font-weight:400;font-size:.8rem;color:var(--muted);margin-top:2px}
+.mrow .note{grid-column:2 / 4;font-size:.82rem;color:var(--muted);margin-top:-4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.chip{display:inline-grid;place-items:center;min-width:30px;height:30px;padding:0 6px;border-radius:4px;border:1px solid var(--rule);background:var(--panel);font-family:var(--mono);font-size:.68rem;font-weight:600;color:var(--ink)}
+.chip svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.chip.s{background:var(--ink);color:var(--paper);border-color:var(--ink);letter-spacing:.06em}
+.chip.flip{border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold)}
+.chip.add{border-style:dashed;border-color:var(--led);color:var(--led)}
+.pts{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;font-size:.88rem}
+.pts small{display:block;color:var(--muted);font-size:.68rem}
+.mapnote{font-size:.85rem;color:var(--muted);margin-top:14px;max-width:72ch}
+
+/* drill */
+.drill{margin-top:34px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:20px;align-items:start}
+.drill h3{font-family:var(--display);font-size:1.9rem;font-weight:700}
+.drill > div{min-width:0}
+.drill select{font:inherit;font-size:.92rem;padding:8px 10px;border-radius:6px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);margin-top:10px;width:100%;max-width:26rem}
+.dtrack{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;min-height:30px}
+.dtrack .chip{opacity:.35}
+.dtrack .chip.done{opacity:1;border-color:var(--ok);box-shadow:inset 0 -3px 0 var(--ok)}
+.dtrack .chip.next{opacity:1;outline:2px solid var(--gold);outline-offset:1px}
+.dstatus{margin-top:12px;font-family:var(--mono);font-size:.85rem;min-height:1.4em}
+.dstatus.dead{color:var(--bad)} .dstatus.win{color:var(--ok)}
+.pad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:6px}
+.pad button{font:inherit;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:8px;cursor:pointer;display:grid;place-items:center}
+.pad button:active{transform:translateY(1px)}
+.pad button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pad .sw{background:var(--led);color:#fff;border-color:var(--led);font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.05em;border-radius:50%}
+.flash{animation:flash .5s}
+@keyframes flash{0%{background:var(--bad)}100%{background:var(--panel)}}
+@media (prefers-reduced-motion: reduce){.flash{animation:none}}
+
+/* 2027 */
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:6px}
+.three h3{font-family:var(--display);font-size:1.9rem;font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:12px}
+.three ul{margin:0;padding-left:18px;display:grid;gap:10px;font-size:.94rem}
+.three li::marker{color:var(--led)}
+.three b{font-weight:600}
+.code{margin-top:30px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+pre{margin:0;overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:16px;font-family:var(--mono);font-size:.8rem;line-height:1.55}
+.k{color:var(--gold)} .str{color:var(--ok)} .cm{color:var(--muted)}
+.steps{margin:0;padding-left:22px;display:grid;gap:10px;font-size:.94rem}
+.steps li::marker{font-family:var(--mono);color:var(--led);font-weight:600}
+.callout{margin-top:30px;border:1px solid var(--rule);border-left:3px solid var(--gold);background:var(--panel);padding:16px 18px;border-radius:0 6px 6px 0;max-width:80ch}
+.callout h3{font-size:1.02rem;margin-bottom:6px}
+.callout p{font-size:.93rem}
+
+/* play today */
+.play{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px}
+.play > div{padding-block:14px;border-bottom:1px solid var(--rule);min-width:0}
+.play h3{font-size:1.02rem;margin-bottom:4px}
+.play p{font-size:.92rem;color:var(--muted)}
+.sources{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule)}
+.sources ul{margin:10px 0 0;padding-left:18px;columns:2;column-gap:36px;font-size:.84rem}
+.sources li{break-inside:avoid;margin-bottom:6px}
+footer{margin-top:28px;font-size:.8rem;color:var(--muted)}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .chain{grid-template-columns:1fr 1fr}
+  .chain li::after{display:none}
+  .game{grid-template-columns:1fr;gap:16px}
+  .three,.code{grid-template-columns:1fr}
+  .drill{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  .proto,.play{grid-template-columns:1fr}
+  .branch{grid-template-columns:1fr}
+  .chain{grid-template-columns:1fr}
+  .mrow{grid-template-columns:minmax(0,1fr) 5.5rem}
+  .mrow .chips{grid-column:1 / 3;grid-row:2}
+  .mrow .note{grid-column:1 / 3}
+  .trow,.axis{grid-template-columns:minmax(0,1fr) 3.6rem}
+  .trow .lbl,.axis div:first-child{grid-column:1 / 3}
+  .trow .track,.axis div:nth-child(2){grid-column:1}
+  .sources ul{columns:1}
+  .framebox .label{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-in">
+    <nav aria-label="Chapters">
+      <a href="#how"><b>1</b>How it works</a>
+      <a href="#games"><b>2</b>The six games</a>
+      <a href="#lost"><b>3</b>The lost version</a>
+      <a href="#moves"><b>4</b>Move map</a>
+      <a href="#next"><b>5</b>2027</a>
+      <a href="#play"><b>6</b>Play today</a>
+    </nav>
+    <div class="framebox" title="Your scroll position, as a frame number on one side of a CAV laserdisc">
+      <span class="label">Frame</span><span class="seg" id="frame" style="--h:18px" aria-label="frame counter"></span>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+<header class="hero">
+  <div>
+    <p class="label">Dragon's Lair · Space Ace · Time Traveler · Dragon's Lair II · Us vs. Them · Thayer's Quest</p>
+    <h1>Laserdisc <span>Teardown</span></h1>
+    <p class="dek">How the movie games of 1983 to 1991 actually worked, what got cut from Dragon's Lair before release, every move to finish it, and how you would build one now.</p>
+    <div class="tldr">
+      <p><b>The short version.</b> Dragon's Lair is a cartoon stored on a giant shiny disc. A small computer in the cabinet watches your joystick. Each scene has a tiny window where one move is right.</p>
+      <p>Hit it and the computer lets the disc keep playing. Miss it and the computer tells the player to jump to a death clip, then jump back. That jumping is called seeking, and it is what wore the players out.</p>
+    </div>
+    <div class="scores">
+      <div><span class="seg" id="maxscore" style="--h:28px" aria-label="326248"></span><span class="label">Max score, one life, arcade Hard</span></div>
+      <div><span class="seg" id="free49" style="--h:28px" aria-label="49"></span><span class="label">Free points for entering any room</span></div>
+    </div>
+  </div>
+  <div class="disc-col">
+    <div class="disc" id="disc" role="img" aria-label="A spinning laserdisc"></div>
+    <p class="disc-cap">A 12 inch CAV disc spins once per video frame, 1,800 times a minute, and every one of its 54,000 frames per side has its own address. That is the whole trick. Dragon's Lair used one side; the back was metal to keep the disc flat.</p>
+  </div>
+</header>
+
+<!-- CHAPTER 1 -->
+<section class="chapter" id="how">
+  <div class="ch-head">
+    <span class="label">Chapter 1</span>
+    <h2>How the trick works</h2>
+    <p>There are no graphics chips drawing Dirk. Everything you see is video. The game program is a table of frame numbers and timing windows, and its only job is to tell the disc player where to go next.</p>
+  </div>
+
+  <ol class="chain">
+    <li><h3>You move</h3><p>Eight way stick plus one sword button. The software reads diagonals as their own inputs, and some rooms accept them.</p></li>
+    <li><h3>The Z80 checks the clock</h3><p>A 4 MHz Zilog Z80 runs 32 KB of program. For each scene it knows when the window opens, what input is right, and where each outcome lives on the disc.</p></li>
+    <li><h3>It sends a frame number</h3><p>A command goes to the Pioneer PR-7820 (early boards) or LD-V1000 (later boards): search to frame N, then play.</p></li>
+    <li><h3>The disc finds it</h3><p>The laser sled jumps across the disc to the frame. Short hop, quick. Long hop, a visible pause.</p></li>
+    <li><h3>The screen and LEDs</h3><p>Video goes straight to the CRT. In the US cabinet, score and lives sit on red LED digits above the screen. A tiny AY-3-8910 chip makes the beeps.</p></li>
+  </ol>
+  <div class="branch">
+    <div class="y"><b>Right move, right time</b><p>Points, a confirming beep, the disc keeps rolling into the next part of the scene.</p></div>
+    <div class="n"><b>Wrong, early, or late</b><p>Search to the matching death clip, play it, search back. Early in a game you may get a random new room; late in the game you repeat the room you died in.</p></div>
+  </div>
+
+  <div class="timing">
+    <h3>How long you actually get</h3>
+    <p>Most moves allow more than 0.4 seconds. The nastiest ones, measured by the Dragon's Lair Project on the final ROMs, allow a tenth of a second. That is about three video frames.</p>
+    <div class="trow"><span class="lbl">Typical move</span><div class="track"><div class="fill" style="width:84%"></div></div><span class="v">0.40+ s</span></div>
+    <div class="trow"><span class="lbl">Socker Boppers, mirrored, very hard</span><div class="track"><div class="fill" style="width:46%"></div></div><span class="v">0.23 s</span></div>
+    <div class="trow"><span class="lbl">Flying Barding fire, mirrored</span><div class="track"><div class="fill" style="width:26%"></div></div><span class="v">0.13 s</span></div>
+    <div class="trow"><span class="lbl">Fire Pit rope jump, mirrored</span><div class="track"><div class="fill" style="width:20%"></div></div><span class="v">0.10 s</span></div>
+    <div class="trow"><span class="lbl">Tilting Room landing</span><div class="track"><div class="fill" style="width:20%"></div></div><span class="v">0.10 s</span></div>
+    <div class="axis"><div></div><div><span>0</span><span>0.25 s</span><span>0.5 s</span></div><div></div></div>
+  </div>
+</section>
+
+<!-- CHAPTER 2 -->
+<section class="chapter" id="games">
+  <div class="ch-head">
+    <span class="label">Chapter 2</span>
+    <h2>The six games</h2>
+    <p>Same core idea, six very different machines. Three of them come from one man, Rick Dyer.</p>
+  </div>
+
+  <article class="game" id="dl">
+    <div>
+      <h3>Dragon's Lair</h3>
+      <p class="alias">1983 · THE ONE I SAW AT CHUCK E. CHEESE</p>
+      <dl class="spec">
+        <div><dt>Released</dt><dd>June 19, 1983</dd></div>
+        <div><dt>Made by</dt><dd>Advanced Microcomputer Systems (Rick Dyer) with Don Bluth's studio; sold by Cinematronics</dd></div>
+        <div><dt>Brain</dt><dd>Z80 at 4 MHz, 32 KB program ROM, AY-3-8910 sound chip</dd></div>
+        <div><dt>Disc player</dt><dd>Pioneer PR-7820 on ROM revisions A to D, Pioneer LD-V1000 from revision E. Philips 22VP932 in Europe.</dd></div>
+        <div><dt>Content</dt><dd>29 distinct rooms, 38 counting mirrored and repeat versions. More than 200 correct moves to finish.</dd></div>
+        <div><dt>Cost</dt><dd>50 cents a play, double the usual. Grossed about $32 million in its first eight months.</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>Mirrored rooms are real animation, not a hardware flip.</b> Flipped copies are pressed on the disc, so the same room asks for the opposite directions.</li>
+        <li><b>The players were the weak spot.</b> Constant seeking for hours a day burned them out. Later logic boards let operators switch from the PR-7820 to the LD-V1000, and ROM revision F stopped shuffling scene order so the laser would travel less.</li>
+        <li><b>Europe got more game at first.</b> Atari's European version used rooms the US board skipped, like the drawbridge, and showed the score on its own screen between rooms. The US board filled those gaps with extra mirrored rooms until revision E added the drawbridge.</li>
+        <li><b>Shoestring cast.</b> About a $1 million budget, so the animators voiced the characters. The only pro voice was narrator Michael Rye in the attract mode.</li>
+        <li><b>Where it came from.</b> Dyer loved the text game Adventure and built a "Fantasy Machine" that told an illustrated story off a roll of paper. It never sold. After seeing <i>The Secret of NIMH</i>, he went to Bluth for real animation.</li>
+        <li><b>Operator secret.</b> During attract mode, hold the stick Up Left and press Sword while dropping coins, release, then start one player. Unlimited lives.</li>
+        <li><b>First US finisher on record.</b> Lance Mazmanian, 17, at Zody's Arcade in North Las Vegas in 1983. A rival finished one day later.</li>
+      </ul>
+      <p class="sub">Watch and read</p>
+      <div class="watch">
+        <a href="https://www.youtube.com/results?search_query=dragon%27s+lair+arcade+full+playthrough+no+death">Full arcade run</a>
+        <a href="https://www.youtube.com/results?search_query=dragon%27s+lair+all+death+scenes">Every death scene</a>
+        <a href="https://www.youtube.com/watch?v=CnPOQr1pxY8">Halcyon Dreams documentary</a>
+        <a href="https://dragons-lair-project.com/games/related/walkthru/lair/hard.asp">Frame exact move guide</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="game" id="sa">
+    <div>
+      <h3>Space Ace</h3>
+      <p class="alias">1984 · THE ONE WITH SKILL LEVELS</p>
+      <dl class="spec">
+        <div><dt>Released</dt><dd>Limited in December 1983, wide on April 29, 1984</dd></div>
+        <div><dt>Hardware</dt><dd>Same Cinematronics platform as Dragon's Lair, mostly sold as a conversion kit</dd></div>
+        <div><dt>Kit</dt><dd>New disc, new EPROMs, an extra "annunciator" board for the skill buttons, new art</dd></div>
+        <div><dt>Controls</dt><dd>Stick, one Fire/Energize button, three skill buttons</dd></div>
+        <div><dt>Skill levels</dt><dd>Cadet plays about half the scenes, Captain about two thirds, Space Ace all of them</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>The first real choice.</b> At certain moments you can Energize and turn scrawny Dexter back into Ace. That sends the disc down a different branch. Skill level also changes which branches exist.</li>
+        <li><b>No annunciator board, no choice.</b> Without that extra board the game just runs in Cadet.</li>
+        <li><b>Built with physical models.</b> The team built Ace's starship and motorcycle as models, filmed them, then traced and painted the footage. A big tunnel model let a camera fly the dogfight.</li>
+        <li><b>The voices.</b> Animator Jeff Etter is Ace, Will Finn is Dexter, Lorna Pomeroy is Kimberly, and Don Bluth himself is Borf.</li>
+        <li><b>1991 remix.</b> Leland put out a kit for Dragon's Lair II hardware that added diagonal moves and removed the easy levels. Ace only.</li>
+        <li>Sold roughly half as many machines as Dragon's Lair as the arcade boom faded.</li>
+      </ul>
+      <p class="sub">Watch</p>
+      <div class="watch">
+        <a href="https://www.youtube.com/results?search_query=space+ace+arcade+space+ace+level+full+playthrough">Ace level run</a>
+        <a href="https://www.youtube.com/results?search_query=space+ace+cadet+vs+ace+differences">Cadet vs Ace paths</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="game" id="tt">
+    <div>
+      <h3>Time Traveler</h3>
+      <p class="alias">1991 · THE HOLOGRAM GAME</p>
+      <dl class="spec">
+        <div><dt>Made by</dt><dd>Sega, designed by Rick Dyer's Virtual Image Productions</dd></div>
+        <div><dt>Disc player</dt><dd>Sony LDP-1450</dd></div>
+        <div><dt>Display</dt><dd>A CRT aimed at a big concave mirror under a little stage</dd></div>
+        <div><dt>Controls</dt><dd>Stick, Action button, Time Reversal button</dd></div>
+        <div><dt>Story</dt><dd>Marshal Gram chases Vulcor through seven time periods to rescue Princess Kyi-La</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>It is not a hologram.</b> A concave mirror focuses the monitor's picture into a real image that floats in the air over the stage. The cabinet is black inside so you cannot see the mirror doing it. Same physics as those mirror toys that make a coin float.</li>
+        <li><b>Filmed like a movie.</b> Shot in San Diego with about 40 actors and a crew of around 100, mostly against green screen, then cut out so the actors stand on the little stage.</li>
+        <li><b>The rewind button, in 1991.</b> The Time Reversal Cube rewinds to just before your death. You could buy more cubes between levels with coins.</li>
+        <li><b>Hidden dance.</b> With a credit in, hold both buttons and pull the stick down. Rick Dyer dances around with his son on his back.</li>
+        <li>Reported about $18 million in sales. Sega later reused the cabinet for <i>Holosseum</i>, a fighting game with sprites instead of actors.</li>
+        <li>Home DVD and PC versions fake the effect with red and blue 3D glasses, since there is no mirror.</li>
+      </ul>
+      <p class="sub">Watch</p>
+      <div class="watch">
+        <a href="https://www.youtube.com/results?search_query=sega+hologram+time+traveler+arcade+cabinet+real">Real cabinet footage</a>
+        <a href="https://www.youtube.com/results?search_query=concave+mirror+real+image+illusion+how+it+works">How the mirror trick works</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="game" id="dl2">
+    <div>
+      <h3>Dragon's Lair II</h3>
+      <p class="alias">1991 · TIME WARP, THE TIME TRAVEL ONE</p>
+      <dl class="spec">
+        <div><dt>Animated</dt><dd>Started late 1983, stopped March 1984, finished in the late 80s</dd></div>
+        <div><dt>Released</dt><dd>1991 by Leland, the company that came out of Cinematronics</dd></div>
+        <div><dt>Disc player</dt><dd>Sony LDP-1450 or Pioneer 4200. Europe: Philips VP380.</dd></div>
+        <div><dt>Story</dt><dd>Mordroc steals Daphne through time; Dirk follows in a talking time machine</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>It shows you the answer.</b> A quick yellow flash marks where to go or when to swing. The first game mostly made you guess.</li>
+        <li><b>Golden treasures.</b> Hidden items need an extra move, often away from the flash. Miss any and the game loops you back to the first one you missed before it lets you finish.</li>
+        <li><b>Scrapped idea.</b> Collecting every treasure was supposed to unlock a longer final battle. In the end everyone gets the long one.</li>
+        <li>The prototype had a completely different soundtrack.</li>
+        <li>Hal Smith voices Mordroc, Daphne's mother, the Time Machine, the Cheshire Cat and the card soldiers.</li>
+        <li>The home computer ports came out first and were built from a VHS tape of the animation, because no arcade disc existed yet.</li>
+        <li>The other time travel laserdisc game, <i>Time Gal</i> (Taito, 1985), plays today through Singe in Hypseus.</li>
+      </ul>
+      <p class="sub">Watch</p>
+      <div class="watch">
+        <a href="https://www.youtube.com/results?search_query=dragon%27s+lair+ii+time+warp+arcade+full+playthrough">Arcade run</a>
+        <a href="https://www.youtube.com/results?search_query=time+gal+laserdisc+taito+1985">Time Gal</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="game" id="uvt">
+    <div>
+      <h3>Us vs. Them</h3>
+      <p class="alias">1984 · THE ONE ALMOST NOBODY PLAYED</p>
+      <dl class="spec">
+        <div><dt>Made by</dt><dd>Mylstar, the renamed Gottlieb. Programmer and video editor: Warren Davis, who made Q*bert.</dd></div>
+        <div><dt>Hardware</dt><dd>Built as a kit for M.A.C.H. 3 on the Mylstar Video Disc Graphics System</dd></div>
+        <div><dt>Display</dt><dd>Disc video underneath, computer drawn ships and shots on top</dd></div>
+        <div><dt>Survivors</dt><dd>About 13 known to collectors in the KLOV census</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>Two layers at once.</b> Unlike Dragon's Lair, the computer draws sprites over the moving video. The overlay hardware came from M.A.C.H. 3, so the footage is the world and the sprites are the game.</li>
+        <li><b>A real film production.</b> Aerial shoots over San Francisco, Chicago, Hollywood, forest, mountain and desert, custom sets for live action alien invasion scenes, comedy gags between waves, and an orchestral score.</li>
+        <li><b>Killed by timing.</b> It tested well, then the laserdisc backlash hit. Players were breaking, operators were angry, orders were canceled, and lawsuits followed. Very few got built.</li>
+        <li>Warren Davis later built the video digitizing system behind Mortal Kombat and NBA Jam.</li>
+      </ul>
+      <p class="sub">Watch</p>
+      <div class="watch">
+        <a href="https://www.gdcvault.com/play/1029402/-Us-vs-Them-and">Warren Davis GDC talk (free)</a>
+        <a href="https://www.youtube.com/results?search_query=us+vs+them+mylstar+laserdisc+arcade">Gameplay</a>
+      </div>
+    </div>
+  </article>
+
+  <article class="game" id="tq">
+    <div>
+      <h3>Thayer's Quest</h3>
+      <p class="alias">1984 · THE ONE WITH A KEYBOARD</p>
+      <dl class="spec">
+        <div><dt>Made by</dt><dd>RDI Video Systems (Rick Dyer's renamed company)</dd></div>
+        <div><dt>Hardware</dt><dd>Conversion kit for Dragon's Lair and Space Ace cabinets; PR-7820 or LD-V1000</dd></div>
+        <div><dt>Controls</dt><dd>A membrane QWERTY keyboard with item keys. The first QWERTY keyboard on an arcade game.</dd></div>
+        <div><dt>Home twin</dt><dd>The RDI Halcyon: Z80B at 6 MHz, voice recognition, $2,500, never mass produced</dd></div>
+      </dl>
+    </div>
+    <div>
+      <ul class="facts">
+        <li><b>An adventure, not a reflex test.</b> You choose where to go and which magic item to use. Once you know a scene's answer it works every time.</li>
+        <li><b>It says your name.</b> You type your name at the start and the speech synthesizer uses it. It also saved progress for the last ten players.</li>
+        <li><b>The original story.</b> It is based on Shadoan, the big fantasy Dyer wrote before Dragon's Lair spun out of it. The arcade disc covers three of the five kingdoms.</li>
+        <li><b>What happened next.</b> The rest arrived in the 90s as <i>Kingdom: The Far Reaches</i> and <i>Kingdom 2: Shadoan</i>, with the characters renamed.</li>
+        <li>The Halcyon disc is double sided and holds more material than the arcade disc.</li>
+        <li>Reportedly some arcades pulled it because kids typed swear words and the machine said them out loud.</li>
+      </ul>
+      <p class="sub">Watch</p>
+      <div class="watch">
+        <a href="https://www.youtube.com/results?search_query=thayer%27s+quest+arcade+keyboard+gameplay">Arcade gameplay</a>
+        <a href="https://www.youtube.com/results?search_query=rdi+halcyon+console+laserdisc">The Halcyon</a>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- CHAPTER 3 -->
+<section class="chapter" id="lost">
+  <div class="ch-head">
+    <span class="label">Chapter 3</span>
+    <h2>The lost version: more doors</h2>
+    <p>Before release, Dragon's Lair was looser. Most rooms had several exits and several right answers. The sources do not say why it was cut back; the usual telling is that testers got lost. What is certain is that the cuts came late, after the animation was finished, because pieces of the old rooms are still hiding on the final disc.</p>
+  </div>
+
+  <div class="proto">
+    <div class="room"><h3>Attract mode</h3><p>A gargoyle throws a spear partway through. It was replaced by the Lizard King.</p><p class="ghost"><b>Still on the disc</b>Turn it up during the Lizard King shot and you hear the swish of the gargoyle's spear.</p></div>
+    <div class="room"><h3>Vestibule</h3><p>The ceiling does not fall right away. Dirk can leave left, leave right, or shove a log aside and drop through a trapdoor.</p><p class="ghost"><b>Still on the disc</b>The trapdoor's hole is visible just before the floor crumbles. They removed the door but never painted floor over it.</p></div>
+    <div class="room"><h3>Spiral Staircase</h3><p>A red trip wire on the first step fires spears into Dirk. The goons also sounded different.</p><p class="ghost"><b>Still on the disc</b>The wire was erased from the main scene but is still there in the death scene.</p></div>
+    <div class="room"><h3>Wizard's Chamber</h3><p>Slam the lid on the cauldron and run, or walk to three flasks: look at one, drink one, or pour one on your sword. Then fight, or leave by the door or a hole in the floor.</p><p class="ghost"><b>Still on the disc</b>The floor hole and its ladder show up in the crumbling bones death.</p></div>
+    <div class="room"><h3>Tentacles and Halberd</h3><p>Mostly the same, plus cut moments like Dirk trying to pull the halberd off the rack, and a bloodier tentacle chop.</p></div>
+    <div class="room"><h3>Tentacle room</h3><p>No fire at all. Walk out the door ahead, or crawl through a hole behind the bench. Wait too long and a green tentacle drops from the ceiling.</p><p class="ghost"><b>Still on the disc</b>That ceiling hole is where the fire comes from in the final game.</p></div>
+    <div class="room"><h3>Mausoleum</h3><p>No rolling skulls, no grabbing hand. Side doors lead to Crypt Creeps, and the door at the far end actually works.</p></div>
+    <div class="room"><h3>Catwalk</h3><p>Duck out early through a small opening on the left, or skip the catwalk and get chased by bats out a different door behind you.</p><p class="ghost"><b>Still on the disc</b>The left opening appears in the crumbling bones death.</p></div>
+    <div class="room"><h3>Yellow Brick Road</h3><p>Choose left, right, or forward. Jump a wall of fire before the pool. Choose left or right again, then meet the spider without killing it.</p><p class="ghost"><b>Still on the disc</b>In one death a knife reaches Dirk's back and vanishes a frame before it hits. The prototype let it land.</p></div>
+    <div class="room"><h3>Mist Room</h3><p>Only one snake. Nothing comes from the ceiling.</p><p class="ghost"><b>Still on the disc</b>The ceiling hole for the second snake disappears as Dirk grabs the skull and leaves, because that ending was reused from the old version.</p></div>
+    <div class="room"><h3>YMCA Room</h3><p>An extra doorway on the left. Only the far stairs flatten, no worms in the pit, and an extra death where Dirk misses the chain.</p><p class="ghost"><b>Still on the disc</b>The extra doorway is in the crumbling bones death.</p></div>
+    <div class="room"><h3>Three Caves</h3><p>No cage. Go left to the lava geyser bridge, right across stepping stones past a water monster, or forward through the jagged door.</p><p class="ghost"><b>Still on the disc</b>Just before the cage drops you can still see the side caves.</p></div>
+  </div>
+
+  <div class="callout">
+    <h3>You can actually play these</h3>
+    <p>The prototype footage was pressed onto a limited Dragon's Lair reproduction laserdisc in 2002 and added to the Dexter disc image. With the fan made Dragon's Lair Enhancement ROMs, a real cabinet will play the cut scenes. The <a href="https://dragons-lair-project.com/games/related/prototype/dl">Dragon's Lair Project prototype page</a> has the clips and photos of the early cabinet, which had a black control panel with printed instructions and a single four digit score.</p>
+  </div>
+</section>
+
+<!-- CHAPTER 4 -->
+<section class="chapter" id="moves">
+  <div class="ch-head">
+    <span class="label">Chapter 4</span>
+    <h2>Every move, every room</h2>
+    <p>Do the inputs in order, each one at the moment the scene asks for it. Flashing objects usually point the way. Mirrored rooms swap left and right, so flip the switch when a room looks backwards.</p>
+  </div>
+
+  <div class="controls">
+    <button class="toggle" id="t-mirror" aria-pressed="false">Mirrored version</button>
+    <button class="toggle" id="t-hard" aria-pressed="false">Arcade Hard additions</button>
+  </div>
+  <div class="legend">
+    <span><span class="chip flip">L</span> changes in the mirrored room</span>
+    <span><span class="chip add">+</span> extra move on arcade Hard</span>
+    <span><span class="chip s">SWORD</span> sword button</span>
+  </div>
+
+  <div class="map" id="map"></div>
+  <p class="mapnote">Room names and points follow the Dragon's Lair Project's arcade guide (points shown for the normal version, then mirrored). Move sequences come from a player guide for the HD release, which uses the arcade moves on Easy; I matched its room nicknames to the arcade names, and a couple of those matches are my best read. For frame exact timing, the <a href="https://dragons-lair-project.com/games/related/walkthru/lair/hard.asp">Dragon's Lair Project Hard guide</a> is the authority.</p>
+
+  <div class="drill" id="drill">
+    <div>
+      <h3>Practice the pattern</h3>
+      <p style="color:var(--muted);font-size:.92rem;margin-top:4px">Pick a room and enter its moves with the pad, your arrow keys, or space for sword. This drills the order only; the real game also needs the timing.</p>
+      <label class="label" for="drill-room" style="display:block;margin-top:14px">Room</label>
+      <select id="drill-room"></select>
+      <div class="dtrack" id="dtrack"></div>
+      <p class="dstatus" id="dstatus">Ready.</p>
+    </div>
+    <div class="pad" role="group" aria-label="Joystick and sword">
+      <span></span>
+      <button data-k="U" aria-label="Up"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+      <span></span>
+      <button data-k="L" aria-label="Left"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></button>
+      <button data-k="S" class="sw" aria-label="Sword">SWORD</button>
+      <button data-k="R" aria-label="Right"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <span></span>
+      <button data-k="D" aria-label="Down"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg></button>
+      <span></span>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 5 -->
+<section class="chapter" id="next">
+  <div class="ch-head">
+    <span class="label">Chapter 5</span>
+    <h2>Dragon's Lair in 2027</h2>
+    <p>The 1983 magic was two things: it looked like a movie, and a crowd could watch. The pain was invisible timing and rooms that were pass or die. Keep the first, fix the second, and bring back the prototype's doors.</p>
+  </div>
+
+  <div class="three">
+    <div>
+      <h3>Keep</h3>
+      <ul>
+        <li><b>Hand made frames.</b> People crowded around for the art. AI video is great for quick animatics and test rooms, but lock a consistent, authored look for the final.</li>
+        <li><b>Watchability.</b> That CRT on top of the cabinet was the original Twitch. Build a spectator view on purpose: TV mode, stream overlay, a crowd screen.</li>
+        <li><b>One input per moment.</b> The fun is reading the scene and reacting. Don't bury it under menus.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Fix</h3>
+      <ul>
+        <li><b>Fair cues.</b> Every move gets a tell in the art: a glint, a flash, a sound. Dragon's Lair II already did this in 1991.</li>
+        <li><b>Rewind instead of game over.</b> Time Traveler's Time Reversal Cube is the template.</li>
+        <li><b>Generous windows by default.</b> Offer the real 1983 timing, down to a tenth of a second, as an arcade mode.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Bring back</h3>
+      <ul>
+        <li><b>The prototype's choices.</b> Two or three real exits per room, each its own clip. The castle becomes a map you learn over many runs.</li>
+        <li><b>Energize.</b> Space Ace's risky transformation as a choice that opens harder, better paths.</li>
+        <li><b>The talking machine.</b> Thayer's Quest said your name in 1984. Today's AI voices can narrate to you naturally, and the Halcyon's 1985 dream of voice commands finally works.</li>
+        <li><b>The hologram.</b> A monitor under a concave mirror still floats a picture in midair. Cheap, and it still stops people.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code">
+    <div>
+      <p class="sub" style="margin-top:0">How it runs now</p>
+      <div class="prose">
+        <p>No disc means no seek. Every clip loads ahead of time, so a branch is instant. The whole game becomes a scene graph: clips, timed input windows, and where each answer leads. This is the same table the 1983 Z80 held, just readable.</p>
+        <p style="margin-top:12px">In a browser, an HTML video element plus <span class="mono">requestVideoFrameCallback</span> gives frame accurate windows on any phone. Singe 2 is an existing engine built for exactly this kind of game.</p>
+      </div>
+    </div>
+<pre><span class="cm">// one room, example values</span>
+{
+  <span class="k">"room"</span>: <span class="str">"three_caves"</span>,
+  <span class="k">"clip"</span>: <span class="str">"three_caves.webm"</span>,
+  <span class="k">"moves"</span>: [
+    { <span class="k">"at"</span>: 2.40, <span class="k">"window"</span>: 0.45,
+      <span class="k">"cue"</span>: <span class="str">"left_cave_glows"</span>,
+      <span class="k">"answers"</span>: {
+        <span class="k">"L"</span>: <span class="str">"lava_bridge"</span>,
+        <span class="k">"R"</span>: <span class="str">"water_stones"</span>,
+        <span class="k">"U"</span>: <span class="str">"jagged_door"</span> },
+      <span class="k">"else"</span>: <span class="str">"death_cage"</span> }
+  ],
+  <span class="k">"spectator"</span>: { <span class="k">"show_input"</span>: true }
+}</pre>
+  </div>
+
+  <div class="code">
+    <div>
+      <p class="sub" style="margin-top:0">A first build, in order</p>
+      <ol class="steps">
+        <li>Pick three rooms and storyboard them with two or three exits each.</li>
+        <li>Make rough animatics with AI video to test the timing and cues.</li>
+        <li>Write the scene graph and a tiny player that reads it.</li>
+        <li>Add rewind, fair windows, and arcade mode as a switch.</li>
+        <li>Add a spectator screen and put it in front of people.</li>
+      </ol>
+    </div>
+    <div class="callout" style="margin-top:0">
+      <h3>A Decomp Lab target</h3>
+      <p>The original program is only 32 KB of Z80 code, and somewhere in it is the scene table: frame numbers, window lengths, right answers, death clips. Load a ROM dump you own into Ghidra and you can read the game's brain directly. The fan Enhancement ROMs, which restored the prototype scenes, show it can be done.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER 6 -->
+<section class="chapter" id="play">
+  <div class="ch-head">
+    <span class="label">Chapter 6</span>
+    <h2>Play them today</h2>
+  </div>
+  <div class="play">
+    <div><h3>Hypseus Singe</h3><p>The maintained fork of the Daphne laserdisc emulator. Runs on Mac, Windows and Raspberry Pi, supports 4K video files, and runs Singe games like Time Gal. You need the ROM files plus the disc video as m2v and ogg files.</p></div>
+    <div><h3>MAME</h3><p>Covers several laserdisc games from disc images, including the overlay shooters like Us vs. Them.</p></div>
+    <div><h3>Dexter</h3><p>A replacement for the original player in a real cabinet. It plays a disc image and the game never knows the difference. Built by Matt Ownby and Warren Ondras over about eight years.</p></div>
+    <div><h3>Official releases</h3><p>Digital Leisure has kept Dragon's Lair, Space Ace, Dragon's Lair II, Time Traveler and Thayer's Quest in print for years on DVD, PC, Blu ray and consoles.</p></div>
+    <div><h3>The movie</h3><p>A live action Dragon's Lair film with Ryan Reynolds has been in development at Netflix for years, with James Bobin reported as director. I could not confirm a release date.</p></div>
+    <div><h3>Dragon's Lair 3D</h3><p>Bluth, Goldman and Dyer reunited for a fully 3D version in 2002 that let you walk the castle freely. A useful lesson in what to keep and what to change.</p></div>
+  </div>
+
+  <div class="sources">
+    <span class="label">Sources</span>
+    <ul>
+      <li><a href="https://dragons-lair-project.com/games/related/prototype/dl">Dragon's Lair Project: prototype</a></li>
+      <li><a href="https://dragons-lair-project.com/games/related/walkthru/lair/hard.asp">Dragon's Lair Project: Hard walkthrough and scores</a></li>
+      <li><a href="https://dragons-lair-project.com/games/related/walkthru/lair/veryhard.asp">Dragon's Lair Project: Very hard timing</a></li>
+      <li><a href="https://www.dragons-lair-project.com/tech/docs/conv_dl.asp">Dragon's Lair Project: PR-7820 to LD-V1000 conversion</a></li>
+      <li><a href="https://new.tcrf.net/Dragon%27s_Lair_(Arcade)">The Cutting Room Floor: Dragon's Lair arcade</a></li>
+      <li><a href="https://www.exotica.org.uk/wiki/Lost_In_Translation/Dragon%27s_Lair">Exotica: Dragon's Lair hardware</a></li>
+      <li><a href="https://www.arcade-history.com/game/702/">Arcade History: Dragon's Lair</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Dragon%27s_Lair_(1983_video_game)">Wikipedia: Dragon's Lair</a></li>
+      <li><a href="https://www.trueachievements.com/game/Dragons-Lair/walkthrough">TrueAchievements: HD move guide</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Space_Ace">Wikipedia: Space Ace</a></li>
+      <li><a href="https://dragons-lair-project.com/games/pages/sa.asp">Dragon's Lair Project: Space Ace</a></li>
+      <li><a href="https://www.arcade-museum.com/Videogame/space-ace--cinematronics">KLOV: Space Ace</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Time_Traveler_(video_game)">Wikipedia: Time Traveler</a></li>
+      <li><a href="https://www.arcade-history.com/game/4421/">Arcade History: Time Traveler</a></li>
+      <li><a href="https://tropedia.fandom.com/wiki/Time_Traveler_(video_game)">Tropedia: Time Traveler production</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Dragon%27s_Lair_II:_Time_Warp">Wikipedia: Dragon's Lair II</a></li>
+      <li><a href="https://www.arcade-museum.com/Videogame/dragons-lair-ii">KLOV: Dragon's Lair II</a></li>
+      <li><a href="https://dragons-lair-project.com/games/pages/dl2.asp">Dragon's Lair Project: Dragon's Lair II</a></li>
+      <li><a href="https://www.gamedeveloper.com/business/video-us-vs-them-and-the-laserdisc-debacle">Game Developer: Us vs. Them talk</a></li>
+      <li><a href="https://arcade-museum.com/Videogame/us-vs-them">KLOV: Us vs. Them</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/M.A.C.H._3">Wikipedia: M.A.C.H. 3</a></li>
+      <li><a href="https://www.arcade-history.com/game/2879/">Arcade History: Thayer's Quest</a></li>
+      <li><a href="https://thedoteaters.com/?cat=371">The Dot Eaters: Thayer's Quest</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Halcyon_(console)">Wikipedia: Halcyon</a></li>
+      <li><a href="https://www.giantbomb.com/rdi-halcyon/3045-107/">Giant Bomb: RDI Halcyon</a></li>
+      <li><a href="https://emulation.gametechwiki.com/index.php/Hypseus_Singe">Emulation Wiki: Hypseus Singe</a></li>
+      <li><a href="https://www.engadget.com/2016-07-10-dexter-laserdisc-replacement.html">Engadget: Dexter</a></li>
+      <li><a href="https://www.flickeringmyth.com/ryan-reynolds-dragons-lair-movie-finds-its-director-in-james-bobin/">Flickering Myth: movie director</a></li>
+    </ul>
+  </div>
+  <footer>Made by <a href="https://github.com/hurtz">Jason O'Connell</a> with Claude, part of <a href="https://jasonoconnell.com">Plain Weird</a>. Watch buttons open YouTube searches so you land on whatever footage is up today.</footer>
+</section>
+
+</main>
+
+<script>
+(function(){
+  /* ---------- 7 segment LEDs ---------- */
+  var SEG = {
+    a:"M4,1 L24,1 L20,5 L8,5 Z", b:"M26,3 L26,23 L22,20.5 L22,7 Z", c:"M26,25 L26,45 L22,41 L22,27.5 Z",
+    d:"M8,43 L20,43 L24,47 L4,47 Z", e:"M2,25 L6,27.5 L6,41 L2,45 Z", f:"M2,3 L6,7 L6,20.5 L2,23 Z",
+    g:"M6,24 L9,21.6 L19,21.6 L22,24 L19,26.4 L9,26.4 Z"
+  };
+  var MAP = {"0":"abcdef","1":"bc","2":"abged","3":"abgcd","4":"fgbc","5":"afgcd","6":"afgedc","7":"abc","8":"abcdefg","9":"abcdfg"," ":""};
+  function digit(ch){
+    var on = MAP[ch] || "";
+    var s = '<svg viewBox="0 0 28 48" aria-hidden="true"><g transform="skewX(-6) translate(3,0)">';
+    for (var k in SEG){ s += '<path class="'+(on.indexOf(k)>-1?'on':'off')+'" d="'+SEG[k]+'"/>'; }
+    return s + '</g></svg>';
+  }
+  function setSeg(el, str){ if(!el) return; var h=''; for(var i=0;i<str.length;i++) h+=digit(str[i]); el.innerHTML=h; el.setAttribute('aria-label', str.trim()); }
+  setSeg(document.getElementById('maxscore'), '326248');
+  setSeg(document.getElementById('free49'), '49');
+
+  /* ---------- scroll position as a CAV frame ---------- */
+  var frameEl = document.getElementById('frame'), disc = document.getElementById('disc');
+  var last = -1, seekTimer = null, lastY = window.scrollY;
+  function updateFrame(){
+    var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    var f = Math.min(53999, Math.round(window.scrollY / max * 53999));
+    if (f !== last){ last = f; setSeg(frameEl, String(f).padStart(5,'0')); }
+    if (Math.abs(window.scrollY - lastY) > 120 && disc){
+      disc.classList.add('seeking'); clearTimeout(seekTimer);
+      seekTimer = setTimeout(function(){ disc.classList.remove('seeking'); }, 500);
+    }
+    lastY = window.scrollY;
+  }
+  window.addEventListener('scroll', function(){ requestAnimationFrame(updateFrame); }, {passive:true});
+  updateFrame();
+
+  /* ---------- move data ---------- */
+  // Each move: "L" etc, or [normal, mirrored]. mirror:"all" swaps every L/R in the mirrored version.
+  var ROOMS = [
+    {n:"Drawbridge", k:"Tentacles from the moat", m:["S"], note:"US boards added this opener at ROM revision E. Europe had it from the start."},
+    {n:"Vestibule", k:"Small crumbling room", m:["R","R"], p:[551]},
+    {n:"Flying Barding", k:"Horse ride through fire", m:["L","R","L","R","R","R"], mirror:"all", p:[3850,5303]},
+    {n:"Mausoleum", k:"Crypt Creeps, skulls, grabbing hand", m:["U","S","U","S",["L","R"],"S"], p:[3859,6411]},
+    {n:"Three Caves", k:"Cage, lava geyser, jagged door", m:["U","U","L"], p:[4481], note:"Jump when the geyser is at zero height. You get three chances."},
+    {n:"Socker Boppers", k:"The Grim Reaper", m:["U","S",["D","U"],"U"], p:[8507,9231]},
+    {n:"Breathing Door", k:"Wind room", m:["R"], p:[428]},
+    {n:"Mist Room", k:"Snakes and the skull", m:["S","S","S","U"], p:[5207]},
+    {n:"Fire Pit", k:"Burning ropes", m:["R","R","R","R"], mirror:"all", p:[2089,923]},
+    {n:"Fire Room", k:"Lightning from the corner", m:["R","L","D","L"], p:[4531]},
+    {n:"Catwalk", k:"Collapsing walkway, bats", m:["U","U","S","R","R"], p:[9020]},
+    {n:"Chapel", k:"Robot Knight, electric checkered floor", m:[["L","R"],"U",["L","R"],["R","L"],["L","R"],["R","L"],"S"], p:[18152,21104]},
+    {n:"Mudmen", k:"Lava people and stepping stones", m:["S","U","U","U","U","U","U","U","U"], p:[14692], note:"Arcade quirk: near the end, Up pays more than Right, which ends the scene early."},
+    {n:"Elevator Floor", k:"Falling platforms", m:[["L","R"]], p:[3304,5619], note:"Jump toward the exit when it lines up. Three of the four rides exit left. On the nine floor rides, waiting for later stops pays bonus points."},
+    {n:"Pirates of the Caribbean", k:"Underground river: boulders, rapids, whirlpools", m:["L","R","L","R","U","U","U","U","R","L","R","L","R"], p:[4673], note:"Boulders, then rapids, then whirlpools, then the exit. On arcade Hard the first whirlpool is skipped but still scores."},
+    {n:"Boulder Trench", k:"Colored balls ramp", m:["D","D","D","D","D","D","U"], p:[2574]},
+    {n:"Pot of Gold", k:"The Lizard King", m:["L","R","R","R","R","R","U","S","S","S","S","S"], p:[12738]},
+    {n:"Forge", k:"Smithee and the flying weapons", m:["S","S",["L","R"],"S","S"], p:[6470,7133]},
+    {n:"Wizard's Chamber", k:"The Cauldron Wizard", m:["U","S","D","S","R"], p:[12267]},
+    {n:"Spiral Staircase", k:"Giddy Goons", m:["S","R","S","U"], p:[5009], note:"Shortcut: Sword, Right, Up gets you past without the second wave."},
+    {n:"Yellow Brick Road", k:"Crumbling floor, pool, spider", m:[["L","R"],"U",["R","L"],"U",["L","R"],"U","S",["R","L"],"U"], p:[28762,31462]},
+    {n:"Giant Bat", k:"Bat staircase", m:["S","L","U","S","L"], p:[8492]},
+    {n:"Throne Room", k:"The magnet ball steals your sword", m:["R","R","R","R"], hard:{at:1,add:"U"}, p:[9244]},
+    {n:"Bower", k:"Bedroom, closing wall", m:["U"], p:[428], note:"Left or Right here and Dirk chokes."},
+    {n:"Wizard's Kitchen", k:"“Drink Me”", m:["R"], p:[428], note:"Ignore the bottle."},
+    {n:"Knight and Light", k:"Black Knight on horseback", m:["L","L","R"], hard:{at:0,add:"U"}, p:[6981]},
+    {n:"Tentacles and Halberd", k:"Tentacle room", m:["S","U","R","D","L","U"], p:[5152]},
+    {n:"YMCA Room", k:"Flattening stairs", m:["L","S","L","L"], p:[4724]},
+    {n:"Tilting Room", k:"Tilting checkered floor", m:["D","U","L"], p:[6602]},
+    {n:"Dragon's Lair", k:"Singe, the finale", m:["L","L","L","L","L","R","U","S","S","U","S"], p:[37251], note:"Arcade Hard adds an extra Up and Right after the second pillar falls. The last Sword is the kill."}
+  ];
+
+  var mirrored = false, hard = false;
+  var swap = {L:"R",R:"L"};
+  // Returns list of {k, flip, add}
+  function seq(r){
+    var out = r.m.map(function(x){
+      if (Array.isArray(x)) return {k: mirrored ? x[1] : x[0], flip:true};
+      if (r.mirror === "all" && (x==="L"||x==="R")) return {k: mirrored ? swap[x] : x, flip:true};
+      return {k:x, flip:false};
+    });
+    if (hard && r.hard) out.splice(r.hard.at + (r.hard.at>0?0:0), 0, {k:r.hard.add, add:true});
+    return out;
+  }
+  var ARROW = {
+    U:'<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
+    D:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>',
+    L:'<svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>',
+    R:'<svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
+  };
+  var NAME = {U:"Up",D:"Down",L:"Left",R:"Right",S:"Sword"};
+  function chip(c){
+    var cls = 'chip' + (c.k==='S'?' s':'') + (c.flip?' flip':'') + (c.add?' add':'');
+    return '<span class="'+cls+'" title="'+NAME[c.k]+'" aria-label="'+NAME[c.k]+'">'+(c.k==='S'?'SWORD':ARROW[c.k])+'</span>';
+  }
+  function fmt(n){ return n.toLocaleString('en-US'); }
+  function renderMap(){
+    var h = '';
+    ROOMS.forEach(function(r){
+      var s = seq(r);
+      var pts = '';
+      if (r.p){ pts = fmt(r.p[0]) + (r.p[1] ? '<small>mirrored '+fmt(r.p[1])+'</small>' : ''); }
+      else { pts = '<small>opener</small>'; }
+      h += '<div class="mrow"><div class="nm">'+r.n+'<span class="nk">'+r.k+'</span></div>'
+        + '<div class="chips">'+s.map(chip).join('')+'</div>'
+        + '<div class="pts">'+pts+'</div>'
+        + (r.note ? '<div class="note">'+r.note+'</div>' : '')
+        + '</div>';
+    });
+    document.getElementById('map').innerHTML = h;
+  }
+  function bindToggle(id, set){
+    var b = document.getElementById(id);
+    b.addEventListener('click', function(){
+      var v = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(v)); set(v); renderMap(); resetDrill();
+    });
+  }
+  bindToggle('t-mirror', function(v){ mirrored = v; });
+  bindToggle('t-hard', function(v){ hard = v; });
+  renderMap();
+
+  /* ---------- drill ---------- */
+  var sel = document.getElementById('drill-room'), track = document.getElementById('dtrack'),
+      status = document.getElementById('dstatus'), drillBox = document.getElementById('drill');
+  ROOMS.forEach(function(r,i){ var o=document.createElement('option'); o.value=i; o.textContent=r.n+' ('+r.k+')'; sel.appendChild(o); });
+  sel.value = "19"; // Spiral Staircase
+  var pos = 0, cur = [];
+  function drawTrack(){
+    track.innerHTML = cur.map(function(c,i){
+      return chip(c).replace('class="chip', 'class="chip'+(i<pos?' done':'')+(i===pos?' next':''));
+    }).join('');
+  }
+  function resetDrill(){
+    cur = seq(ROOMS[+sel.value]); pos = 0; drawTrack();
+    status.className = 'dstatus'; status.textContent = 'Ready. '+cur.length+' moves.';
+  }
+  function press(k){
+    if (!cur.length) return;
+    if (pos >= cur.length){ resetDrill(); }
+    if (cur[pos].k === k){
+      pos++; drawTrack();
+      if (pos === cur.length){
+        var r = ROOMS[+sel.value];
+        status.className = 'dstatus win';
+        status.textContent = 'Room clear' + (r.p ? ', ' + fmt(mirrored && r.p[1] ? r.p[1] : r.p[0]) + ' points' : '') + '. Press any move to run it again.';
+      } else { status.className='dstatus'; status.textContent = 'Good. '+(cur.length-pos)+' to go.'; }
+    } else {
+      status.className = 'dstatus dead';
+      status.textContent = 'Dirk dies. You pressed '+NAME[k]+', the room wanted '+NAME[cur[pos].k]+'. Back to the start.';
+      drillBox.classList.remove('flash'); void drillBox.offsetWidth; drillBox.classList.add('flash');
+      pos = 0; drawTrack();
+    }
+  }
+  sel.addEventListener('change', resetDrill);
+  document.querySelectorAll('.pad button').forEach(function(b){ b.addEventListener('click', function(){ press(b.dataset.k); }); });
+  var KEYS = {ArrowUp:"U",ArrowDown:"D",ArrowLeft:"L",ArrowRight:"R"," ":"S",Enter:"S"};
+  document.addEventListener('keydown', function(e){
+    var r = drillBox.getBoundingClientRect();
+    var inView = r.top < window.innerHeight && r.bottom > 0;
+    if (!inView || !(e.key in KEYS) || e.target === sel) return;
+    if (e.key === "Enter" && e.target.tagName === "BUTTON") return;
+    e.preventDefault(); press(KEYS[e.key]);
+  });
+  resetDrill();
+})();
+</script>
+
+</body>
+</html>
