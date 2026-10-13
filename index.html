@@ -143,11 +143,109 @@ footer a{color:var(--gold)}
 .ha:hover .go{background:var(--gold)}
 @media (max-width:560px){.ha{grid-template-columns:104px minmax(0,1fr);gap:12px}.ha img{width:104px}.ha b{font-size:30px}.ha .go{grid-column:1/-1;text-align:center}}
 @media (prefers-reduced-motion:reduce){.fc img,.tile img{transition:none}.reel .track{animation:none}}
+
+/* polish pass: night sky over Des Moines, a jump bar, steadier cards */
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#051a36 0,var(--sky) 420px,var(--sky) 72%,#072646 100%)}
+.wrap{position:relative;z-index:1}
+.sky{position:absolute;top:0;left:0;right:0;height:620px;pointer-events:none;z-index:0;overflow:hidden;-webkit-mask-image:linear-gradient(#000 35%,transparent);mask-image:linear-gradient(#000 35%,transparent)}
+.sky::before,.sky::after{content:"";position:absolute;inset:0}
+.sky::before{background-image:radial-gradient(circle at 23px 41px,#fff 0 1px,transparent 1.5px),radial-gradient(circle at 141px 13px,#cfe0ff 0 .8px,transparent 1.3px),radial-gradient(circle at 205px 98px,#fff 0 .8px,transparent 1.3px),radial-gradient(circle at 77px 141px,#ffe9a8 0 1.1px,transparent 1.6px),radial-gradient(circle at 262px 63px,#fff 0 .7px,transparent 1.2px),radial-gradient(circle at 301px 152px,#cfe0ff 0 .9px,transparent 1.4px);background-size:320px 180px;opacity:.6}
+.sky::after{background-image:radial-gradient(circle at 57px 77px,#fff 0 1.2px,transparent 1.8px),radial-gradient(circle at 233px 21px,#ffe9a8 0 1px,transparent 1.5px),radial-gradient(circle at 371px 133px,#fff 0 1.1px,transparent 1.6px),radial-gradient(circle at 160px 190px,#cfe0ff 0 .9px,transparent 1.4px);background-size:430px 240px;animation:tw 5s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.2}to{opacity:.9}}
+header{position:relative;isolation:isolate;padding-bottom:18px}
+header::after{content:"";position:absolute;right:0;bottom:0;width:min(680px,62%);height:210px;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 60% 75% at 66% 100%,rgba(255,138,31,.2),transparent 70%)}
+.city{position:absolute;right:0;bottom:0;width:min(540px,47%);height:auto;z-index:-1;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 30%);mask-image:linear-gradient(90deg,transparent,#000 30%)}
+.city .blink{animation:blink 2.6s steps(1) infinite}
+@keyframes blink{50%{opacity:.15}}
+.word h1 span{text-shadow:0 0 26px rgba(255,138,31,.45)}
+.intro{font-size:15.5px;line-height:1.6;max-width:64ch;margin-top:10px}
+.intro strong{color:var(--ink);font-weight:500}
+.stats{gap:8px;font:20px/1 var(--display);margin-top:4px}
+.stats span{display:inline-flex;align-items:baseline;gap:6px;padding:5px 10px 4px;border:1px solid var(--line);background:rgba(4,16,31,.6);border-radius:3px}
+.stats b{font-size:24px}
+.reel{height:116px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.reel .track{padding:14px 0}
+.reel::before,.reel::after{content:"";position:absolute;left:0;right:0;height:5px;z-index:1;background:repeating-linear-gradient(90deg,rgba(243,246,251,.3) 0 9px,transparent 9px 18px)}
+.reel::before{top:4px}.reel::after{bottom:4px}
+.jump{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;margin:16px -16px 0;padding:8px 16px;background:rgba(5,24,48,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-block:1px solid var(--line)}
+.jump .in{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.jump .in::-webkit-scrollbar{display:none}
+.jump a{flex:0 0 auto;font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-decoration:none;padding:7px 10px;border-radius:3px;border:1px solid transparent;transition:color .15s,background-color .15s,border-color .15s}
+.jump a:hover{color:var(--ink);border-color:var(--line)}
+.jump a.on{background:var(--gold);color:#1b1b1b;border-color:var(--gold)}
+@media (min-width:1181px){.jump{margin-inline:0;padding-inline:8px;border:1px solid var(--line);border-radius:4px}}
+.drawer,#hello{scroll-margin-top:64px}
+.drawer{margin-top:40px}
+.dh b{font-size:34px}
+.fc,.tile{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.fc .media,.tile .media{transition:border-color .18s ease}
+.fc:not(.static):hover,.tile:not(.static):hover,.fc:not(.static):focus-visible{transform:translate(-3px,-3px);box-shadow:8px 8px 0 rgba(0,0,0,.45);border-color:var(--gold)}
+.fc:not(.static):hover .media,.tile:not(.static):hover .media,.fc:not(.static):focus-visible .media{border-color:var(--gold)}
+.fc .cap{display:flex;flex-direction:column;gap:7px;padding:12px 14px 14px}
+.fc .cap b{font-size:32px;line-height:1;text-wrap:balance}
+.fc .cap p{font-size:13.5px;line-height:1.45}
+.fc .row1{gap:4px 8px}
+.tile .cap{display:flex;flex-direction:column;gap:5px}
+.tile b{line-height:1;text-wrap:balance}
+.row1:empty{display:none}
+.fc .acts,.tile .acts{margin-top:auto}
+.soon{display:inline-flex;align-items:center;gap:8px;font:12.5px var(--mono);color:var(--mute);padding:5px 10px;border:1px solid var(--line);border-radius:3px}
+.soon::before{content:"";width:7px;height:7px;border-radius:50%;background:#3ddc84;box-shadow:0 0 0 3px rgba(61,220,132,.2)}
+@media (min-width:901px){.feat:not(.ranked)>.fc:last-child:nth-child(3n+1){grid-column:1/-1;flex-direction:row}.feat:not(.ranked)>.fc:last-child:nth-child(3n+1) .media{flex:0 0 calc((100% - 28px)/3);align-self:flex-start;border-bottom:0;border-right:2px solid var(--ink)}.feat:not(.ranked)>.fc:last-child:nth-child(3n+1) .cap{padding:16px 20px}.feat:not(.ranked)>.fc:last-child:nth-child(3n+1) .cap b{font-size:42px}.feat:not(.ranked)>.fc:last-child:nth-child(3n+1) .cap p{font-size:15px;max-width:60ch}}
+@media (min-width:561px) and (max-width:900px){.feat:not(.ranked)>.fc:last-child:nth-child(2n+1){grid-column:1/-1;flex-direction:row}.feat:not(.ranked)>.fc:last-child:nth-child(2n+1) .media{flex:0 0 calc((100% - 14px)/2);align-self:flex-start;border-bottom:0;border-right:2px solid var(--ink)}}
+.hello b{font-size:40px}
+footer{line-height:1.6}
+@media (max-width:860px){.city{position:relative;grid-column:1/-1;width:100%;margin:4px 0 -18px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 18%);mask-image:linear-gradient(90deg,transparent,#000 18%)}header::after{width:100%}}
+@media (max-width:560px){.sky{height:300px}header{grid-template-columns:62px minmax(0,1fr);gap:8px 14px;align-items:start}.mark{width:62px;margin-top:4px}.word h1{font-size:46px}.by{font-size:16px}.intro{font-size:15px}.stats{font-size:18px}.stats b{font-size:21px}.fc .cap b{font-size:30px}}
+.feat.fav{grid-template-columns:repeat(6,minmax(0,1fr))}
+.feat.fav>.fc{grid-column:span 2}
+.feat.fav>.fc.half{grid-column:span 3}
+.feat.fav>.fc.top{grid-column:span 4;grid-row:span 2}
+.feat.fav .fc.top .media{aspect-ratio:auto;flex:1 1 auto;min-height:280px}
+.feat.fav .fc.top .cap{flex:0 0 auto}
+.feat.fav .fc.top .cap b{font-size:48px}
+.feat.fav .fc.top .cap p{font-size:15px}
+@media (max-width:900px){.feat.fav{grid-template-columns:repeat(2,minmax(0,1fr))}.feat.fav>.fc,.feat.fav>.fc.half{grid-column:span 1}.feat.fav>.fc.top{grid-column:1/-1;grid-row:auto}.feat.fav .fc.top .media{aspect-ratio:16/9;flex:0 0 auto;min-height:0}}
+@media (min-width:561px) and (max-width:900px){.feat.fav>.fc:last-child{grid-column:1/-1;flex-direction:row}.feat.fav>.fc:last-child .media{flex:0 0 calc((100% - 14px)/2);align-self:flex-start;border-bottom:0;border-right:2px solid var(--ink)}}
+@media (max-width:560px){.feat.fav{grid-template-columns:1fr}.feat.fav>.fc.top .cap b{font-size:38px}}
+.fc.drift .media img{animation:drift 16s ease-in-out infinite alternate}
+@keyframes drift{from{transform:scale(1) translate(0,0)}to{transform:scale(1.06) translate(-1.5%,-1%)}}
+.end{margin-top:44px;padding-block:40px 8px;display:grid;justify-items:center;text-align:center;gap:12px;border-top:2px dashed var(--line)}
+.endbird{position:relative;background:none;border:0;cursor:pointer;padding:0;width:72px}
+.endbird svg{width:72px;height:auto;display:block}
+.end.seen .endbird,.endbird.hop{animation:hop .8s ease 2}
+@keyframes hop{0%,100%{transform:translateY(0)}30%{transform:translateY(-18px) rotate(-6deg)}60%{transform:translateY(0) rotate(4deg)}}
+.plop{position:absolute;left:46%;top:88%;width:9px;height:9px;border-radius:50% 50% 45% 45%;background:#f3f6fb;animation:plop 1.1s ease-in forwards}
+@keyframes plop{to{transform:translateY(70px);opacity:0}}
+.end b{font:clamp(30px,5vw,46px)/1.02 var(--display);font-weight:400;color:var(--gold);text-wrap:balance}
+.end p{margin:0;color:var(--mute);max-width:48ch}
+#peek{position:fixed;inset:0;z-index:60;background:rgba(2,8,18,.94);display:grid;place-items:center;padding:20px 16px}
+#peek .pk{width:min(760px,100%);display:grid;gap:12px;justify-items:center}
+#peek .pimg{position:relative;width:min(100%,calc((100vh - 170px) * 1.78));max-width:100%;background-size:cover;background-position:center;background-repeat:no-repeat;border:2px solid var(--ink);box-shadow:8px 8px 0 rgba(0,0,0,.5);transition:background-position .45s ease}
+#peek.howto .pimg{width:min(100%,calc(100vh - 190px))}
+#peek .pcap{font:26px/1.1 var(--display);color:var(--gold);text-align:center;min-height:1.2em;text-wrap:balance}
+#peek .pbar{display:flex;gap:8px}
+#peek.spin .pimg{animation:spinin 1s cubic-bezier(.2,.8,.2,1)}
+@keyframes spinin{from{transform:rotate(-1080deg) scale(.04)}to{transform:none}}
+#peek.wait .pimg{animation:shake .18s linear infinite}
+@keyframes shake{25%{transform:translate(2px,-1px) rotate(.4deg)}75%{transform:translate(-2px,1px) rotate(-.4deg)}}
+.burst{position:absolute;left:4%;top:6%;max-width:46%;padding:22px 26px;background:var(--gold);color:#d81e1e;font:clamp(18px,3.4vw,30px)/1 var(--brand);text-align:center;transform:rotate(-10deg);clip-path:polygon(50% 0,61% 18%,82% 8%,79% 30%,100% 35%,84% 52%,98% 70%,76% 72%,78% 94%,58% 82%,48% 100%,38% 82%,18% 94%,21% 72%,0 70%,15% 52%,0 35%,21% 30%,18% 8%,39% 18%);animation:pulse .45s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:rotate(-6deg) scale(1.12)}}
+.tile.onair .media::after{content:attr(data-onair);position:absolute;left:6px;bottom:6px;right:6px;z-index:2;background:#e8322a;color:#fff;font:11px/1.3 var(--mono);letter-spacing:.06em;padding:3px 7px;animation:blink 1.2s steps(1) infinite}
+.tile.onair{border-color:#e8322a}
+.hearts::before{content:"";position:absolute;inset:0;background:#ff6fb5;mix-blend-mode:color;opacity:.6}
+.hearts{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden}
+.hearts span{position:absolute;top:-40px;color:#ff6fb5;animation:fall 4.2s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(260deg)}}
+.hearts .toast{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#ff6fb5;color:#1b1b1b;font:600 14px var(--body);padding:9px 14px;border-radius:3px;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#peek .pimg,.burst,.hearts span,.endbird{animation:none!important}.fc,.tile{transition:none}.fc:not(.static):hover,.tile:not(.static):hover,.fc:not(.static):focus-visible{transform:none}.sky::after,.city .blink{animation:none}}
 </style>
 
+<div class="sky" aria-hidden="true"></div>
 <div class="wrap">
-<header>
-  <svg class="mark" viewBox="0 0 200 260" role="img" aria-label="Plain Weird logo: an Iowa water tower standing on bird legs">
+<header id="top">
+  <svg class="mark" viewBox="0 0 200 260" role="img" aria-label="Plain Weird logo: an Iowa water tower standing on bird legs"><g id="pwlogo">
     <circle cx="100" cy="16" r="6" fill="#ffd23c"/>
     <path d="M100 20 L58 58 H142 Z" fill="#ff8a1f"/>
     <path d="M44 62 H156 Q172 62 172 96 Q172 136 100 142 Q28 136 28 96 Q28 62 44 62 Z" fill="#ff8a1f"/>
@@ -157,12 +255,29 @@ footer a{color:var(--gold)}
       <path d="M78 140 L66 192 L84 236"/><path d="M84 236 L62 252 M84 236 L84 256 M84 236 L104 252"/>
       <path d="M122 140 L134 192 L116 236"/><path d="M116 236 L96 252 M116 236 L116 256 M116 236 L138 252"/>
     </g>
-  </svg>
+  </g></svg>
   <div class="word"><h1>Plain <span>Weird</span></h1><div class="by">Games, retro teardowns and weird machines, all made by <a href="https://github.com/hurtz" target="_blank" rel="noopener">Jason O'Connell</a>, aka hurtz2k · <a href="https://www.linkedin.com/in/jloconne/" target="_blank" rel="noopener">Connect on LinkedIn</a></div></div>
-  <p class="intro">These are my games and my ideas. I've been in IT for 32 years, starting at a Phoenix computer store in 1994. Now I build at night in Des Moines with AI as my crew: remakes of the games I grew up on, teardowns of their code, a TV I can swear at, and an AI that phones businesses for me. Most of the games run right here in your browser. Scroll to watch them play, click to play them yourself.</p>
+  <p class="intro"><strong>These are my games and my ideas.</strong> I've been in IT for 32 years, starting at a Phoenix computer store in 1994. Now I build at night in Des Moines with AI as my crew: remakes of the games I grew up on, teardowns of their code, a TV I can swear at, and an AI that phones businesses for me. Most of the games run right here in your browser. Scroll to watch them play, click to play them yourself.</p>
   <div class="stats" id="stats"></div>
+  <svg class="city" viewBox="0 0 560 150" aria-hidden="true">
+    <defs><pattern id="lit" width="10" height="9" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="2" height="3" fill="#ffd23c"/><rect x="7" y="6" width="2" height="2" fill="#ffd23c" opacity=".5"/></pattern></defs>
+    <g fill="#04132a">
+      <circle cx="18" cy="136" r="10"/><circle cx="34" cy="130" r="13"/><rect x="32" y="134" width="3" height="16"/>
+      <path d="M54 150V129l14-11 14 11v21z"/><path d="M88 150v-26l8-11h18l8 11v26z"/>
+      <rect x="128" y="62" width="11" height="88"/><rect x="140" y="62" width="11" height="88"/><rect x="152" y="62" width="11" height="88"/><rect x="133" y="47" width="22" height="16"/><rect x="164" y="98" width="18" height="52"/>
+      <path d="M206 150l6-42h3l-4 42zM236 150l-6-42h-3l4 42z"/><path d="M204 94q17-14 34 0v14q-17 9-34 0z"/><path d="M221 78l13 14h-26z"/>
+      <rect x="262" y="118" width="96" height="32"/><rect x="266" y="107" width="12" height="12"/><rect x="342" y="107" width="12" height="12"/><path d="M266 108q6-10 12 0zM342 108q6-10 12 0z"/><rect x="294" y="96" width="32" height="24"/>
+      <rect x="372" y="90" width="20" height="60"/><rect x="396" y="66" width="22" height="84"/><path d="M422 150V58l24-9v101z"/>
+      <path d="M452 150V46l15-20 15 20v104z"/><rect x="466" y="6" width="2" height="22"/>
+      <rect x="488" y="52" width="24" height="98"/><rect x="516" y="72" width="26" height="78"/><rect x="545" y="100" width="15" height="50"/>
+    </g>
+    <g fill="url(#lit)" opacity=".45"><rect x="372" y="94" width="20" height="56"/><rect x="396" y="70" width="22" height="80"/><path d="M422 150V62l24-9v97z"/><rect x="452" y="50" width="30" height="100"/><rect x="488" y="56" width="24" height="94"/><rect x="516" y="76" width="26" height="74"/><rect x="262" y="124" width="96" height="20"/></g>
+    <path d="M294 97q16-34 32 0z" fill="#ffd23c"/><rect x="308.5" y="56" width="3" height="10" fill="#ffd23c"/><circle cx="221" cy="77" r="2" fill="#ff8a1f"/>
+    <circle class="blink" cx="467" cy="5" r="2.2" fill="#ff4d4d"/>
+  </svg>
 </header>
 <div class="reel" aria-hidden="true"><div class="track" id="reel"></div></div>
+<nav class="jump" aria-label="Sections"><div class="in" id="jump"></div></nav>
 
 <a class="ha" href="https://www.instagram.com/hourlyabsurdity/" target="_blank" rel="noopener"><img src="img/hourly-absurdity.jpg" alt="Hourly Absurdity artwork"><span><small>My Instagram</small><b>Hourly Absurdity</b><em>Absurd ideas, turned into pictures.</em></span><span class="go">Follow @hourlyabsurdity</span></a>
 <main id="main"></main>
@@ -173,13 +288,15 @@ footer a{color:var(--gold)}
 
 <section class="hello" id="hello"><div><b>Say hi</b><p>Played something? Tell me what you liked, what broke, or what I should build next. I read everything.</p></div><div class="hb"><a class="btn" id="mail" href="#hello">Email me</a><a class="btn alt" href="https://www.reddit.com/user/hurtz2k/" target="_blank" rel="noopener">u/hurtz2k on Reddit</a><a class="btn alt" href="https://www.linkedin.com/in/jloconne/" target="_blank" rel="noopener">LinkedIn</a><a class="btn alt" href="https://github.com/hurtz" target="_blank" rel="noopener">GitHub</a></div><form class="news" id="news" novalidate><label for="newsmail">Get an email when I make something new. A few times a year, no spam.</label><span class="nrow"><input id="newsmail" type="email" placeholder="you@example.com" autocomplete="email" required><button class="btn" type="submit">Sign me up</button></span><small id="newsmsg" role="status"></small></form><small id="mailtxt"></small></section>
 <footer>Made by Jason O'Connell (hurtz2k) in Des Moines, Iowa, with Claude, ChatGPT and Codex, Cursor, Gemini, ElevenLabs and Suno as the crew. Pictures and clips are real screens and real gameplay, plus boxes and disks from my own archive. A few are drawn: the phone call card, the C64 loading screen, the Amiga boot diagram, the demo scroller, the Pod window and the tracker screen. Code lives at <a href="https://github.com/hurtz" target="_blank" rel="noopener">github.com/hurtz</a>. Say hi on <a href="https://www.linkedin.com/in/jloconne/" target="_blank" rel="noopener">LinkedIn</a>. This site counts visits and plays without cookies and keeps no IP addresses.</footer>
+<section class="end" id="end" aria-label="The very bottom"><button class="endbird" type="button" aria-label="Poke the water tower"><svg viewBox="0 0 200 260" aria-hidden="true"><use href="#pwlogo"/></svg></button><b>Hey, that's cool.<br>You made it all the way down here.</b><p id="endfeet">Most people never see this part.</p><a class="btn" href="#top">Back to the top</a></section>
+<div id="peek" hidden role="dialog" aria-modal="true" aria-label="A closer look"><div class="pk"><div class="pimg" id="pimg"></div><div class="pcap" id="pcap"></div><div class="pbar"><button class="btn alt" type="button" id="pnext">Next</button><button class="btn" type="button" id="pshut">Close</button></div></div></div>
 </div>
 
 <script>
 const YT=id=>"https://www.youtube.com/watch?v="+id;
 const TAG={R:["Retro remake","--t-retro"],E:["Emulation","--t-emu"],T:["Teardown","--t-tear"],M:["Multiplayer","--t-multi"],D:["On Reddit","--t-reddit"],V:["Interactive AI voice","--t-talk"],I:["iPhone","--t-ios"],H:["Hardware","--t-hw"],Y:["YouTube","--t-yt"]};
-const SEC=[["Games","Ranked by me. Click any one to play."],["Halloween beta","Three weird ones for October."],["File system lab","Games about how a disk keeps its files."],["Retro lab","The machines and games I grew up on, rebuilt, ripped apart and brought back."],["Workshop","Tools and toys I use for real."],["Videos I made",""],["Weird web and music",""]];
-const ORDER=[0,4,5,3,1,2,6];const BIGSEC=new Set([0,4,5]);
+const SEC=[["Games","Ranked by me. Click any one to play."],["Halloween beta","Three weird ones for October."],["File system lab","Games about how a disk keeps its files."],["Retro lab","The machines and games I grew up on, rebuilt, ripped apart and brought back."],["Workshop","Tools and toys I use for real."],["Videos I made",""],["Weird web and music",""],["My favorites","Start here. The ones I am proudest of."]];
+const ORDER=[7,0,4,5,3,1,2,6];const FAV=["catbird","hot-aisle","scanmoines","phone-caller","modem-lab","platter","choppricer","tvargenta"];const FAVS=new Set(FAV);const HALF=new Set(["choppricer","tvargenta"]);const BIGSEC=new Set([0,4,5]);
 const PLAY={"modem-lab":"play/modem-lab.html","vid-hotaisle":"play/vid-hotaisle.html","vid-catbird":"play/vid-catbird.html","vid-platter":"play/vid-platter.html","vine-runner":"play/vine-runner.html","going-down":"play/going-down.html","hot-aisle":"play/hot-aisle.html","catbird":"play/catbird.html","life-simulator":"play/life-simulator.html","plumbing":"play/plumbing.html","clauderooms":"play/clauderooms.html","trick-or-steal":"play/trick-or-steal.html","trick-or-eaten":"play/trick-or-eaten.html","take-one":"play/take-one.html","play-with-me":"play/play-with-me.html","inode-rush":"play/inode-rush.html","inode-bonsai":"play/inode-bonsai.html","fsgolf":"play/fsgolf.html","w0725b":"play/uwu-skystrike.html","uber-ride":"play/uber-ride/index.html","contra-crt":"play/contra-crt/index.html","rusty-raid":"play/rusty-raid.html"};
 // my ranking, best first
 const RANK=["catbird","hot-aisle","vine-runner","plumbing","going-down","life-simulator","play-with-me","they-saw-us","choppricer","clauderooms","nice-truck","w0725b","little-tempest","cascade","ascii-cat"];
@@ -211,7 +328,6 @@ const P=[
 
 ["contra-crt","Contra CRT",3,"R","A concept study: a Contra style jungle on a CRT, built to flip between flat 2D and full 3D.",[]],
 ["rusty-raid","Raid Night at Rusty n Edie's",3,"R","Dial into the biggest BBS in America on January 30, 1993, the day the FBI showed up.",[]],
-["dragons-lair","Dragon's Lair Deep Dive",3,"TH","The arcade game I first saw at Chuck E. Cheese, taken apart. The rooms they cut before release, every move for all 30 rooms, and real gameplay from Space Ace, the Time Traveler hologram and more.",[["Read","dragons-lair/"]]],
 ["raiders","Raiders of the Lost Ark",3,"T","Atari 2600 ROM teardown. Every sprite pulled straight from the cartridge bytes.",[["Read","https://raiders-deploy.vercel.app"]]],
 ["contra","Inside Contra (NES, 1988)",3,"T","Compressed graphics, sprite extraction, and 6502 code from an annotated disassembly.",[["Read","https://site-contra.vercel.app"]]],
 ["kq1","Inside King's Quest (1984)",3,"T","Sierra's AGI engine pulled apart: vector backgrounds, animation, and bytecode, straight off the floppy.",[["Read","https://site-theta-seven-64.vercel.app"]]],
@@ -225,6 +341,7 @@ const P=[
 ["amiga-boot","Amiga A1000 vs A500 Boot",3,"T","The two boot sequences, side by side.",[["Read","https://amiga-boot-comparison.vercel.app"]]],
 ["pod","Pod on Windows 98",3,"E","My favorite Windows 98 racer, backed up and coming back to life in a VM.",[]],
 ["launch1980","Alley Cat",3,"E","The original 1983 Atari Alley Cat, pulled off the disk and running in RetroArch.",[]],
+["dragons-lair","Dragon's Lair Hardware Manual",3,"T","A technical manual for the Dragon's Lair arcade hardware.",[]],
 ["rusty","Rusty n Edie's Tribute",3,"R","The legendary Ohio BBS, rebuilt as a tribute site.",[["Visit","https://rusty-edies-bbs.vercel.app"]]],
 ["max-headroom","Max Headroom Reconstruction",3,"R","Rebuilding the Max Headroom voice from old audio.",[]],
 ["nes-ai","Self Learning NES",3,"E","An AI that teaches itself to play NES games.",[]],
@@ -237,8 +354,6 @@ const P=[
 ["platter","Platter",4,"","A menu bar app that makes your silent Mac sound like a 1990s hard drive again. Floppy, SCSI, IDE. Free and open source.",[["Get it","https://hurtz.github.io/platter/"],["Code","https://github.com/hurtz/platter"]]],
 ["tvargenta","TVArgenta",4,"HV","A 3D printed retro TV. Swear at it and it puts Johnny Carson, cartoons, or the news on.",[]],
 ["scanmoines","ScanMoines / DSMRadar",4,"","A Raspberry Pi with two radios listens to Des Moines public safety radio and turns it into readable stories, with the original audio.",[["Read the stories","https://dsmradar.com/"],["Listen live","https://scanner.jasonoconnell.com/"]]],
-["returnability","Returnability",4,"","Never miss a return window again. It reads your receipts in Gmail, figures out what can still go back and by when, and follows every return until the refund lands.",[]],
-["valheim","Valheim Connect",4,"M","A world we built together in 2021. I brought the server back from an old backup, logged in, and slept in the same bed I slept in years ago.",[["Open","https://valheim-connect.vercel.app"]]],
 
 ["tape","The Tape That Loaded Again",5,"Y","Recovering 40 year old Commodore 64 programs from cassette, with AI, and proving every byte.",[["Watch",YT("TLCCnDBVDiY")]]],
 ["vid-modem","Every Dial Up Modem Sound, Explained",5,"Y","Every screech and hiss of a dial up handshake, slowed down and explained step by step.",[["Watch",YT("syQejFP70wM")]]],
@@ -262,7 +377,7 @@ const APPKEY={"vid-modem":["modem-lab","Try Modem Lab"]};
 const SECBTN=new Set(["Listen live"]);
 const TRAILKEY={"hot-aisle":"vid-hotaisle","catbird":"vid-catbird","platter":"vid-platter"};
 // action clips: short real gameplay loops (trailer cuts for Catbird, Hot Aisle and Platter)
-const CLIPS=["catbird","hot-aisle","platter","clauderooms","life-simulator","choppricer","cascade","play-with-me","nice-truck","vine-runner","plumbing","going-down","uber-ride","w0725b","they-saw-us","little-tempest","ascii-cat","tape"];
+const CLIPS=["catbird","hot-aisle","platter","clauderooms","life-simulator","choppricer","cascade","play-with-me","nice-truck","vine-runner","plumbing","going-down","uber-ride","w0725b","they-saw-us","little-tempest","ascii-cat","tape","modem-lab","vid-modem"];
 const CLIP=Object.fromEntries(CLIPS.map(k=>[k,`vid/clip-${k}.mp4`]));
 // player
 const player=$("#player"),pframe=$("#pframe");
@@ -272,11 +387,12 @@ $("#pclose").onclick=closeGame;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!player.hidden)closeGame()});
 const games=P.filter(p=>p[2]<=2);
 const playHere=P.filter(p=>PLAY[p[0]]&&!WATCH(p[0])).length+P.filter(p=>!PLAY[p[0]]&&p[5].some(l=>/^Play|demo/i.test(l[0]))).length;
-$("#stats").innerHTML=`<span><b>${games.length}</b> games</span><span><b>${playHere}</b> you can play</span><span><b>${P.filter(p=>p[2]===3).length}</b> retro projects</span><span><b>${P.filter(p=>p[2]===5).length+3}</b> videos and trailers</span>`;
+$("#stats").innerHTML=`<span><b>${games.length}</b> games</span><span><b>${P.filter(p=>p[2]===3).length}</b> retro projects</span><span><b>${playHere}</b> play right in your browser</span><span><b>${P.filter(p=>p[2]===5).length+3}</b> videos</span>`;
 const NOTGAME=new Set(["contra-crt","modem-lab","rusty-raid"]);
 // one rule for video: anything with a trailer or a video gets the same red VIDEO tag in the same corner, and the same Watch button in the same place
 function vidOf(p){const[k,,,t,,l]=p;if(TRAILKEY[k])return{play:TRAILKEY[k]};const v=l.find(x=>/youtu\.?be/.test(x[1])||/^(Watch|Trailer)/i.test(x[0]));return v?{href:v[1]}:null}
-function action(p){const[k,n,,t,,l]=p;const pl=PLAY[k];const v=vidOf(p);
+const FXLAB={"absurd-howto":"Read a guide","billy":"But wait","newspaper":"Extra! Extra!","uwu":"Do not click","radio-station":"Listen in"};
+function action(p){const[k,n,,t,,l]=p;const pl=PLAY[k];const v=vidOf(p);if(!pl&&FXLAB[k]&&!l.length)return{attr:`data-fx="${k}"`,lab:FXLAB[k],cls:"play"};
   if(pl)return{attr:`data-play="${k}"`,lab:WATCH(k)?"Watch":(k==="contra-crt"||NOTGAME.has(k))?"Try it":"Play",cls:"play"};
   if(v&&v.href&&(t.includes("Y")||!l.some(x=>x[1]!==v.href)))return{attr:`data-open="${k}"`,lab:"Watch",cls:"play",href:v.href,isVid:1};
   const link=l.find(x=>!v||x[1]!==v.href);
@@ -286,32 +402,67 @@ function watchBtn(p,a,sm){const v=vidOf(p);if(!v||a.isVid)return "";return v.pla
 function secLinks(p,sm){return p[5].filter(x=>SECBTN.has(x[0])).map(([t,u])=>`<a class="act ${sm?"sm ":""}watch" href="${esc(u)}" target="_blank" rel="noopener">&#9654; ${esc(t)}</a>`).join("")}
 function extras(p,a){const[k,,,,,l]=p;const v=vidOf(p);return l.filter(x=>!SECBTN.has(x[0])&&!(a&&a.href===x[1])&&!(v&&(v.href===x[1]||(v.play&&/^Trailer$/i.test(x[0]))))).map(([t,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>`).join("")}
 const vidTag=p=>{const[k,,sec,t,,l]=p;if(WATCH(k)||t.includes("Y"))return '<span class="badge">&#9654; Video</span>';if(sec<=2&&t.includes("I"))return '<span class="badge ios">iPhone game</span>';if(sec<=2&&(PLAY[k]||l.some(x=>/^Play$|demo/i.test(x[0]))))return '<span class="badge game">&#9654; Playable</span>';return ""};
-function card(p,r){const[k,n,,t,d]=p;const a=action(p);const clip=CLIP[k];
+function card(p,r,o={}){const[k,n,,t,d]=p;const isTop=o.top??r===1;const a=action(p);const clip=CLIP[k];
   const rk=r?`<span class="rank${r<4?" g"+r:""}">#${r}</span>`:"";
   const tv=clip?`<video muted loop playsinline disablepictureinpicture preload="none" aria-hidden="true" data-src="${clip}"></video>`:"";
   const first=a.lab?(a.href?`<a class="act ${a.cls}" href="${esc(a.href)}" target="_blank" rel="noopener">&#9654; ${esc(a.lab)}</a>`:`<button class="act ${a.cls}" type="button" ${a.attr}>&#9654; ${esc(a.lab)}</button>`):`<span class="soon">${p[2]===4?"Runs at my house":"In the works"}</span>`;
   const second=watchBtn(p,a,0)+secLinks(p,0)+(APPKEY[k]?`<button class="act watch" type="button" data-play="${APPKEY[k][0]}">&#9654; ${APPKEY[k][1]}</button>`:"");
   const ex=extras(p,a);
-  const fun=r?`<button class="fun" type="button" data-fun="${k}" aria-label="This one is fun: ${esc(n)}">&#9829; <span>Fun</span></button>`:"";
-  return `<div class="fc${clip?" hasv":""}${a.lab?"":" static"}${r===1?" top":""}" data-k="${k}" ${a.attr} ${a.lab?`tabindex="0" role="button" aria-label="${esc(a.lab+": "+n)}"`:""}><span class="media"><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360">${tv}${rk}${vidTag(p)}</span><span class="cap"><span class="row1"><b>${esc(n)}</b>${[...t].map(chip).join("")}</span><p>${esc(d)}</p><span class="acts">${first}${second}${ex?`<span class="more">${ex}</span>`:""}${fun}</span></span></div>`}
+  const fun=(o.fun??!!r)?`<button class="fun" type="button" data-fun="${k}" aria-label="This one is fun: ${esc(n)}">&#9829; <span>Fun</span></button>`:"";
+  return `<div class="fc${clip?" hasv":""}${a.lab?"":" static"}${isTop?" top":""}${HALF.has(k)&&o.fav?" half":""}" data-k="${k}" ${a.attr} ${a.lab?`tabindex="0" role="button" aria-label="${esc(a.lab+": "+n)}"`:""}><span class="media"><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360">${tv}${rk}${vidTag(p)}</span><span class="cap"><span class="row1"><b>${esc(n)}</b>${[...t].map(chip).join("")}</span><p>${esc(d)}</p><span class="acts">${first}${second}${ex?`<span class="more">${ex}</span>`:""}${fun}</span></span></div>`}
 function tile(p,mode){const[k,n,,t,d]=p;const a=action(p);const ex=extras(p,a);
   const first=a.lab?(a.href?`<a class="act sm ${a.cls}" href="${esc(a.href)}" target="_blank" rel="noopener">&#9654; ${esc(a.lab)}</a>`:`<button class="act sm ${a.cls}" type="button" ${a.attr}>&#9654; ${esc(a.lab)}</button>`):"";
   const second=watchBtn(p,a,1)+secLinks(p,1)+(mode==="vote"?`<button class="vote" type="button" data-vote="${k}" aria-label="Finish ${esc(n)} next">&#9650; <span>Finish this next</span></button>`:"");
   return `<div class="tile${a.lab?"":" static"}" data-k="${k}" ${a.attr}><span class="media"><img src="img/${k}.jpg" alt="Screen from ${esc(n)}" loading="lazy" width="640" height="360">${vidTag(p)}</span><span class="cap"><b>${esc(n)}</b><span class="row1">${[...t].map(chip).join(" ")}</span><p>${esc(d)}</p>${first||second||ex?`<span class="acts">${first}${second}${ex?`<span class="more">${ex}</span>`:""}</span>`:""}</span></div>`}
-function sec(i,inner,count){const[s,sub]=SEC[i];return `<section class="drawer" id="s${i}"><div class="dh"><b>${s}</b><span>${count}</span>${sub?`<em>${esc(sub)}</em>`:""}</div>${inner}</section>`}
+function sec(i,inner,count,o={}){const s=o.name||SEC[i][0],sub=o.sub??SEC[i][1];return `<section class="drawer" id="${o.id||"s"+i}"><div class="dh"><b>${s}</b><span>${count}</span>${sub?`<em>${esc(sub)}</em>`:""}</div>${inner}</section>`}
 function render(){
-  const html=ORDER.map(i=>{if(i===2)return "";if(i===1)return `<div class="pair">${[1,2].map(j=>sec(j,`<div class="tiles">${P.filter(p=>p[2]===j).map(tile).join("")}</div>`,P.filter(p=>p[2]===j).length)).join("")}</div>`;let rows=P.filter(p=>p[2]===i);if(!rows.length)return "";
-    if(i===0){const ranked=RANK.map(k=>BY[k]);const rest=rows.filter(p=>!RANK.includes(p[0]));
-      return sec(0,`<div class="feat ranked">${ranked.map((p,j)=>card(p,j+1)).join("")}</div>`,rows.length)+(rest.length?sec(0,`<div class="tiles">${rest.map(p=>tile(p)).join("")}</div>`,rest.length).replace(">Games<",">Unranked<").replace(/<em>.*?<\/em>/,"<em>Weird, but still fun.</em>").replace('id="s0"','id="s0b"'):"")}
+  const html=ORDER.map(i=>{if(i===7){const f=FAV.map(k=>BY[k]).filter(Boolean);return sec(7,`<div class="feat fav">${f.map((p,j)=>card(p,0,{top:j===0,fun:p[2]<=2,fav:1})).join("")}</div>`,f.length)}
+    if(i===2)return "";if(i===1)return `<div class="pair">${[1,2].map(j=>sec(j,`<div class="tiles">${P.filter(p=>p[2]===j).map(tile).join("")}</div>`,P.filter(p=>p[2]===j).length)).join("")}</div>`;let rows=P.filter(p=>p[2]===i&&!FAVS.has(p[0]));if(!rows.length)return "";
+    if(i===0){const ranked=RANK.filter(k=>!FAVS.has(k)).map(k=>BY[k]);const rest=rows.filter(p=>!RANK.includes(p[0]));
+      return sec(0,`<div class="feat ranked">${ranked.map((p,j)=>card(p,j+1,{top:false})).join("")}</div>`,ranked.length,{name:"More games"})+(rest.length?sec(0,`<div class="feat">${rest.map(p=>card(p,0)).join("")}</div>`,rest.length,{name:"Unranked",sub:"Weird, but still fun.",id:"s0b"}):"")}
     if(BIGSEC.has(i))return sec(i,`<div class="feat">${rows.map(p=>card(p,0)).join("")}</div>`,rows.length);
     return sec(i,`<div class="tiles">${rows.map(tile).join("")}</div>`,rows.length)}).join("");
   $("#main").innerHTML=html;
 }
-document.addEventListener("click",e=>{if(e.target.closest("a"))return;const b=e.target.closest("[data-play]");if(b){openGame(b.dataset.play);return}const o=e.target.closest("[data-open]");if(o){const l=BY[o.dataset.open][5][0];if(l)window.open(l[1],"_blank","noopener")}});
+document.addEventListener("click",e=>{if(e.target.closest("a"))return;const fx=e.target.closest("[data-fx]");if(fx){runFx(fx.dataset.fx,fx);return}const b=e.target.closest("[data-play]");if(b){openGame(b.dataset.play);return}const o=e.target.closest("[data-open]");if(o){const l=BY[o.dataset.open][5][0];if(l)window.open(l[1],"_blank","noopener")}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("fc"))e.target.click()});
 const REEL=[...RANK.slice(0,16),"rusty-raid","raiders","yars","modem-lab","super-metroid","amiga-scene","skate-or-die","kq1"];
 $("#reel").innerHTML=[...REEL,...REEL].map(k=>`<img src="img/${k}.jpg" alt="" loading="lazy">`).join("");
 render();
+
+// the weird web toys: each one does a small thing instead of sitting there
+const peek=$("#peek"),pimg=$("#pimg"),pcap=$("#pcap"),pnext=$("#pnext");let peekTimer=0,peekStep=null;
+function openPeek(o){clearInterval(peekTimer);peek.className=o.cls||"";pimg.style.cssText=o.style||"";pimg.innerHTML=o.html||"";pcap.textContent=o.cap||"";peekStep=o.step||null;pnext.hidden=!o.step;peek.hidden=false;document.body.style.overflow="hidden";$("#pshut").focus();if(o.every)peekTimer=setInterval(o.every[1],o.every[0])}
+function shutPeek(){clearInterval(peekTimer);peek.hidden=true;pimg.innerHTML="";document.body.style.overflow=""}
+$("#pshut").onclick=shutPeek;pnext.onclick=()=>{if(peekStep)peekStep()};peek.addEventListener("click",e=>{if(e.target===peek)shutPeek()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!peek.hidden)shutPeek()});
+const HOWTO=["Step 1. Locate the roll. Make eye contact.","Step 2. Pull gently. It can sense fear.","Step 3. Fold into a neat square, as your ancestors did.","Step 4. Proceed. This step has no further instructions.","Step 5. Release it into the bowl. Do not wave.","Step 6. Wash your hands. You have earned this."];
+const WAIT=["BUT WAIT!","THERE'S MORE!","CALL NOW!","OPERATORS ARE STANDING BY","FOREVER"];
+const DA=[["Traffic with Len","aud/deadair-banter-raccoon.mp3"],["Local Desk: Vape Store Inquiry","aud/deadair-news-vape.mp3"],["Honest Don's Panic Room and Tanning","aud/deadair-ad-panic.mp3"]];let da=null,dai=0;
+function uwuText(root,undo){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode())){if(!n.nodeValue.trim())continue;undo.push([n,n.nodeValue]);n.nodeValue=n.nodeValue.replace(/[rl]/g,"w").replace(/[RL]/g,"W")}}
+function runFx(k,el){try{ping("play",k)}catch(e){}
+  if(k==="newspaper")openPeek({cls:"spin",style:"background-image:url(img/newspaper.jpg);aspect-ratio:16/9",cap:"EXTRA! EXTRA! Read all about it."});
+  else if(k==="billy"){let i=0;openPeek({cls:"wait",style:"background-image:url(img/billy.jpg);aspect-ratio:16/9",html:'<span class="burst" id="burst">BUT WAIT!</span>',cap:"A nightmare infomercial. It never ends.",every:[900,()=>{const b=$("#burst");if(b)b.textContent=WAIT[++i%WAIT.length]}]})}
+  else if(k==="absurd-howto"){let i=0;const show=()=>{pimg.style.backgroundPosition=["0% 0%","50% 0%","100% 0%","0% 100%","50% 100%","100% 100%"][i];pcap.textContent=HOWTO[i]};
+    openPeek({cls:"howto",style:"background-image:url(img/howto-guide.jpg);background-size:300% 200%;aspect-ratio:1/1",step:()=>{i=(i+1)%6;show()}});show()}
+  else if(k==="uwu"){if(document.body.classList.contains("uwu"))return;const undo=[];document.querySelectorAll("h1,.by,.intro,.dh b,.dh em,.fc .cap b,.fc .cap p,.tile b,.tile p,.jump a").forEach(x=>uwuText(x,undo));document.body.classList.add("uwu");
+    const hz=document.createElement("div");hz.className="hearts";for(let j=0;j<36;j++){const h=document.createElement("span");h.textContent="♥";h.style.left=Math.random()*100+"%";h.style.animationDelay=(Math.random()*2.5)+"s";h.style.fontSize=(14+Math.random()*26)+"px";hz.appendChild(h)}
+    const t=document.createElement("div");t.className="toast";t.textContent="UwU mode. It wears off in 7 seconds. Sowwy.";hz.appendChild(t);document.documentElement.appendChild(hz);
+    setTimeout(()=>{undo.forEach(([n,v])=>n.nodeValue=v);document.body.classList.remove("uwu");hz.remove()},7000)}
+  else if(k==="radio-station"){const t=document.querySelector('.tile[data-k="radio-station"]');const b=t&&t.querySelector(".act");const m=t&&t.querySelector(".media");
+    const off=()=>{if(t)t.classList.remove("onair");if(b)b.innerHTML="&#9654; Listen in"};
+    if(da&&!da.paused){da.pause();off();return}
+    const[title,src]=DA[dai++%DA.length];da=new Audio(src);da.onended=off;da.play().then(()=>{if(t)t.classList.add("onair");if(m)m.dataset.onair="ON AIR: "+title;if(b)b.innerHTML="&#9632; Stop"}).catch(off)}}
+// the very bottom: a hello for anyone who scrolls all the way down
+{const end=$("#end");const feet=()=>Math.max(1,Math.round(document.documentElement.scrollHeight/96/12));
+ if("IntersectionObserver" in window)new IntersectionObserver((es,o)=>es.forEach(en=>{if(en.isIntersecting){$("#endfeet").textContent=`That was about ${feet()} feet of scrolling. Your thumb deserves a snack.`;end.classList.add("seen");o.disconnect()}}),{threshold:.6}).observe(end);
+ end.querySelector(".endbird").onclick=()=>{const bd=end.querySelector(".endbird");bd.classList.remove("hop");void bd.offsetWidth;bd.classList.add("hop");const pl=document.createElement("i");pl.className="plop";bd.appendChild(pl);setTimeout(()=>pl.remove(),1200)}}
+// jump bar: one link per section, the one you are reading lights up
+{const NAV=[["s7","Favorites"],["s0","More games"],["s4","Workshop"],["s5","Videos"],["s3","Retro lab"],["s1","Halloween"],["s2","File systems"],["s6","Weird web"],["hello","Say hi"]].filter(([id])=>document.getElementById(id));
+ const J=$("#jump");J.innerHTML=NAV.map(([id,t])=>`<a href="#${id}" data-j="${id}">${t}</a>`).join("");
+ if("IntersectionObserver" in window){let cur="";const on=id=>{if(id===cur)return;cur=id;J.querySelectorAll("a").forEach(a=>a.classList.toggle("on",a.dataset.j===id));const a=J.querySelector(`a[data-j="${id}"]`);if(a&&J.scrollWidth>J.clientWidth)J.scrollTo({left:a.offsetLeft-J.offsetLeft-J.clientWidth/2+a.clientWidth/2,behavior:"smooth"})};
+  const so=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)on(en.target.id==="s0b"?"s0":en.target.id)}),{rootMargin:"-35% 0px -60% 0px"});
+  document.querySelectorAll(".drawer,#hello").forEach(x=>so.observe(x))}}
 // action clips play on their own while a card is on screen, muted, and pause when it scrolls away
 // reduced motion: no autoplay, hover still plays on desktop
 const startV=c=>{const v=c.querySelector("video");if(!v)return;if(!v.src){v.src=v.dataset.src;v.addEventListener("playing",()=>c.classList.add("live"))}v.muted=true;v.play().catch(()=>{})};
@@ -320,6 +471,9 @@ const calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
 if(!calm&&"IntersectionObserver" in window){
   const io=new IntersectionObserver(es=>es.forEach(en=>en.isIntersecting?startV(en.target):stopV(en.target)),{threshold:.4,rootMargin:"120px 0px"});
   document.querySelectorAll(".fc.hasv").forEach(c=>io.observe(c));
+  // cards with no clip get a slow camera drift while on screen, so every card moves a little
+  const io2=new IntersectionObserver(es=>es.forEach(en=>en.target.classList.toggle("drift",en.isIntersecting)),{threshold:.3});
+  document.querySelectorAll(".fc:not(.hasv)").forEach(c=>io2.observe(c));
   document.addEventListener("visibilitychange",()=>{if(document.hidden)document.querySelectorAll(".fc.hasv video").forEach(v=>v.pause());else document.querySelectorAll(".fc.hasv").forEach(c=>{const r=c.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight)startV(c)})});
 }else if(matchMedia("(hover:hover)").matches){
   document.addEventListener("mouseover",e=>{const c=e.target.closest(".fc.hasv");if(c)startV(c)});
