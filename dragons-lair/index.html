@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dragon's Lair Deep Dive</title>
-<meta name="description" content="Dragon's Lair and the laserdisc arcade games around it: real gameplay, the cut prototype rooms, every move to finish it, and how the hardware worked.">
+<meta name="description" content="Dragon's Lair, taken apart: the Fantasy Machine it grew out of, the 1983 animation studio, the cut prototype rooms, every room with the exact timing window for every move, and the laserdisc games around it.">
 <meta name="author" content="Jason O'Connell">
+<meta property="og:title" content="Dragon's Lair Deep Dive">
+<meta property="og:description" content="Every room, every move, the cut prototype, and the 1983 tapes. By Jason O'Connell (hurtz2k).">
+<meta property="og:image" content="https://jasonoconnell.com/dragons-lair/img/hero.webp">
 <link rel="icon" href="../img/plain-weird-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=VT323&display=swap">
 <style>
-/* Plain Weird night sky, same as the portfolio. The game footage is the star: video first, then the cut rooms, then every move. */
+/* Plain Weird night sky, same tokens as the portfolio. Pictures carry the page: big archival frames, then a room by room dossier built from the game's own timing table. */
 :root{
-  --sky:#0a2f5c; --sec:#082a52; --row:#0f4687; --black:#04101f; --ink:#f3f6fb; --mute:#a8c0e2; --dim:#7e9cc6;
+  --sky:#0a2f5c; --deep:#061d3b; --sec:#082a52; --row:#0f4687; --black:#04101f; --ink:#f3f6fb; --mute:#a8c0e2; --dim:#7e9cc6;
   --orange:#ff8a1f; --gold:#ffd23c; --led:#ff4b2b; --led-off:#2a1622; --ok:#5ee0b5; --bad:#ff6b57; --line:rgba(255,255,255,.14);
   --brand:"Bungee",Impact,"Arial Black",sans-serif; --display:"VT323",ui-monospace,monospace;
   --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
@@ -22,18 +25,18 @@
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;background:linear-gradient(180deg,#061d3b 0,var(--sky) 420px,var(--sky) 100%);color:var(--ink);font:15px/1.55 var(--body)}
+body{margin:0;background:linear-gradient(180deg,var(--deep) 0,var(--sky) 600px,var(--sky) 100%);color:var(--ink);font:16px/1.6 var(--body)}
 a{color:var(--ink);text-decoration-color:var(--gold);text-underline-offset:3px}
 a:hover{color:var(--gold)}
 :focus-visible{outline:2px solid var(--orange);outline-offset:2px}
-img{max-width:100%}
-.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 64px}
+img{max-width:100%;display:block}
 h1,h2,h3{margin:0;text-wrap:balance}
 p{margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:16px;padding-block:0 72px}
 
 /* top bar */
-.bar{position:sticky;top:0;z-index:20;background:rgba(6,29,59,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.bar-in{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:8px;display:flex;gap:14px;align-items:center}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:rgba(6,29,59,.93);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1200px;margin:0 auto;padding-inline:16px;padding-block:8px;display:flex;gap:14px;align-items:center}
 .home{font:14px var(--brand);text-decoration:none;white-space:nowrap}
 .home span{color:var(--orange)}
 .bar nav{display:flex;gap:2px;overflow-x:auto;min-width:0;scrollbar-width:none}
@@ -41,153 +44,190 @@ p{margin:0}
 .bar nav a:hover{color:var(--ink);background:var(--row)}
 
 /* hero */
-.hero{padding-block:34px 10px;display:grid;gap:18px}
-.kicker{font:13px var(--mono);color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
-.hero h1{font:clamp(44px,9vw,104px)/.9 var(--brand);letter-spacing:.005em}
+.hero{position:relative;margin-inline:-16px;min-height:min(78vh,720px);display:flex;align-items:flex-end;overflow:hidden;border-bottom:2px solid var(--ink)}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;filter:saturate(1.1) contrast(1.05)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,16,31,.1) 0,rgba(4,16,31,.25) 45%,rgba(4,16,31,.95) 100%)}
+.hero-in{position:relative;z-index:1;padding:28px 32px;max-width:1200px;width:100%;margin:0 auto;display:grid;gap:14px}
+.kicker{font:14px var(--mono);color:var(--gold);letter-spacing:.08em;text-transform:uppercase}
+.hero h1{font:clamp(52px,11vw,132px)/.86 var(--brand);text-shadow:0 4px 0 var(--black)}
 .hero h1 span{color:var(--orange)}
-.lede{max-width:64ch;color:var(--mute);font-size:17px}
-.facts{display:flex;flex-wrap:wrap;gap:6px 26px;font:24px/1.1 var(--display)}
+.lede{max-width:62ch;font-size:18px;color:#dfe8f5}
+.facts{display:flex;flex-wrap:wrap;gap:6px 26px;font:26px/1.1 var(--display)}
 .facts b{color:var(--orange);font-weight:400}
+.hero .cap{position:absolute;z-index:1;right:16px;top:12px;font:12px var(--mono);color:var(--mute);background:rgba(4,16,31,.7);padding:3px 8px}
 
-/* video */
-.vid{position:relative;aspect-ratio:16/9;max-width:100%;background:var(--black);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--black)}
-.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.vid.tall{aspect-ratio:9/16;max-width:320px}
-.vcap{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font:13px var(--mono);color:var(--mute)}
-.vcap a{color:var(--gold)}
+/* chapters */
+.ch{padding-block:64px 8px;scroll-margin-top:52px}
+.ch-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 20px;align-items:end;margin-bottom:24px;border-bottom:2px solid var(--ink);padding-bottom:14px}
+.ch-num{font:clamp(64px,10vw,110px)/.8 var(--display);color:var(--orange);grid-row:span 2}
+.ch-head h2{font:clamp(30px,5vw,52px)/1 var(--brand)}
+.ch-head p{color:var(--mute);max-width:70ch}
+.prose{max-width:70ch;display:grid;gap:14px;font-size:17px}
+.prose b{color:var(--gold);font-weight:600}
+.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start;margin-block:26px}
+.split.rev{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
 
-/* sections */
-.sec{padding-block:52px 6px;scroll-margin-top:52px}
-.dh{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding:8px 12px;border:2px solid var(--ink);background:repeating-linear-gradient(180deg,transparent 0 5px,rgba(255,255,255,.06) 5px 6px),var(--sec);margin-bottom:20px}
-.dh h2{font:34px/1 var(--display);background:var(--sec);padding-inline:6px}
-.dh em{font-style:normal;color:var(--mute);font-size:14px;margin-left:auto;background:var(--sec);padding-inline:6px}
-.intro{max-width:70ch;color:var(--mute);margin-bottom:18px}
+/* figures */
+figure{margin:0;min-width:0}
+figure .ph{position:relative;background:var(--black);border:2px solid var(--ink);box-shadow:5px 5px 0 var(--black);overflow:hidden;cursor:zoom-in}
+figure img{width:100%;aspect-ratio:4/3;object-fit:cover}
+figure.wide img{aspect-ratio:16/9}
+figure.free img{aspect-ratio:auto}
+figcaption{font-size:13.5px;color:var(--mute);margin-top:8px;line-height:1.45}
+figcaption b{color:var(--ink);font-weight:600}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.flip img{transform:scaleX(-1)}
+.tag{position:absolute;left:8px;top:8px;font:12px var(--mono);background:var(--orange);color:var(--black);padding:2px 7px;font-weight:600}
+.tag.gold{background:var(--gold)}
+.tag.red{background:var(--led);color:#fff}
+.quote{font:30px/1.15 var(--display);color:var(--gold);border-left:4px solid var(--orange);padding-left:16px;max-width:40ch}
 
-/* cut rooms */
-.rooms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.room{background:var(--black);border:1px solid var(--line);padding:14px 16px;min-width:0}
-.room h3{font:22px/1 var(--display);color:var(--gold);margin-bottom:6px}
-.room p{font-size:14px}
-.room .left{margin-top:8px;font-size:13px;color:var(--mute);border-left:2px solid var(--orange);padding-left:10px}
-.room .left b{display:block;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
-.btn{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--body);background:var(--orange);color:var(--black);padding:9px 14px;text-decoration:none;border:2px solid var(--black);box-shadow:3px 3px 0 var(--black)}
-.btn:hover{color:var(--black);background:var(--gold)}
-.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:none}
-.btn.ghost:hover{background:var(--row)}
-.row-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+/* spec table */
+.spec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 24px;margin-top:20px}
+.spec div{padding-block:10px;border-bottom:1px solid var(--line);min-width:0}
+.spec dt{font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.spec dd{margin:2px 0 0;font-size:15px}
 
-/* move map */
-.mm-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start;margin-bottom:22px}
-.controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-.toggle{font:13px var(--mono);border:2px solid var(--ink);background:transparent;color:var(--ink);padding:7px 12px;cursor:pointer}
-.toggle[aria-pressed="true"]{background:var(--orange);color:var(--black);border-color:var(--orange)}
-.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mute);align-items:center}
-.legend span{display:inline-flex;align-items:center;gap:6px}
+/* pipeline diagram */
+.pipe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-block:22px}
+.pipe div{background:var(--black);border:1px solid var(--line);padding:12px;position:relative;min-width:0}
+.pipe div:not(:last-child)::after{content:"\25B6";position:absolute;right:-12px;top:50%;transform:translateY(-50%);color:var(--orange);font-size:12px}
+.pipe b{display:block;font:22px/1 var(--display);color:var(--gold);margin-bottom:4px}
+.pipe p{font-size:13.5px;color:var(--mute)}
+
+/* LED */
 .seg{display:inline-flex;gap:2px;vertical-align:middle}
 .seg svg{height:30px;width:auto;overflow:visible}
 .seg .on{fill:var(--led);filter:drop-shadow(0 0 4px rgba(255,75,43,.6))}
 .seg .off{fill:var(--led-off)}
-.scorebox{display:flex;flex-wrap:wrap;gap:20px;margin-top:14px}
-.scorebox div{display:flex;flex-direction:column;gap:4px}
-.scorebox small{font:11px var(--mono);color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
-.map{border-top:2px solid var(--ink)}
-.mrow{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 6.5rem;gap:14px;padding:11px 8px;border-bottom:1px solid var(--line);align-items:center}
-.mrow:nth-child(odd){background:rgba(255,255,255,.025)}
-.nm{font:22px/1 var(--display)}
-.nk{display:block;font:13px/1.3 var(--body);color:var(--mute);margin-top:3px}
-.note{grid-column:2 / 4;font-size:13px;color:var(--mute);margin-top:-4px}
-.chips{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
-.chip{display:inline-grid;place-items:center;min-width:32px;height:32px;padding:0 6px;border:2px solid var(--ink);background:var(--row);color:var(--ink);font:600 11px var(--mono)}
-.chip svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.chip.s{background:var(--orange);border-color:var(--orange);color:var(--black);letter-spacing:.05em}
-.chip.flip{border-color:var(--gold);box-shadow:inset 0 -4px 0 var(--gold)}
-.chip.add{border-style:dashed;border-color:var(--led);color:var(--led);background:transparent}
-.pts{font:20px var(--display);text-align:right;font-variant-numeric:tabular-nums}
-.pts small{display:block;font:11px var(--mono);color:var(--mute)}
-.mapnote{font-size:13px;color:var(--mute);margin-top:12px;max-width:80ch}
+
+/* scene table */
+.table13{display:grid;grid-template-columns:2.4rem repeat(3,minmax(0,1fr));gap:6px;margin-top:18px}
+.table13 .rn{font:22px var(--display);color:var(--orange);display:grid;place-items:center}
+.table13 a{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;align-items:center;text-decoration:none;background:var(--black);border:1px solid var(--line);padding:4px;min-width:0}
+.table13 a:hover{border-color:var(--gold)}
+.table13 img{width:72px;aspect-ratio:4/3;object-fit:cover}
+.table13 a.flip img{transform:scaleX(-1)}
+.table13 span{font-size:12.5px;line-height:1.2;min-width:0;overflow-wrap:anywhere}
+.table13 .noimg{width:72px;aspect-ratio:4/3;background:repeating-linear-gradient(45deg,var(--sec) 0 6px,var(--black) 6px 12px)}
+.table13 .lock{border-color:var(--orange)}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.rules div{border-left:3px solid var(--gold);padding:4px 0 4px 14px;font-size:15px}
+.rules b{display:block;font:22px/1.1 var(--display);color:var(--gold)}
+
+/* rooms */
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--mute);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.rooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.room{background:var(--black);border:2px solid var(--ink);display:grid;grid-template-rows:auto 1fr;min-width:0;scroll-margin-top:60px}
+.room .ph{position:relative;border-bottom:2px solid var(--ink);cursor:zoom-in}
+.room .ph img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.room.flip .ph img{transform:scaleX(-1)}
+.room .noimg{aspect-ratio:4/3;display:grid;place-items:center;text-align:center;padding:20px;color:var(--mute);background:repeating-linear-gradient(45deg,var(--sec) 0 10px,var(--black) 10px 20px);font-size:14px}
+.room .rowtag{position:absolute;right:8px;top:8px;font:13px var(--mono);background:rgba(4,16,31,.85);padding:2px 7px;border:1px solid var(--line)}
+.room .body{padding:14px 16px 16px;display:grid;gap:10px;align-content:start;min-width:0}
+.room h3{font:24px/1 var(--brand)}
+.room .nk{color:var(--mute);font-size:14px;margin-top:-4px}
+.stats{display:flex;flex-wrap:wrap;gap:4px 18px;font:21px/1.1 var(--display)}
+.stats b{color:var(--orange);font-weight:400}
+.moves{display:grid;gap:5px;margin:0;padding:0;list-style:none}
+.mv{display:grid;grid-template-columns:2.2rem 40px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
+.mv .ix{font:18px var(--display);color:var(--dim);text-align:right}
+.chip{display:inline-grid;place-items:center;min-width:36px;height:32px;padding:0 5px;border:2px solid var(--ink);background:var(--row);color:var(--ink);font:600 10.5px var(--mono)}
+.chip svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.chip.s{background:var(--orange);border-color:var(--orange);color:var(--black)}
+.track{position:relative;height:14px;background:var(--sec);border:1px solid var(--line);min-width:0}
+.track i{position:absolute;top:0;bottom:0;background:var(--led)}
+.track i.zero{background:var(--gold)}
+.mv .win{font:12px var(--mono);color:var(--mute);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mv .win em{font-style:normal;color:var(--ink)}
+.room .note{font-size:13.5px;color:#dfe8f5;border-left:3px solid var(--gold);padding-left:10px}
+.room .also{font-size:12px;color:var(--dim)}
 
 /* drill */
-.drill{margin-top:30px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;background:var(--black);border:2px solid var(--ink);padding:18px;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
+.drill{margin-top:34px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;background:var(--black);border:2px solid var(--ink);padding:18px;box-shadow:6px 6px 0 rgba(0,0,0,.35)}
 .drill > div{min-width:0}
-.drill h3{font:32px/1 var(--display);color:var(--gold)}
-.drill select{font:14px var(--body);padding:8px 10px;border:2px solid var(--ink);background:var(--sec);color:var(--ink);margin-top:10px;width:100%;max-width:26rem}
+.drill h3{font:34px/1 var(--display);color:var(--gold)}
+.drill select{font:15px var(--body);padding:8px 10px;border:2px solid var(--ink);background:var(--sec);color:var(--ink);margin-top:10px;width:100%;max-width:26rem}
 .dtrack{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;min-height:32px}
 .dtrack .chip{opacity:.3}
 .dtrack .chip.done{opacity:1;border-color:var(--ok);box-shadow:inset 0 -4px 0 var(--ok)}
 .dtrack .chip.next{opacity:1;outline:2px solid var(--gold);outline-offset:2px}
-.dstatus{margin-top:12px;font:20px var(--display);min-height:1.2em}
+.dstatus{margin-top:12px;font:22px var(--display);min-height:1.2em}
 .dstatus.dead{color:var(--bad)} .dstatus.win{color:var(--ok)}
-.pad{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,56px);gap:6px}
+.pad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,58px);gap:6px}
 .pad button{border:2px solid var(--ink);background:var(--sec);color:var(--ink);cursor:pointer;display:grid;place-items:center}
 .pad button:active{transform:translateY(2px)}
 .pad button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.pad .sw{background:var(--led);border-color:var(--led);color:#fff;border-radius:50%;font:600 10px var(--mono);letter-spacing:.04em}
+.pad .sw{background:var(--led);border-color:var(--led);color:#fff;border-radius:50%;font:600 10px var(--mono)}
 .flash{animation:flash .5s}
 @keyframes flash{0%{background:#7a1a12}100%{background:var(--black)}}
 @media (prefers-reduced-motion:reduce){.flash{animation:none}}
 
-/* cabinet */
-.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:s}
-.steps li{background:var(--black);border:1px solid var(--line);padding:14px;counter-increment:s;min-width:0}
-.steps li::before{content:counter(s);font:28px/1 var(--display);color:var(--orange);display:block;margin-bottom:6px}
-.steps b{display:block;margin-bottom:4px}
-.steps p{font-size:14px;color:var(--mute)}
-.timing{margin-top:26px;max-width:780px}
-.timing h3{font:26px var(--display);color:var(--gold)}
-.timing > p{color:var(--mute);font-size:14px;margin-bottom:10px}
-.trow{display:grid;grid-template-columns:minmax(0,16rem) 1fr 4.5rem;gap:12px;align-items:center;padding-block:5px;font-size:14px}
-.track{height:14px;background:var(--black);border:1px solid var(--line);position:relative}
-.fill{position:absolute;inset:0 auto 0 0;background:var(--led)}
-.trow .v{font:20px var(--display);text-align:right}
-.spec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 24px;margin-top:26px}
-.spec div{padding-block:9px;border-bottom:1px solid var(--line);min-width:0}
-.spec dt{font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
-.spec dd{margin:2px 0 0;font-size:14px}
+/* family */
+.fam{display:grid;gap:40px}
+.fam article{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:26px;align-items:start;border-top:2px solid var(--line);padding-top:26px}
+.fam h3{font:clamp(28px,4vw,40px)/1 var(--brand)}
+.fam .tag2{font:13px var(--mono);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+.fam ul{margin:14px 0 0;padding-left:18px;display:grid;gap:8px;font-size:15px}
+.fam li::marker{color:var(--orange)}
+.fam .imgs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fam .imgs figure:first-child{grid-column:1 / -1}
 
-/* other games */
-.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
-.game{min-width:0;display:grid;gap:12px;align-content:start}
-.game h3{font:clamp(26px,3.4vw,34px)/1 var(--brand)}
-.game .tag{font:12px var(--mono);color:var(--gold);letter-spacing:.06em;text-transform:uppercase}
-.game ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:14px}
-.game li::marker{color:var(--orange)}
-.game .specline{font:13px var(--mono);color:var(--mute)}
-.tt{display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:12px;align-items:start}
-
-/* 2027 */
 .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 .three h3{font:32px/1 var(--display);color:var(--gold);border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px}
-.three ul{margin:0;padding-left:18px;display:grid;gap:9px;font-size:14px}
+.three ul{margin:0;padding-left:18px;display:grid;gap:9px;font-size:15px}
 .three li::marker{color:var(--orange)}
-pre{margin:22px 0 0;overflow-x:auto;background:var(--black);border:1px solid var(--line);padding:16px;font:13px/1.55 var(--mono);max-width:720px}
-.k{color:var(--gold)} .str{color:var(--ok)} .cm{color:var(--dim)}
-
 .small{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
 .small > div{padding-block:12px;border-bottom:1px solid var(--line);min-width:0}
-.small h3{font:22px var(--display);color:var(--gold)}
-.small p{font-size:14px;color:var(--mute)}
+.small h3{font:24px var(--display);color:var(--gold)}
+.small p{font-size:15px;color:var(--mute)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 14px var(--body);background:var(--orange);color:var(--black);padding:9px 14px;text-decoration:none;border:2px solid var(--black);box-shadow:3px 3px 0 var(--black)}
+.btn:hover{color:var(--black);background:var(--gold)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:none}
 .sources{margin-top:40px;font-size:13px}
+.sources h3{font:24px var(--display);color:var(--gold)}
 .sources ul{columns:2;column-gap:28px;padding-left:18px;margin:8px 0 0}
-.sources li{break-inside:avoid;margin-bottom:5px}
-footer{margin-top:26px;font-size:13px;color:var(--mute)}
+.sources li{break-inside:avoid;margin-bottom:5px;color:var(--mute)}
+footer{margin-top:26px;font-size:13px;color:var(--mute);max-width:90ch}
 
-@media (max-width:900px){
-  .rooms{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .mm-top,.games,.three{grid-template-columns:minmax(0,1fr)}
-  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(2,8,18,.94);display:grid;place-items:center;padding:24px;padding-top:calc(24px + env(safe-area-inset-top,0px))}
+.lb figure{max-width:min(1100px,100%);display:grid;gap:10px}
+.lb img{max-height:78vh;width:auto;margin:0 auto;border:2px solid var(--ink);aspect-ratio:auto}
+.lb img.flip{transform:scaleX(-1)}
+.lb figcaption{text-align:center;font-size:15px;color:#dfe8f5}
+.lb button{position:absolute;right:16px;top:calc(12px + env(safe-area-inset-top,0px));font:600 14px var(--mono);background:var(--orange);color:var(--black);border:0;padding:8px 12px;cursor:pointer}
+
+@media (max-width:960px){
+  .split,.split.rev,.fam article{grid-template-columns:minmax(0,1fr)}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe div::after{display:none}
   .spec{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rooms,.three{grid-template-columns:minmax(0,1fr)}
   .drill{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:600px){
-  .rooms,.steps,.spec,.small{grid-template-columns:minmax(0,1fr)}
-  .mrow{grid-template-columns:minmax(0,1fr) 5.5rem}
-  .mrow .chips{grid-column:1 / 3;grid-row:2}
-  .note{grid-column:1 / 3}
-  .trow{grid-template-columns:minmax(0,1fr) 3.6rem}
-  .trow .lbl{grid-column:1 / 3}
-  .tt{grid-template-columns:minmax(0,1fr)}
+  .hero-in{padding:20px 16px}
+  .g2,.g3,.g4,.spec,.small,.rules{grid-template-columns:minmax(0,1fr)}
+  .g4.keep2,.g3.keep2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pipe{grid-template-columns:minmax(0,1fr)}
+  .table13{grid-template-columns:1.6rem repeat(3,minmax(0,1fr))}
+  .table13 a{grid-template-columns:minmax(0,1fr)}
+  .table13 img,.table13 .noimg{width:100%}
+  .table13 span{font-size:11px}
+  .mv{grid-template-columns:1.6rem 40px minmax(0,1fr);}
+  .mv .win{grid-column:2 / 4;text-align:left}
   .sources ul{columns:1}
-  .dh em{margin-left:0}
+  .ch-head{grid-template-columns:minmax(0,1fr)}
+  .ch-num{grid-row:auto}
 }
 </style>
 </head>
@@ -195,93 +235,186 @@ footer{margin-top:26px;font-size:13px;color:var(--mute)}
 
 <div class="bar"><div class="bar-in">
   <a class="home" href="../">PLAIN <span>WEIRD</span></a>
-  <nav aria-label="Sections">
+  <nav aria-label="Chapters">
+    <a href="#origin">Before the dragon</a>
+    <a href="#making">Drawing it</a>
+    <a href="#arcade">1983</a>
+    <a href="#machine">The machine</a>
+    <a href="#rooms">Every room</a>
     <a href="#cut">The cut version</a>
-    <a href="#moves">Every move</a>
-    <a href="#cabinet">Inside the cabinet</a>
-    <a href="#others">The other games</a>
+    <a href="#family">The family</a>
     <a href="#next">2027</a>
-    <a href="#movie">The movie</a>
   </nav>
 </div></div>
 
 <main class="wrap">
 
-<section class="hero">
-  <p class="kicker">Retro lab · 1983 laserdisc arcade</p>
-  <h1>Dragon's <span>Lair</span></h1>
-  <p class="lede">The first time I saw it was at a Chuck E. Cheese, with a crowd packed around the cabinet just watching. This is everything I wanted to know about it: the version they cut before release, every move to finish it, and how the machine actually ran.</p>
-  <div class="facts">
-    <span><b>1983</b> June 19</span>
-    <span><b>50¢</b> a play</span>
-    <span><b>$32M</b> in 8 months</span>
-    <span><b>29</b> rooms</span>
-    <span><b>200+</b> moves to finish</span>
+<header class="hero">
+  <img src="img/hero.webp" alt="Kids lined up beside a Dragon's Lair cabinet in an arcade, 1983" fetchpriority="high">
+  <span class="cap">The line for Dragon's Lair, 1983</span>
+  <div class="hero-in">
+    <p class="kicker">Retro lab · Laserdisc arcade · 1983</p>
+    <h1>Dragon's <span>Lair</span></h1>
+    <p class="lede">The first time I saw it was at a Chuck E. Cheese, with a crowd packed around the cabinet just watching. This is everything I wanted to know about it, with the pictures to prove it: where it came from, how they drew it, the version they cut, how the machine runs, and every move in every room down to the hundredth of a second.</p>
+    <div class="facts">
+      <span><b>1983</b> June 19</span>
+      <span><b>50¢</b> a play</span>
+      <span><b>$32M</b> in 8 months</span>
+      <span><b>38</b> room versions</span>
+      <span><b>200+</b> moves to win</span>
+    </div>
   </div>
-  <div>
-    <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/t-w8wvjXbto" title="Dragon's Lair arcade, 1983" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-    <p class="vcap"><span>The 1983 arcade game.</span><a href="https://www.youtube.com/watch?v=t-w8wvjXbto">Open on YouTube</a><a href="https://www.youtube.com/watch?v=CnPOQr1pxY8">Halcyon Dreams, the documentary</a></p>
+</header>
+
+<!-- 1 ORIGIN -->
+<section class="ch" id="origin">
+  <div class="ch-head"><span class="ch-num">01</span><h2>Before the dragon</h2><p>Dragon's Lair started as a box that printed a story on a roll of paper.</p></div>
+  <div class="split">
+    <div class="prose">
+      <p>Rick Dyer loved <b>Adventure</b>, the old text game where you type GO NORTH and read what happens. He wanted a version you could see, so he built what he called <b>The Fantasy Machine</b>.</p>
+      <p>The first versions were a little computer with a paper roll inside. The roll had text and hand drawn pictures on it. You pushed word buttons like NORTH, CLIMB, SWORD or OPEN, and the machine scrolled the paper to the right spot. Later versions swapped the paper for a videodisc of mostly still pictures and narration.</p>
+      <p>Nobody bought it. Dyer decided the problem was excitement, not the idea. Then he saw Don Bluth's 1982 film <b>The Secret of NIMH</b> and knew what was missing: real animation. He brought Bluth's studio in, his company Advanced Microcomputer Systems (later RDI Video Systems) handled the engineering, and Cinematronics built and sold the cabinets.</p>
+      <p>The budget was about $1 million, so the animators did the voices themselves. Film editor Dan Molina is Dirk. The only professional voice is the narrator in the attract mode, Michael Rye.</p>
+    </div>
+    <figure><div class="ph"><img src="img/fm-device.webp" alt="The Fantasy Machine, a white box with a paper roll and a color keypad" loading="lazy"></div><figcaption><b>The Fantasy Machine.</b> Paper roll story on top, word buttons in front.</figcaption></figure>
+  </div>
+  <div class="grid g4 keep2">
+    <figure><div class="ph"><img src="img/fm-keypad.webp" alt="Keypad with words like North, Jump, Sword, Climb, Swim, Open, Close" loading="lazy"></div><figcaption>The word pad: NORTH, JUMP, SWORD, CLIMB, SWIM, OPEN, CLOSE, BOOK, RUN.</figcaption></figure>
+    <figure><div class="ph"><img src="img/fm-roll.webp" alt="Paper roll page: You're in a wizard's den of necromancy. Rats are climbing a ladder." loading="lazy"></div><figcaption>"You're in a wizard's den of necromancy. Rats are climbing a ladder." Sound familiar?</figcaption></figure>
+    <figure><div class="ph"><img src="img/fm-text.webp" alt="Paper roll text about a rocky cavern with a bridge of green mist" loading="lazy"></div><figcaption>A rocky cavern, a crumbling ledge, a bridge of green mist. Dragon's Lair rooms before they moved.</figcaption></figure>
+    <figure><div class="ph"><img src="img/fm-overlay.webp" alt="A dragon illustrated keypad overlay labeled Adventure" loading="lazy"></div><figcaption>An illustrated overlay for the pad, with a dragon on it.</figcaption></figure>
+  </div>
+  <div class="grid g3" style="margin-top:22px">
+    <figure><div class="ph"><img src="img/dyer.webp" alt="Rick Dyer in a 1983 TV interview, captioned Rick Dyer, Inventor" loading="lazy"></div><figcaption><b>Rick Dyer</b> on the news in 1983, captioned "Inventor".</figcaption></figure>
+    <figure><div class="ph"><img src="img/bluth.webp" alt="Don Bluth in a 1983 interview" loading="lazy"></div><figcaption><b>Don Bluth</b>, who left Disney to start his own studio, in a 1983 interview.</figcaption></figure>
+    <figure><div class="ph"><img src="img/fm-news.webp" alt="A TV reporter sitting next to the Fantasy Machine" loading="lazy"></div><figcaption>A TV reporter with the Fantasy Machine on the desk.</figcaption></figure>
   </div>
 </section>
 
-<!-- CUT VERSION -->
-<section class="sec" id="cut">
-  <div class="dh"><h2>The cut version</h2><em>More doors, more choices, then they took them out</em></div>
-  <p class="intro">Before release, most rooms had several exits and more than one right answer. The cuts happened after the animation was finished, so pieces of the old rooms are still sitting on the final disc if you know where to look.</p>
-  <div class="rooms">
-    <div class="room"><h3>Attract mode</h3><p>A gargoyle throws a spear partway through. The Lizard King replaced it.</p><p class="left"><b>Left on the disc</b>Turn it up on the Lizard King shot and you still hear the spear's swish.</p></div>
-    <div class="room"><h3>Vestibule</h3><p>The ceiling does not fall right away. Go left, go right, or shove a log aside and drop through a trapdoor.</p><p class="left"><b>Left on the disc</b>The trapdoor's hole shows just before the floor crumbles.</p></div>
-    <div class="room"><h3>Spiral Staircase</h3><p>A red trip wire on the first step fires spears into Dirk.</p><p class="left"><b>Left on the disc</b>Erased from the scene, still there in the death scene.</p></div>
-    <div class="room"><h3>Wizard's Chamber</h3><p>Slam the lid on the cauldron and run, or try three flasks: look, drink, or pour one on your sword. Then fight, or leave by the door or a hole in the floor.</p><p class="left"><b>Left on the disc</b>The floor hole and ladder appear in the crumbling bones death.</p></div>
-    <div class="room"><h3>Tentacle room</h3><p>No fire at all. Take the door ahead or crawl through a hole behind the bench. Wait and a green tentacle drops from the ceiling.</p><p class="left"><b>Left on the disc</b>That ceiling hole is where the fire comes from now.</p></div>
-    <div class="room"><h3>Mausoleum</h3><p>No skulls, no grabbing hand. Side doors lead to Crypt Creeps, and the far door actually opens.</p></div>
-    <div class="room"><h3>Catwalk</h3><p>Duck out early through a small opening on the left, or get chased by bats out a different door.</p><p class="left"><b>Left on the disc</b>The opening shows in the crumbling bones death.</p></div>
-    <div class="room"><h3>Yellow Brick Road</h3><p>Pick left, right, or forward. Jump a wall of fire before the pool. Walk past the spider without killing it.</p><p class="left"><b>Left on the disc</b>In one death a knife reaches Dirk's back and vanishes a frame before it hits.</p></div>
-    <div class="room"><h3>Mist Room</h3><p>Only one snake. Nothing from the ceiling.</p><p class="left"><b>Left on the disc</b>The second snake's ceiling hole vanishes as Dirk leaves. They reused the old ending.</p></div>
-    <div class="room"><h3>YMCA Room</h3><p>An extra doorway, no worms in the pit, and an extra death where Dirk misses the chain.</p><p class="left"><b>Left on the disc</b>The doorway is in the crumbling bones death.</p></div>
-    <div class="room"><h3>Three Caves</h3><p>No cage. Left to the lava geyser bridge, right across stones past a water monster, or forward through the jagged door.</p><p class="left"><b>Left on the disc</b>You can see both side caves right before the cage drops.</p></div>
-    <div class="room"><h3>Tentacles and Halberd</h3><p>Extra moments, like Dirk trying to yank the halberd off the rack, and a bloodier tentacle chop.</p></div>
+<!-- 2 MAKING -->
+<section class="ch" id="making">
+  <div class="ch-head"><span class="ch-num">02</span><h2>Drawing it</h2><p>Every frame of Dirk was a hand painted cel, shot on film in early 1983.</p></div>
+  <div class="split rev">
+    <figure><div class="ph"><img src="img/proto-slate.webp" alt="Film slate: Don Bluth Productions, Roll 792, date 2-9-83, Prod 107, Seq 005, Sc A-1, animator Pomeroy" loading="lazy"></div><figcaption><b>A real slate</b> left on the prototype disc: Roll 792, February 9, 1983, production 107, animator Pomeroy.</figcaption></figure>
+    <div class="prose">
+      <p>The prototype disc still has the film slates in it, the clapboards held up in front of the camera before each shot. They read like a timeline. The ones I found are dated <b>February 1 to February 15, 1983</b>, all marked <b>Production 107</b>, with animator names like Pomeroy, Spafford, Wurzer and Heidi.</p>
+      <p>That puts the drawing about four months before the game hit arcades on June 19. The pipeline was a full movie studio's: storyboards, pencil animation, a pencil test to check the motion, ink and paint on clear cels, painted backgrounds, then a film camera shooting it all frame by frame. The film was mastered to laserdisc.</p>
+      <div class="grid g2" style="margin-top:6px">
+        <figure><div class="ph"><img src="img/proto-slate-2.webp" alt="Slate Roll 798, 2-11-83, animator Wurzer" loading="lazy"></div><figcaption>Roll 798, Feb 11, Wurzer.</figcaption></figure>
+        <figure><div class="ph"><img src="img/proto-slate-3.webp" alt="Slate Roll 799, 2-12-83, animator Heidi" loading="lazy"></div><figcaption>Roll 799, Feb 12, Heidi.</figcaption></figure>
+      </div>
+    </div>
   </div>
-  <div class="row-btns">
-    <a class="btn" href="https://dragons-lair-project.com/games/related/prototype/dl">&#9654; Watch the actual prototype clips</a>
-    <a class="btn ghost" href="https://www.youtube.com/results?search_query=dragon%27s+lair+prototype+scenes">More prototype footage</a>
+  <div class="grid g4 keep2">
+    <figure><div class="ph"><img src="img/make-board.webp" alt="Storyboard panels being drawn" loading="lazy"></div><figcaption><b>Storyboards.</b> Each room planned panel by panel.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-draw.webp" alt="An animator drawing at a light table" loading="lazy"></div><figcaption><b>Animation.</b> Pencil drawings on a light table.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-pencil.webp" alt="A pencil drawing of Dirk on a test monitor" loading="lazy"></div><figcaption><b>Pencil test.</b> Rough drawings played on a monitor to check motion.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-ink.webp" alt="A painter working on a cel with a brush" loading="lazy"></div><figcaption><b>Ink and paint.</b> Each drawing traced and painted on a clear cel.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-cel.webp" alt="A painted cel of Dirk being handled with white gloves" loading="lazy"></div><figcaption>A finished Dirk cel, handled with gloves so no fingerprints show on film.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-fire.webp" alt="Painting fire effects onto a cel" loading="lazy"></div><figcaption><b>Effects.</b> Fire painted by hand, frame by frame.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-paint.webp" alt="An artist painting a background" loading="lazy"></div><figcaption><b>Backgrounds.</b> The rooms are paintings the cels sit on top of.</figcaption></figure>
+    <figure><div class="ph"><img src="img/make-film.webp" alt="An editor working with film reels" loading="lazy"></div><figcaption><b>Film.</b> Shot, cut and assembled on reels before it ever became a disc.</figcaption></figure>
   </div>
-  <p class="intro" style="margin-top:14px">The prototype footage was pressed onto a limited reproduction laserdisc in 2002. With the fan made Enhancement ROMs and a Dexter board, a real cabinet will play the cut scenes.</p>
 </section>
 
-<!-- MOVES -->
-<section class="sec" id="moves">
-  <div class="dh"><h2>Every move</h2><em>All 30 rooms, in order of the inputs</em></div>
-  <div class="mm-top">
-    <div>
-      <p class="intro" style="margin-bottom:0">Do each input at the moment the scene asks for it. Flashing things usually point the way. Some rooms come back mirrored, which swaps left and right, so flip the switch when a room looks backwards.</p>
-      <div class="controls">
-        <button class="toggle" id="t-mirror" aria-pressed="false">Mirrored room</button>
-        <button class="toggle" id="t-hard" aria-pressed="false">Arcade Hard extras</button>
-      </div>
-      <div class="legend">
-        <span><span class="chip flip">L</span> flips when mirrored</span>
-        <span><span class="chip add">+</span> extra on Hard</span>
-        <span><span class="chip s">SWORD</span> sword button</span>
-      </div>
-      <div class="scorebox">
-        <div><span class="seg" id="maxscore" aria-label="326248"></span><small>Max score, one life, Hard</small></div>
-        <div><span class="seg" id="free49" aria-label="49"></span><small>Free points per room</small></div>
-      </div>
+<!-- 3 ARCADE -->
+<section class="ch" id="arcade">
+  <div class="ch-head"><span class="ch-num">03</span><h2>The arcade, 1983</h2><p>It looked like a Disney movie you could steer, and people lined up to watch other people die.</p></div>
+  <div class="split">
+    <div class="prose">
+      <p>Every other game in the arcade was built from little blocks of color. Dragon's Lair was a cartoon. It cost <b>50 cents</b>, double the normal quarter, and operators paid around <b>$4,200</b> for a cabinet. It made about <b>$32 million</b> in its first eight months.</p>
+      <p>Many arcades put a second TV on top of the cabinet so the crowd could watch. That is the screen everyone remembers. Watching was half the game, because you learned the rooms by seeing someone else die in them.</p>
+      <p>TV news crews came to film the lines. The footage below is from their tapes and from the creators' own 1983 and 1984 tapes.</p>
+      <p class="quote">Laser video games: Dragon's Lair, Cliff Hanger, Astron Belt.</p>
     </div>
-    <div>
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/QGC9ZgoHttQ" title="Perfect Dragon's Lair run with no deaths" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="vcap"><span>A perfect run, no deaths. Follow along with the map.</span><a href="https://www.youtube.com/watch?v=ZYXRdXlsBOk">Another clean run</a></p>
+    <figure><div class="ph"><img src="img/arcade-2.webp" alt="Kids crowding around the Dragon's Lair cabinet while one plays" loading="lazy"></div><figcaption><b>The crowd.</b> One player, everyone else watching.</figcaption></figure>
+  </div>
+  <div class="grid g4 keep2">
+    <figure><div class="ph"><img src="img/arcade-sign.webp" alt="Arcade marquee reading Laser Video Games, Dragon's Lair, Cliff Hanger, Astron Belt" loading="lazy"></div><figcaption>An arcade sign selling the new laser games.</figcaption></figure>
+    <figure><div class="ph"><img src="img/arcade-1.webp" alt="Three kids standing in front of the cabinet" loading="lazy"></div><figcaption>Waiting for a turn.</figcaption></figure>
+    <figure><div class="ph"><img src="img/arcade-3.webp" alt="A kid staring at the screen" loading="lazy"></div><figcaption>The look.</figcaption></figure>
+    <figure><div class="ph"><img src="img/arcade-tron.webp" alt="A player at Dragon's Lair next to a Tron cabinet" loading="lazy"></div><figcaption>Next to Tron, it looked like it came from the future.</figcaption></figure>
+    <figure><div class="ph"><img src="img/arcade-marquee.webp" alt="The lit Dragon's Lair marquee" loading="lazy"></div><figcaption>The marquee.</figcaption></figure>
+    <figure><div class="ph"><img src="img/cab-panel.webp" alt="A hand on the Dragon's Lair control panel" loading="lazy"></div><figcaption>One stick, one sword button.</figcaption></figure>
+    <figure><div class="ph"><img src="img/cab-stick.webp" alt="Close up of the red ball joystick" loading="lazy"></div><figcaption>The stick reads all eight directions.</figcaption></figure>
+    <figure><div class="ph"><img src="img/cab-led.webp" alt="Red LED score display: Player 1 score, lives, Player 2 score, lives" loading="lazy"></div><figcaption>The red LED panel above the screen. The picture is video, so the score had to live somewhere else.</figcaption></figure>
+  </div>
+</section>
+
+<!-- 4 MACHINE -->
+<section class="ch" id="machine">
+  <div class="ch-head"><span class="ch-num">04</span><h2>Inside the machine</h2><p>There is no graphics chip drawing Dirk. The computer's only job is to tell a disc player which frame to jump to.</p></div>
+  <div class="grid g3">
+    <figure><div class="ph"><img src="img/cab-player.webp" alt="A Pioneer laserdisc player sitting inside an open arcade cabinet" loading="lazy"></div><figcaption><b>The player in the cabinet.</b> A home style Pioneer laserdisc player, working far harder than it was built to.</figcaption></figure>
+    <figure><div class="ph"><img src="img/disc-spin.webp" alt="Close up of a laserdisc spinning" loading="lazy"></div><figcaption><b>The disc.</b> One side holds the whole game. The other side is metal backing to keep it flat.</figcaption></figure>
+    <figure><div class="ph"><img src="img/disc-frame.webp" alt="Game frame with the overlay Frame No. 3564" loading="lazy"></div><figcaption><b>Frame No. 3564.</b> Every frame on the disc has an address. This is a debug view showing it.</figcaption></figure>
+  </div>
+
+  <div class="pipe" aria-label="How one move is processed">
+    <div><b>1 · You move</b><p>Stick or sword. Diagonals count as their own inputs.</p></div>
+    <div><b>2 · Z80 checks</b><p>Is this the right input, inside the window, for this part of the room?</p></div>
+    <div><b>3 · Frame number</b><p>It picks where the answer lives on the disc: keep rolling, or a death clip.</p></div>
+    <div><b>4 · Seek</b><p>The laser jumps to that frame. Short hop, instant. Long hop, a pause.</p></div>
+    <div><b>5 · Screen</b><p>Video to the monitor, score to the LEDs, a beep from the sound chip.</p></div>
+  </div>
+
+  <dl class="spec">
+    <div><dt>CPU</dt><dd>Zilog Z80 at 4 MHz</dd></div>
+    <div><dt>Program</dt><dd>32 KB of ROM</dd></div>
+    <div><dt>Sound chip</dt><dd>AY-3-8910 for beeps; music and voices are on the disc</dd></div>
+    <div><dt>Player, early</dt><dd>Pioneer PR-7820, ROM revisions A to D</dd></div>
+    <div><dt>Player, later</dt><dd>Pioneer LD-V1000, revision E on</dd></div>
+    <div><dt>Europe</dt><dd>Philips 22VP932, sold by Atari, with rooms the early US boards skipped</dd></div>
+    <div><dt>Mirrored rooms</dt><dd>Flipped animation pressed on the disc, not flipped by hardware</dd></div>
+    <div><dt>Points</dt><dd>49 just for entering a room. Max on Hard with one life: 326,248</dd></div>
+    <div><dt>Operator trick</dt><dd>Hold Up and Left while starting a game: unlimited lives</dd></div>
+  </dl>
+
+  <div class="split" style="margin-top:34px">
+    <div class="prose">
+      <p><b>Why the players broke.</b> A normal movie plays straight through. Dragon's Lair makes the laser sled jump all over the disc, hundreds of times an hour, all day. The PR-7820 players died fast. Cinematronics moved to the LD-V1000 and a revised board, and the last ROM, revision F, stopped shuffling the room order just to cut down the travel.</p>
+      <p>Today a board called <b>Dexter</b> replaces the player completely and plays a disc image. The game never knows.</p>
+      <p><b>The prototype even had its own screens.</b> The early disc and ROM show plain text screens like this one, a peek at the test build before the art was final.</p>
+    </div>
+    <div class="grid g2">
+      <figure class="free"><div class="ph"><img src="img/pr7820.webp" alt="Diagram of the six photodiode array in a Pioneer PR-7820" loading="lazy"></div><figcaption>The PR-7820's photodiode layout, the part that reads the laser's reflection. Diagram by RiverMan18, CC BY-SA 4.0.</figcaption></figure>
+      <figure><div class="ph"><img src="img/proto-text.webp" alt="Gray screen reading Player 2 Game Over" loading="lazy"></div><figcaption>A bare text screen from the prototype build.</figcaption></figure>
     </div>
   </div>
 
-  <div class="map" id="map"></div>
-  <p class="mapnote">Room names and points come from the Dragon's Lair Project's arcade guide (normal version, then mirrored). Move sequences come from a player guide for the HD release, which uses the arcade moves on Easy, matched to the arcade room names. For frame exact timing, use the <a href="https://dragons-lair-project.com/games/related/walkthru/lair/hard.asp">Dragon's Lair Project Hard guide</a>.</p>
+  <h3 style="font:34px var(--display);color:var(--gold);margin-top:40px">How the game picks your next room</h3>
+  <div class="prose" style="margin-top:8px">
+    <p>The rooms sit in a table of <b>13 rows by 3</b>. The game walks down the rows three times. Each time through, it picks one room you haven't played yet from each row. That's how mirrored rooms and different rooms swap places from game to game. This is the table, straight from the game's data.</p>
+  </div>
+  <div class="table13" id="table13"></div>
+  <div class="rules">
+    <div><b>Row 13 is locked</b>The long elevator on pass one, its mirror on pass two, the Dragon's Lair on pass three.</div>
+    <div><b>Row 4 repeats</b>The short elevator sits in two slots, so it can come up twice.</div>
+    <div><b>Deaths come back</b>Rooms you die in go on a list of up to 8. You must beat them all before the game lets you into the lair.</div>
+    <div><b>Very hard mode</b>Operators can set it so five rooms get harder timing, with windows as short as a tenth of a second.</div>
+  </div>
+</section>
+
+<!-- 5 ROOMS -->
+<section class="ch" id="rooms">
+  <div class="ch-head"><span class="ch-num">05</span><h2>Every room, every move</h2><p>The exact window for every input, from the game's own timing table.</p></div>
+  <div class="prose" style="margin-bottom:18px">
+    <p>Each room plays as a chain of short clips. Every row below is one clip. The red mark shows when your move counts inside that clip, and the numbers are the window in seconds from the start of the clip. Hit it early and you buzz or die. Hit it late and you die. Some moves accept more than one direction; those are listed.</p>
+  </div>
+  <div class="controls">
+    <div class="legend">
+      <span><span class="chip s">SWORD</span> sword button</span>
+      <span><span class="track" style="width:70px;display:inline-block"><i style="left:30%;width:35%"></i></span> when the move counts</span>
+      <span><span class="track" style="width:70px;display:inline-block"><i class="zero" style="left:30%;width:35%"></i></span> right move, zero points (a bug)</span>
+    </div>
+  </div>
+  <div class="rooms" id="roomlist"></div>
+  <p class="figcaption" style="color:var(--mute);font-size:13px;margin-top:14px;max-width:90ch">Timing comes from DirkSimple, a modern open source player whose scene table was built from the original ROM's data. Mirrored rooms show the normal room's picture flipped, which is exactly what the disc does.</p>
 
   <div class="drill" id="drill">
     <div>
       <h3>Practice a room</h3>
-      <p style="color:var(--mute);font-size:14px;margin-top:4px">Pick a room, then hit the pad, your arrow keys, or space for sword. This drills the order. The real thing also needs the timing.</p>
+      <p style="color:var(--mute);font-size:14px;margin-top:4px">Pick a room, then use the pad, your arrow keys, or space for sword. This drills the order. The real thing also needs the timing above.</p>
       <label for="drill-room" style="display:block;margin-top:12px;font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">Room</label>
       <select id="drill-room"></select>
       <div class="dtrack" id="dtrack"></div>
@@ -299,281 +432,307 @@ footer{margin-top:26px;font-size:13px;color:var(--mute)}
       <span></span>
     </div>
   </div>
-</section>
 
-<!-- CABINET -->
-<section class="sec" id="cabinet">
-  <div class="dh"><h2>Inside the cabinet</h2><em>No graphics chip draws Dirk. It's all video.</em></div>
-  <ol class="steps">
-    <li><b>You move</b><p>Eight way stick and one sword button. The program reads diagonals as their own inputs.</p></li>
-    <li><b>The Z80 checks the window</b><p>A 4 MHz Z80 runs 32 KB of program: for each scene, when the window opens, which input is right, and where each outcome sits on the disc.</p></li>
-    <li><b>It sends a frame number</b><p>The Pioneer player gets "search to frame N, play." Right answer, keep rolling. Wrong, jump to the death clip and back.</p></li>
-    <li><b>Seeking kills players</b><p>Hours of jumping wore the Pioneers out. Revision F stopped shuffling room order just to cut down the travel.</p></li>
-  </ol>
-  <div class="timing">
-    <h3>How long you get</h3>
-    <p>Most moves allow more than 0.4 seconds. The worst, measured on the final ROMs, allow a tenth of a second. About three frames of video.</p>
-    <div class="trow"><span class="lbl">Typical move</span><div class="track"><div class="fill" style="width:84%"></div></div><span class="v">0.40+ s</span></div>
-    <div class="trow"><span class="lbl">Socker Boppers, mirrored, very hard</span><div class="track"><div class="fill" style="width:46%"></div></div><span class="v">0.23 s</span></div>
-    <div class="trow"><span class="lbl">Flying Barding fire, mirrored</span><div class="track"><div class="fill" style="width:26%"></div></div><span class="v">0.13 s</span></div>
-    <div class="trow"><span class="lbl">Fire Pit rope jump, mirrored</span><div class="track"><div class="fill" style="width:20%"></div></div><span class="v">0.10 s</span></div>
-    <div class="trow"><span class="lbl">Tilting Room landing</span><div class="track"><div class="fill" style="width:20%"></div></div><span class="v">0.10 s</span></div>
+  <h3 style="font:34px var(--display);color:var(--gold);margin-top:44px">Ways to die</h3>
+  <p class="prose" style="color:var(--mute);margin:6px 0 16px">Every room has between one and seven death clips. They are half the reason people watched.</p>
+  <div class="grid g4 keep2">
+    <figure><div class="ph"><img src="img/death-8.webp" alt="Dirk turning into a skeleton" loading="lazy"></div><figcaption>The classic: skin off, skeleton, collapse.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-1.webp" alt="Dirk screaming in terror" loading="lazy"></div><figcaption>Too slow.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-2.webp" alt="Dirk falling into a hole in the yellow floor" loading="lazy"></div><figcaption>The floor wins.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-3.webp" alt="Dirk grabbed by water snakes" loading="lazy"></div><figcaption>Water snakes in the pool.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-4.webp" alt="Dirk crushed between stone blocks" loading="lazy"></div><figcaption>Crushed by the blocks.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-5.webp" alt="Dirk hit by a flying mace" loading="lazy"></div><figcaption>The Forge's flying mace.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-6.webp" alt="Dirk underwater surrounded by bubbles" loading="lazy"></div><figcaption>Under the pool.</figcaption></figure>
+    <figure><div class="ph"><img src="img/death-7.webp" alt="Dirk falling into darkness" loading="lazy"></div><figcaption>Into the pit.</figcaption></figure>
   </div>
-  <dl class="spec">
-    <div><dt>CPU</dt><dd>Zilog Z80 at 4 MHz</dd></div>
-    <div><dt>Program</dt><dd>32 KB of ROM</dd></div>
-    <div><dt>Sound chip</dt><dd>AY-3-8910 for the beeps; the rest is on the disc</dd></div>
-    <div><dt>Player, early</dt><dd>Pioneer PR-7820 (ROM revisions A to D)</dd></div>
-    <div><dt>Player, later</dt><dd>Pioneer LD-V1000 (revision E on)</dd></div>
-    <div><dt>Europe</dt><dd>Philips 22VP932, sold by Atari, with rooms the first US boards skipped</dd></div>
-    <div><dt>Mirrored rooms</dt><dd>Flipped animation pressed on the disc, not flipped by hardware</dd></div>
-    <div><dt>Score display</dt><dd>Red LED digits above the screen in the US cabinet</dd></div>
-    <div><dt>Operator cheat</dt><dd>In attract mode, hold Up Left, press Sword while dropping coins, start 1 player: unlimited lives</dd></div>
-  </dl>
 </section>
 
-<!-- OTHERS -->
-<section class="sec" id="others">
-  <div class="dh"><h2>The other games</h2><em>Same idea, five very different machines</em></div>
-  <div class="games">
-
-    <article class="game">
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/SFTKbBcdP5w" title="Space Ace arcade cabinet and full gameplay" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="tag">1984 · Cinematronics · Don Bluth</p>
-      <h3>Space Ace</h3>
-      <ul>
-        <li>Three skill buttons: Cadet plays about half the scenes, Captain about two thirds, Space Ace all of them.</li>
-        <li>The Energize button lets scrawny Dexter turn back into Ace, which sends the disc down a different branch.</li>
-        <li>Ace's ship and motorcycle were real models, filmed and then traced. A big tunnel model let the camera fly the dogfight.</li>
-        <li>Don Bluth himself voices Borf.</li>
-      </ul>
-      <p class="specline">Same hardware as Dragon's Lair, sold mostly as a kit with an extra board for the skill buttons.</p>
-    </article>
-
-    <article class="game">
-      <div class="tt">
-        <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/OokTK_ir9oE" title="Hologram Time Traveler playthrough" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-        <div class="vid tall"><iframe src="https://www.youtube-nocookie.com/embed/L55U9hN5mmg" title="Time Traveler hologram cabinet in person" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+<!-- 6 CUT -->
+<section class="ch" id="cut">
+  <div class="ch-head"><span class="ch-num">06</span><h2>The cut version</h2><p>Before release, the rooms had extra doors, extra choices and extra deaths. Here they are.</p></div>
+  <div class="prose" style="margin-bottom:22px">
+    <p>The prototype disc was looser. Most rooms had more than one way out. Then it was cut back to a single path per room before release; the usual story is that testers got lost. The cut came after the animation was finished, so pieces of the old rooms are still visible on the final disc if you know where to look.</p>
+  </div>
+  <div class="grid g3">
+    <figure><div class="ph"><img src="img/proto-log.webp" alt="Prototype vestibule: Dirk lifting a log" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Vestibule.</b> Dirk could shove a log aside and drop through a trapdoor. The hole is still visible in the final game, right before the floor crumbles.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-wire.webp" alt="Dirk's foot near a red trip wire on the stairs" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Spiral Staircase.</b> A red trip wire on the first step fired spears. Erased from the final scene, but still there in the death clip.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-flask.webp" alt="Dirk pouring a flask onto his sword" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Wizard's Chamber.</b> Three flasks on a counter: look at one, drink one, or pour one on your sword.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-tentacle.webp" alt="The tentacle room with no fire, door ahead and bench" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Tentacle room, no fire.</b> Take the door ahead or crawl out behind the bench. The ceiling hole that spits fire later held a green tentacle.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-halberd.webp" alt="Dirk reaching for the halberd rack as a tentacle grabs" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Tentacles and Halberd.</b> Extra moments like Dirk trying to pull the halberd off the rack.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-tomb.webp" alt="An empty mausoleum corridor" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Mausoleum.</b> No skulls, no grabbing hand. Side doors to the Crypt Creeps, and the far door actually opens.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-catwalk-2.webp" alt="Dirk at a small opening on the left of the catwalk" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Catwalk.</b> A small opening on the left to escape early, or skip the catwalk and get chased out another door by bats.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-cave-water.webp" alt="A blue cave with stepping stones in water" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Three Caves, right.</b> Stepping stones past a water monster.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-cave-lava.webp" alt="A lava cave with a branch bridge" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Three Caves, left.</b> A bridge over the lava geyser.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-cave-door.webp" alt="A jagged doorway lit by two torches" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Three Caves, forward.</b> Jump through the jagged door. The final game drops a cage on you instead.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-ymca-fall.webp" alt="Dirk falling after missing the chain" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>YMCA Room.</b> An extra death: Dirk misses the chain and falls. Also an extra doorway, and no worms in the pit.</figcaption></figure>
+    <figure><div class="ph"><img src="img/proto-mist.webp" alt="The mist room with a single snake" loading="lazy"><span class="tag">Cut</span></div><figcaption><b>Mist Room.</b> One snake, nothing from the ceiling. The final game reuses this ending, which is why the ceiling hole vanishes as Dirk leaves.</figcaption></figure>
+  </div>
+  <div class="split" style="margin-top:26px">
+    <div class="prose">
+      <p><b>A whole swamp.</b> The prototype disc also has a green swamp with creatures on tree stumps and a treasure chest on top of a stump tower. I couldn't match it to any room in the final game.</p>
+      <p>The prototype footage was pressed onto a limited reproduction laserdisc in 2002, and fans made Enhancement ROMs that let a real cabinet play the cut rooms.</p>
+      <div class="btns">
+        <a class="btn" href="https://archive.org/details/youtube-AnoMtRBTu9U">&#9654; Watch the prototype disc</a>
+        <a class="btn ghost" href="https://archive.org/details/youtube-HMtN7cIlMYk">Another prototype video</a>
+        <a class="btn ghost" href="https://dragons-lair-project.com/games/related/prototype/dl">Dragon's Lair Project notes</a>
       </div>
-      <p class="tag">1991 · Sega · Rick Dyer · the hologram game</p>
-      <h3>Time Traveler</h3>
-      <ul>
-        <li>Not really a hologram. A CRT shines into a big concave mirror under the stage, which floats a real image in midair. The black cabinet hides the mirror.</li>
-        <li>Shot in San Diego with about 40 actors, mostly on green screen.</li>
-        <li>The Time Reversal button rewinds to just before you die. A rewind button in 1991.</li>
-        <li>Hidden dance: with a credit in, hold both buttons and pull down. Rick Dyer dances with his son on his back.</li>
-      </ul>
-      <p class="specline">Sony LDP-1450 player. Reported $18M in sales.</p>
-    </article>
-
-    <article class="game">
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/rTsoAGMzssw" title="Dragon's Lair II Time Warp longplay" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="tag">1991 · Leland · the time travel one</p>
-      <h3>Dragon's Lair II: Time Warp</h3>
-      <ul>
-        <li>Animated starting in 1983, shelved in March 1984, finished years later, and released in 1991.</li>
-        <li>A quick yellow flash shows you where to go. The first game mostly made you guess.</li>
-        <li>Miss a hidden golden treasure and the game loops you back to it before it lets you finish.</li>
-        <li>The prototype had a completely different soundtrack.</li>
-      </ul>
-      <p class="specline">Sony LDP-1450 or Pioneer 4200 player.</p>
-    </article>
-
-    <article class="game">
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/8DZjXdqeb5A" title="Us vs. Them arcade longplay" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="tag">1984 · Mylstar · Warren Davis of Q*bert</p>
-      <h3>Us vs. Them</h3>
-      <ul>
-        <li>Two layers: real aerial film on the disc, computer drawn ships and shots on top.</li>
-        <li>Live action alien invasion scenes on custom sets, with an orchestral score.</li>
-        <li>It tested well, then the laserdisc backlash hit. Orders were canceled and very few got built.</li>
-      </ul>
-      <p class="vcap"><a href="https://www.gdcvault.com/play/1029402/-Us-vs-Them-and">Warren Davis's GDC talk on making it (free)</a></p>
-    </article>
-
-    <article class="game">
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/iOkq0fp54yY" title="Thayer's Quest arcade longplay" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="tag">1984 · RDI · Rick Dyer</p>
-      <h3>Thayer's Quest</h3>
-      <ul>
-        <li>No joystick. A membrane QWERTY keyboard with item keys, the first on an arcade game.</li>
-        <li>You type your name and the speech chip says it during the game. It saved progress for the last ten players.</li>
-        <li>Built from Shadoan, the bigger story Dragon's Lair was spun out of.</li>
-        <li>Made for the Halcyon home system too: $2,500, voice recognition, never mass produced.</li>
-      </ul>
-      <p class="vcap"><a href="https://www.youtube.com/watch?v=as00YZFIN2Y">The Halcyon version</a></p>
-    </article>
-
-    <article class="game">
-      <div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/CnPOQr1pxY8" title="Halcyon Dreams: The Legacy of Dragon's Lair" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-      <p class="tag">Documentary</p>
-      <h3>Halcyon Dreams</h3>
-      <ul>
-        <li>Rick Dyer's story: the paper roll "Fantasy Machine," seeing The Secret of NIMH, bringing in Bluth, and the Halcyon.</li>
-        <li>His son showed up in the comments to say Rick loved it.</li>
-      </ul>
-    </article>
-
+    </div>
+    <div class="grid g2">
+      <figure><div class="ph"><img src="img/proto-swamp.webp" alt="A green swamp with a stump tower and stepping stones" loading="lazy"><span class="tag">Cut</span></div><figcaption>The swamp.</figcaption></figure>
+      <figure><div class="ph"><img src="img/proto-chest.webp" alt="Dirk opening a treasure chest" loading="lazy"><span class="tag">Cut</span></div><figcaption>The chest on the stump.</figcaption></figure>
+      <figure><div class="ph"><img src="img/proto-log-2.webp" alt="Dirk carrying a log toward the trapdoor" loading="lazy"><span class="tag">Cut</span></div><figcaption>Log in hand, heading for the trapdoor.</figcaption></figure>
+      <figure><div class="ph"><img src="img/proto-pattern.webp" alt="A wallpaper of running Dirks in rainbow colors" loading="lazy"><span class="tag gold">Disc filler</span></div><figcaption>Patterned frames that sit between scenes on the prototype disc.</figcaption></figure>
+    </div>
   </div>
 </section>
 
-<!-- 2027 -->
-<section class="sec" id="next">
-  <div class="dh"><h2>Making one in 2027</h2><em>Keep the movie, fix the guessing, bring back the doors</em></div>
+<!-- 7 FAMILY -->
+<section class="ch" id="family">
+  <div class="ch-head"><span class="ch-num">07</span><h2>The family</h2><p>Same trick, five very different machines.</p></div>
+  <div class="fam">
+    <article>
+      <div>
+        <h3>Space Ace</h3>
+        <p class="tag2">1984 · Cinematronics · Don Bluth</p>
+        <ul>
+          <li><b>Skill buttons.</b> Cadet plays about half the scenes, Captain about two thirds, Space Ace all of them.</li>
+          <li><b>Energize.</b> A button that turns scrawny Dexter back into Ace, sending the disc down a different branch. The first real choice in one of these games.</li>
+          <li>Ace's ship and motorcycle were real models, filmed and traced. A big tunnel model gave the camera a dogfight to fly through.</li>
+          <li>Don Bluth himself voices the villain Borf.</li>
+          <li>Sold mostly as a kit for Dragon's Lair cabinets, with an extra board for the skill buttons.</li>
+        </ul>
+      </div>
+      <div class="imgs">
+        <figure><div class="ph"><img src="img/sa-cab.webp" alt="A kid playing Space Ace in 1984" loading="lazy"></div><figcaption>Space Ace in an arcade, 1984.</figcaption></figure>
+        <figure><div class="ph"><img src="img/sa-borf.webp" alt="Borf, the blue villain" loading="lazy"></div><figcaption>Borf.</figcaption></figure>
+        <figure><div class="ph"><img src="img/sa-screen.webp" alt="Space Ace on a monitor" loading="lazy"></div><figcaption>On the monitor.</figcaption></figure>
+      </div>
+    </article>
+    <article>
+      <div>
+        <h3>Time Traveler</h3>
+        <p class="tag2">1991 · Sega · Rick Dyer · the hologram game</p>
+        <ul>
+          <li><b>Not really a hologram.</b> A TV under the stage shines into a big concave mirror, which floats a real image in the air. The black cabinet hides the mirror. Same physics as the mirror toys that make a coin float.</li>
+          <li>Shot in San Diego with about 40 actors, mostly on green screen, so the actors could stand on the little stage.</li>
+          <li><b>A rewind button in 1991.</b> The Time Reversal button jumps back to just before you died.</li>
+          <li>Hidden: with a credit in, hold both buttons and pull down. Rick Dyer dances with his son on his back.</li>
+          <li>Sony LDP-1450 player. Sega later reused the cabinet for a fighting game, Holosseum.</li>
+        </ul>
+      </div>
+      <div class="imgs">
+        <figure class="free"><div class="ph"><img src="img/tt-cab.webp" alt="The white Sega Hologram Time Traveler cabinet" loading="lazy"></div><figcaption>The cabinet. Photo by Onoff456, public domain.</figcaption></figure>
+        <figure><div class="ph"><img src="img/tt-stage.webp" alt="The stage area of Time Traveler" loading="lazy"></div><figcaption>The stage where the actors appear. Public domain.</figcaption></figure>
+        <figure><div class="ph"><img src="img/tt-stage-2.webp" alt="Close up of the Time Traveler stage" loading="lazy"></div><figcaption>Closer in. Public domain.</figcaption></figure>
+      </div>
+    </article>
+    <article>
+      <div>
+        <h3>Dragon's Lair II</h3>
+        <p class="tag2">Drawn 1983 to the late 80s · released 1991 · Leland</p>
+        <ul>
+          <li>Started right after the first game, shelved in March 1984 when the laserdisc craze crashed, finished years later.</li>
+          <li><b>It shows you the answer.</b> A quick yellow flash marks where to go. The first game mostly made you guess.</li>
+          <li>Hidden golden treasures. Miss one and the game loops you back to it before it lets you finish.</li>
+          <li>Dirk chases Mordroc through time: Wonderland, the Garden of Eden, Beethoven's study.</li>
+        </ul>
+      </div>
+      <div class="imgs">
+        <figure><div class="ph"><img src="img/d2-dirk.webp" alt="Dirk in Dragon's Lair II" loading="lazy"></div><figcaption>Older Dirk, still daring.</figcaption></figure>
+        <figure><div class="ph"><img src="img/d2-eden.webp" alt="A snake and a poison fruit sign in the garden" loading="lazy"></div><figcaption>The garden and the Poison Fruit.</figcaption></figure>
+        <figure><div class="ph"><img src="img/d2-piano.webp" alt="Beethoven at the piano" loading="lazy"></div><figcaption>Beethoven's study.</figcaption></figure>
+      </div>
+    </article>
+    <article>
+      <div>
+        <h3>Thayer's Quest</h3>
+        <p class="tag2">1984 · RDI · Rick Dyer</p>
+        <ul>
+          <li><b>No joystick.</b> A membrane QWERTY keyboard with item keys, the first on an arcade game.</li>
+          <li>You type your name and the speech chip says it during the game. It saved progress for the last ten players.</li>
+          <li>Built from Shadoan, the big story Dragon's Lair was spun out of.</li>
+          <li>Also made for the <b>RDI Halcyon</b>, a $2,500 home laserdisc console you talked to. You trained it on your voice by repeating words like BLACK MACE and CRYSTAL.</li>
+        </ul>
+      </div>
+      <div class="imgs">
+        <figure><div class="ph"><img src="img/tq-choice.webp" alt="A wizard's crystal ball showing numbered destinations" loading="lazy"></div><figcaption>Choose where to go: Glendoe, Waterfalls, Forest.</figcaption></figure>
+        <figure><div class="ph"><img src="img/tq-word.webp" alt="Blue screen: Please repeat the word... Crystal" loading="lazy"></div><figcaption>Halcyon voice training.</figcaption></figure>
+        <figure><div class="ph"><img src="img/tq-villain.webp" alt="The villain Sorsabal on horseback" loading="lazy"></div><figcaption>The wizard Sorsabal.</figcaption></figure>
+      </div>
+    </article>
+    <article>
+      <div>
+        <h3>Us vs. Them</h3>
+        <p class="tag2">1984 · Mylstar · Warren Davis of Q*bert</p>
+        <ul>
+          <li>Two layers: real aerial film on the disc, computer drawn ships and shots on top.</li>
+          <li>Live action alien invasion scenes on custom sets, with an orchestral score.</li>
+          <li>It tested well, then the laserdisc backlash hit. Orders were canceled and very few were built.</li>
+          <li>Warren Davis later built the video digitizing system behind Mortal Kombat and NBA Jam.</li>
+        </ul>
+        <div class="btns"><a class="btn ghost" href="https://www.gdcvault.com/play/1029402/-Us-vs-Them-and">Warren Davis's GDC talk (free)</a></div>
+      </div>
+      <div class="imgs">
+        <figure><div class="ph"><img src="img/astron.webp" alt="The Sega Astron Belt laserdisc in a museum case" loading="lazy"></div><figcaption>Not Us vs. Them, but its ancestor: the disc from Sega's Astron Belt, the first laserdisc arcade game, which used the same film plus graphics trick. Photo by Mbrickn, CC0.</figcaption></figure>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- 8 NEXT -->
+<section class="ch" id="next">
+  <div class="ch-head"><span class="ch-num">08</span><h2>Making one in 2027</h2><p>Keep the movie, fix the guessing, bring back the doors.</p></div>
   <div class="three">
     <div><h3>Keep</h3><ul>
-      <li>Hand made looking frames. The art is why people crowded around.</li>
-      <li>A spectator view. The crowd watching was half the fun, so build a big screen mode on purpose.</li>
+      <li>Hand made looking frames. The art is why people lined up.</li>
+      <li>A spectator view. The crowd was half the fun, so build the TV on top on purpose.</li>
       <li>One input per moment.</li>
     </ul></div>
     <div><h3>Fix</h3><ul>
       <li>Fair cues for every move, like Dragon's Lair II's flash.</li>
-      <li>Rewind instead of game over, like Time Traveler's button.</li>
-      <li>Generous windows by default, real 1983 timing as an arcade mode.</li>
+      <li>Rewind instead of game over, like Time Traveler.</li>
+      <li>Wide windows by default, real 1983 timing as an arcade mode.</li>
     </ul></div>
     <div><h3>Bring back</h3><ul>
-      <li>The prototype's two and three exit rooms, so the castle becomes a map you learn.</li>
+      <li>The prototype's extra doors and flasks, so the castle becomes a map you learn.</li>
       <li>Space Ace's Energize as a risk choice.</li>
-      <li>A narrator who says your name, like Thayer's Quest did in 1984, with today's AI voices.</li>
+      <li>A narrator who says your name, like Thayer's Quest in 1984, with today's AI voices. The Halcyon's talking console finally works now.</li>
       <li>A concave mirror cabinet. Still cheap, still stops people.</li>
     </ul></div>
   </div>
-<pre><span class="cm">// no disc, no seeking: every branch is instant</span>
-{ <span class="k">"room"</span>: <span class="str">"three_caves"</span>, <span class="k">"clip"</span>: <span class="str">"three_caves.webm"</span>,
-  <span class="k">"moves"</span>: [ { <span class="k">"at"</span>: 2.40, <span class="k">"window"</span>: 0.45,
-    <span class="k">"answers"</span>: { <span class="k">"L"</span>: <span class="str">"lava_bridge"</span>, <span class="k">"R"</span>: <span class="str">"water_stones"</span>, <span class="k">"U"</span>: <span class="str">"jagged_door"</span> },
-    <span class="k">"else"</span>: <span class="str">"death_cage"</span> } ] }</pre>
-</section>
-
-<!-- MOVIE + PLAY -->
-<section class="sec" id="movie">
-  <div class="dh"><h2>The movie, and playing it now</h2></div>
-  <div class="small">
-    <div><h3>The live action movie</h3><p>Netflix and Ryan Reynolds announced a live action Dragon's Lair in 2020, and James Bobin was later reported as director. Nothing released yet that I could find.</p></div>
-    <div><h3>Hypseus Singe</h3><p>The maintained fork of the Daphne laserdisc emulator. Runs on Mac, Windows and Raspberry Pi. Needs the ROMs plus the disc video files.</p></div>
-    <div><h3>Dexter</h3><p>Swaps the worn out Pioneer in a real cabinet for a board that plays a disc image. The game never knows.</p></div>
-    <div><h3>Official releases</h3><p>Digital Leisure has kept Dragon's Lair, Space Ace, Dragon's Lair II, Time Traveler and Thayer's Quest in print on PC and consoles.</p></div>
+  <div class="small" style="margin-top:34px">
+    <div><h3>The movie</h3><p>Netflix and Ryan Reynolds announced a live action Dragon's Lair in 2020, and James Bobin was later reported as director. Nothing released yet that I could find.</p></div>
+    <div><h3>Play it now</h3><p>Hypseus Singe, the maintained fork of the Daphne laserdisc emulator, runs it on Mac, Windows and Raspberry Pi with the ROMs and disc video. DirkSimple is a small open source player. Digital Leisure keeps official versions in print.</p></div>
   </div>
 
   <div class="sources">
-    <span style="font:11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">Sources</span>
+    <h3>Sources</h3>
     <ul>
+      <li><a href="https://github.com/icculus/DirkSimple">DirkSimple</a>: room timing, scene table and picking rules</li>
       <li><a href="https://dragons-lair-project.com/games/related/prototype/dl">Dragon's Lair Project: prototype</a></li>
       <li><a href="https://dragons-lair-project.com/games/related/walkthru/lair/hard.asp">Dragon's Lair Project: Hard guide and scores</a></li>
       <li><a href="https://dragons-lair-project.com/games/related/walkthru/lair/veryhard.asp">Dragon's Lair Project: very hard timing</a></li>
       <li><a href="https://www.dragons-lair-project.com/tech/docs/conv_dl.asp">Dragon's Lair Project: player conversion</a></li>
       <li><a href="https://new.tcrf.net/Dragon%27s_Lair_(Arcade)">The Cutting Room Floor</a></li>
       <li><a href="https://www.exotica.org.uk/wiki/Lost_In_Translation/Dragon%27s_Lair">Exotica: hardware</a></li>
-      <li><a href="https://www.arcade-history.com/game/702/">Arcade History: Dragon's Lair</a></li>
       <li><a href="https://en.wikipedia.org/wiki/Dragon%27s_Lair_(1983_video_game)">Wikipedia: Dragon's Lair</a></li>
-      <li><a href="https://www.trueachievements.com/game/Dragons-Lair/walkthrough">TrueAchievements: HD move guide</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Halcyon_(console)">Wikipedia: Halcyon</a></li>
+      <li><a href="https://www.engadget.com/2016-07-10-dexter-laserdisc-replacement.html">Engadget: Dexter</a></li>
       <li><a href="https://en.wikipedia.org/wiki/Space_Ace">Wikipedia: Space Ace</a></li>
       <li><a href="https://en.wikipedia.org/wiki/Time_Traveler_(video_game)">Wikipedia: Time Traveler</a></li>
       <li><a href="https://www.arcade-history.com/game/4421/">Arcade History: Time Traveler</a></li>
       <li><a href="https://en.wikipedia.org/wiki/Dragon%27s_Lair_II:_Time_Warp">Wikipedia: Dragon's Lair II</a></li>
       <li><a href="https://www.gamedeveloper.com/business/video-us-vs-them-and-the-laserdisc-debacle">Game Developer: Us vs. Them</a></li>
       <li><a href="https://www.arcade-history.com/game/2879/">Arcade History: Thayer's Quest</a></li>
-      <li><a href="https://en.wikipedia.org/wiki/Halcyon_(console)">Wikipedia: Halcyon</a></li>
-      <li><a href="https://emulation.gametechwiki.com/index.php/Hypseus_Singe">Emulation Wiki: Hypseus Singe</a></li>
       <li><a href="https://www.flickeringmyth.com/ryan-reynolds-dragons-lair-movie-finds-its-director-in-james-bobin/">Flickering Myth: the movie</a></li>
     </ul>
+    <h3 style="margin-top:18px">Pictures</h3>
+    <ul>
+      <li>Game frames and 1983 to 1984 tapes: <a href="https://archive.org/details/Arcade_Longplay_Dragons_Lair">World of Longplays, Dragon's Lair arcade</a> (played by Ironclaw), which includes the creators' archival footage from the Digital Leisure release</li>
+      <li>Prototype frames and slates: <a href="https://archive.org/details/youtube-AnoMtRBTu9U">prototype disc video</a> and <a href="https://archive.org/details/youtube-HMtN7cIlMYk">1983 prototype video</a></li>
+      <li>Dragon's Lair II: <a href="https://archive.org/details/Arcade_Longplay_114_Dragons_Lair_II_-_Time_Warp">World of Longplays</a> (played by T-0815)</li>
+      <li>Thayer's Quest and Halcyon: <a href="https://archive.org/details/thayers-quest-rdi-halcyon-laserdisc">Halcyon laserdisc capture</a></li>
+      <li>Space Ace: <a href="https://archive.org/details/SpaceAce_201902">archival movie</a></li>
+      <li>Time Traveler cabinet: <a href="https://commons.wikimedia.org/wiki/File:Arcade_complete_view.jpg">Onoff456</a>, public domain</li>
+      <li>PR-7820 diagram: <a href="https://commons.wikimedia.org/wiki/File:PR-7820_photodiode_array.jpg">RiverMan18</a>, CC BY-SA 4.0</li>
+      <li>Astron Belt disc: <a href="https://commons.wikimedia.org/wiki/File:Sega_Astron_Belt.jpg">Mbrickn</a>, CC0</li>
+    </ul>
   </div>
-  <footer>Made by <a href="https://github.com/hurtz">Jason O'Connell</a> (hurtz2k) with Claude. Part of <a href="../">Plain Weird</a>. Videos play from YouTube and belong to their uploaders.</footer>
+  <footer>Made by <a href="https://github.com/hurtz">Jason O'Connell</a> (hurtz2k) with Claude. Part of <a href="../">Plain Weird</a>. Dragon's Lair, Space Ace, Dragon's Lair II, Time Traveler, Thayer's Quest and Us vs. Them belong to their owners. Frames and archival stills are shown here for history and commentary.</footer>
 </section>
 
 </main>
 
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Picture viewer">
+  <button type="button" id="lbclose">Close</button>
+  <figure><img id="lbimg" alt=""><figcaption id="lbcap"></figcaption></figure>
+</div>
+
 <script>
+var DATA={"rooms":{"flaming_ropes":{"n":"Fire Pit","k":"Flaming ropes over a pit","d":2,"m":[["R",1.25,2.13,2.23,251,3561,[]],["R",1.08,1.83,2.23,379,3693,[]],["R",1.08,1.83,2.23,495,0,[]],["R",0.85,1.7,1.51,915,0,[]]],"i":"room-fire-pit","f":0},"flaming_ropes_reversed":{"n":"Fire Pit, mirrored","k":"Flaming ropes, right to left","d":3,"m":[["L",1.25,2.13,0.0,379,0,[]],["L",1.11,1.83,1.58,495,12857,[]],["L",1.08,1.83,1.57,0,0,[]],["L",0.85,1.7,1.5,0,0,[]]],"i":"room-fire-pit","f":1,"t":"Bug in the original program: the last two jumps are the right moves but pay zero points. That is why this room is worth 923 and the normal one is worth 2,089."},"bower":{"n":"Bower","k":"Bedroom, the closing wall","d":1,"m":[["U",0.0,2.03,1.77,379,9181,[]]],"i":"room-bower","f":0,"t":"Left or Right here and Dirk chokes."},"flying_horse":{"n":"Flying Barding","k":"Magic horse through fire","d":3,"m":[["R",3.8,4.52,4.52,495,10021,[]],["L",0.72,1.34,1.38,495,0,[]],["R",1.21,1.83,1.83,495,0,[]],["L",1.31,1.97,1.97,495,0,[]],["L",1.31,1.87,1.87,1326,0,[]],["L",0.72,1.38,1.41,495,0,[]]],"i":"room-flying-barding","f":0},"flying_horse_reversed":{"n":"Flying Barding, mirrored","k":"Magic horse, flipped","d":3,"m":[["UL",3.77,4.49,0.0,915,0,["L"]],["R",0.72,1.25,1.28,915,0,[]],["L",1.31,1.97,1.97,495,0,[]],["R",1.31,1.97,1.97,495,0,[]],["R",1.25,1.8,1.8,1939,0,[]],["R",0.79,1.44,1.48,495,0,[]]],"i":"room-flying-barding","f":1},"alice_room":{"n":"Wizard's Kitchen","k":"\u201cDrink Me\u201d","d":2,"m":[["R",0.0,2.06,2.02,379,18282,[]]],"i":"room-kitchen","f":0,"t":"Leave the Drink Me bottle alone."},"crypt_creeps":{"n":"Mausoleum","k":"Crypt Creeps, skulls, the grabbing hand","d":5,"m":[["U",2.23,3.24,3.24,495,11489,[]],["S",0.69,1.28,1.31,915,0,[]],["U",1.05,2.19,2.19,495,0,[]],["S",0.59,1.18,1.21,915,0,[]],["L",0.43,1.83,1.83,495,0,[]],["S",0.69,1.83,1.83,495,0,[]]],"i":"room-mausoleum","f":0},"crypt_creeps_reversed":{"n":"Mausoleum, mirrored","k":"Crypt Creeps, flipped","d":5,"m":[["U",2.46,3.47,0.0,495,0,[]],["S",0.49,0.92,0.92,2191,0,[]],["U",1.15,2.23,2.23,495,0,[]],["S",0.69,1.11,1.15,2191,0,[]],["R",0.49,1.83,1.83,495,0,[]],["S",0.75,1.83,1.83,495,0,[]]],"i":"room-mausoleum","f":1},"underground_river":{"n":"Underground River","k":"Boulders, rapids, whirlpools","d":7,"m":[["L",0.0,1.02,1.02,379,22936,[]],["R",0.95,1.9,1.93,379,0,[]],["L",1.05,2.0,2.03,379,0,[]],["R",0.95,1.97,1.97,379,0,[]],["U",4.52,5.14,5.21,495,0,["R"]],["U",1.83,2.49,2.52,495,0,["L"]],["U",1.8,2.46,2.49,495,0,["R"]],["U",2.16,2.79,2.82,495,0,["L"]],["R",3.83,5.47,5.5,251,0,[]],["L",1.41,2.72,2.72,251,0,[]],["R",1.34,2.49,2.49,251,0,[]],["L",1.44,2.72,2.72,251,0,[]],["U",3.87,5.14,5.18,495,0,["R"]]],"i":"room-river","f":0,"t":"Boulders, rapids, whirlpools, then the exit."},"falling_platform_short":{"n":"Elevator Floor, short","k":"Three levels down","d":3,"m":[["L",5.01,5.34,6.88,3255,14847,[]]],"i":"room-elevator-short","f":0,"t":"Three stops, three chances to jump to the exit."},"vestibule":{"n":"Vestibule","k":"Small crumbling room","d":1,"m":[["R",1.97,4.0,4.0,251,1887,["D"]],["R",0.0,0.95,0.67,251,0,[]]],"i":"room-vestibule","f":0,"t":"Crumbles on three sides, then the ceiling caves in."},"rolling_balls":{"n":"Boulder Trench","k":"Colored balls","d":2,"m":[["D",5.14,5.93,5.96,251,26098,[]],["D",1.08,1.83,1.87,379,0,[]],["D",1.21,1.93,1.97,379,0,[]],["D",1.15,1.93,1.97,379,0,[]],["D",1.15,1.93,1.97,379,0,[]],["D",1.11,1.87,1.9,379,0,[]],["U",0.0,1.41,1.9,379,0,[]]],"i":"room-boulder","f":0},"electric_cage_and_geyser":{"n":"Three Caves","k":"Electric cage and the geyser","d":3,"m":[["U",0.56,2.92,0.0,915,0,[]],["U",0.0,0.39,1.51,1326,0,[]],["L",3.11,3.51,5.37,2191,26893,[]]],"i":"room-three-caves","f":0},"black_knight":{"n":"Knight and Light","k":"Black Knight on horseback","d":3,"m":[["L",2.69,3.51,0.0,1939,0,[]],["L",3.11,3.87,3.87,1939,0,[]],["R",2.46,3.21,3.24,2675,0,[]]],"i":"room-knight","f":0},"grim_reaper":{"n":"Socker Boppers","k":"The Grim Reaper","d":3,"m":[["U",1.57,1.93,0.0,4026,0,[]],["S",2.98,3.57,3.6,2191,8151,[]],["D",1.57,2.92,2.92,1326,0,[]],["U",1.48,2.98,2.98,915,0,[]]],"i":"room-socker","f":0},"grim_reaper_reversed":{"n":"Socker Boppers, mirrored","k":"The Grim Reaper, flipped","d":3,"m":[["U",0.72,1.02,0.0,4750,0,[]],["S",3.05,3.6,3.6,2191,19628,[]],["D",2.16,2.98,2.98,1326,0,[]],["U",1.61,2.56,2.59,915,0,[]]],"i":"room-socker","f":1},"lizard_king":{"n":"Pot of Gold","k":"The Lizard King","d":3,"m":[["L",0.46,2.13,0.0,1939,0,["U","UL"]],["R",3.57,4.42,4.46,1326,0,[]],["R",2.65,3.47,3.51,1326,0,[]],["R",1.21,2.06,2.1,1326,0,[]],["R",3.83,4.78,4.82,1326,0,[]],["R",1.41,2.13,2.16,2191,0,[]],["U",0.46,2.19,2.23,3255,0,["S"]],["S",0.82,1.54,1.57,0,0,[]],["S",0.33,0.95,0.95,0,0,["D"]],["S",0.16,0.98,1.02,0,0,[]],["S",0.49,0.92,0.92,0,0,["D"]],["S",0.56,1.08,1.11,0,0,[]]],"i":"room-pot","f":0,"t":"Chase the pot of gold, grab your sword back, then fight."},"smithee":{"n":"Forge","k":"Smithee, the living statue","d":6,"m":[["S",2.23,3.08,0.0,915,0,[]],["S",1.93,2.46,2.49,1939,0,[]],["L",0.95,2.69,2.72,1326,0,[]],["S",1.05,1.83,1.83,1326,0,[]],["S",5.21,6.26,6.26,915,0,[]]],"i":"room-forge","f":0},"smithee_reversed":{"n":"Forge, mirrored","k":"Smithee, flipped","d":6,"m":[["S",2.19,3.11,0.0,1326,0,[]],["S",1.93,2.46,2.49,2191,0,[]],["R",0.95,2.72,2.75,1326,0,[]],["S",0.98,1.8,1.8,1326,0,[]],["S",5.18,6.23,6.23,915,0,[]]],"i":"room-forge","f":1},"wind_room":{"n":"Breathing Door","k":"The wind room","d":1,"m":[["R",7.41,8.13,8.16,379,8709,[]]],"i":"room-breathing","f":0,"t":"The wind room tempts you with a diamond. Don't reach for it."},"tentacle_room":{"n":"Tentacles and Halberd","k":"Tentacle room","d":4,"m":[["S",2.69,3.96,3.96,49,2353,[]],["U",1.41,2.33,2.36,379,0,[]],["R",1.18,1.93,1.9,495,0,[]],["D",0.49,1.41,1.44,915,0,["R"]],["L",1.97,2.72,2.72,1326,0,[]],["U",0.36,2.19,2.23,1939,0,["R"]]],"i":"room-tentacles","f":0},"snake_room":{"n":"Mist Room","k":"Snakes and the skull","d":1,"m":[["S",1.97,2.69,0.0,495,0,[]],["S",0.92,1.64,1.67,2675,0,[]],["S",1.05,1.87,1.83,49,0,[]],["U",0.0,0.72,0.72,1939,0,["R","UR"]]],"i":"room-mist","f":0},"bubbling_cauldron":{"n":"Wizard's Chamber","k":"The bubbling cauldron","d":3,"m":[["U",1.97,2.72,0.0,2191,0,[]],["S",1.64,2.49,2.52,3255,0,[]],["D",0.56,1.38,1.41,3255,0,["DR"]],["S",0.66,1.74,1.74,2191,0,[]],["R",1.8,2.92,2.95,1326,0,[]]],"i":"room-chamber","f":0},"flattening_staircase":{"n":"YMCA Room","k":"Flattening stairs","d":4,"m":[["L",2.03,2.75,0.0,495,0,[]],["S",1.48,2.19,2.23,1939,0,[]],["L",0.75,1.48,1.51,915,0,["UL"]],["L",1.97,3.18,3.21,1326,0,[]]],"i":"room-ymca","f":0},"giddy_goons":{"n":"Spiral Staircase","k":"Giddy Goons","d":5,"m":[["S",2.39,3.11,3.15,379,5683,[]],["R",1.11,1.83,1.83,1326,0,[]],["S",1.48,2.13,2.16,3255,0,["U"]],["U",0.85,1.54,1.61,0,0,["L"]]],"i":"room-spiral","f":0},"fire_room":{"n":"Fire Room","k":"Lightning and the bench","d":2,"m":[["R",2.88,3.51,0.0,915,0,[]],["U",1.15,2.1,2.16,1326,0,["L"]],["L",0.66,1.97,1.97,915,0,["D","DL"]],["L",0.2,1.64,1.64,1326,0,[]]],"i":"room-fire-room","f":0},"yellow_brick_road":{"n":"Yellow Brick Road","k":"Crumbling floor, pool, spider","d":6,"m":[["L",0.0,1.83,0.0,1326,0,[]],["U",0.89,2.03,2.06,1939,0,[]],["R",1.08,2.46,2.46,2191,0,[]],["U",0.49,1.77,1.83,2675,0,[]],["L",0.66,2.1,2.13,3255,0,[]],["U",1.25,1.93,1.93,3551,0,[]],["S",2.49,3.21,3.24,4026,0,[]],["R",0.72,1.48,1.54,5000,0,[]],["U",0.75,2.06,2.1,4750,0,[]]],"i":"room-ybr","f":0},"yellow_brick_road_reversed":{"n":"Yellow Brick Road, mirrored","k":"Crumbling floor, flipped","d":6,"m":[["R",0.0,1.87,0.0,1939,0,[]],["U",0.89,2.03,2.06,2191,0,[]],["L",1.08,2.42,2.16,2675,0,[]],["U",0.49,1.74,1.74,3255,0,[]],["R",0.66,2.06,2.1,3551,0,[]],["U",1.21,1.93,1.93,4026,0,[]],["S",2.49,3.21,3.24,4026,0,[]],["L",0.72,1.51,1.54,5000,0,[]],["U",0.75,2.06,2.1,4750,0,[]]],"i":"room-ybr","f":1},"catwalk_bats":{"n":"Catwalk","k":"Bats","d":2,"m":[["U",0.0,2.69,0.0,915,0,[]],["UL",0.0,1.15,1.15,915,0,["L","U"]],["S",1.74,2.46,2.49,2675,0,[]],["R",0.36,1.44,1.48,915,0,["UR"]],["R",0.89,1.44,1.21,3551,0,[]]],"i":"room-catwalk","f":0},"robot_knight":{"n":"Chapel","k":"Robot Knight, electric floor","d":2,"m":[["R",2.88,4.26,0.0,1939,0,[]],["L",0.43,1.28,1.31,1939,0,[]],["U",0.95,1.51,1.54,2191,0,[]],["L",1.15,2.16,2.16,1939,0,[]],["R",1.21,2.1,2.13,1939,0,[]],["L",0.39,1.02,1.05,1939,0,[]],["R",0.2,0.75,0.75,4026,0,[]],["S",1.61,2.69,2.69,2191,0,[]]],"i":"room-chapel","f":0},"robot_knight_reversed":{"n":"Chapel, mirrored","k":"Robot Knight, flipped","d":2,"m":[["L",3.47,4.36,0.0,2191,0,[]],["R",0.56,1.28,1.31,2191,0,[]],["U",0.95,1.57,1.61,2675,0,[]],["R",1.25,2.13,2.16,2191,0,[]],["L",1.21,2.1,2.13,2191,0,[]],["R",0.39,1.02,1.05,2191,0,[]],["L",0.2,0.75,0.75,4750,0,[]],["S",1.83,2.69,2.72,2675,0,[]]],"i":"room-chapel","f":1},"giant_bat":{"n":"Giant Bat","k":"The bat staircase","d":3,"m":[["S",0.0,1.02,0.0,1326,0,[]],["L",0.82,1.38,1.41,2191,0,[]],["UL",1.7,2.33,2.36,1326,0,["L","U"]],["S",1.74,2.33,2.36,3551,0,[]]],"i":"room-giant-bat","f":0},"throne_room":{"n":"Throne Room","k":"The magnet ball steals your sword","d":3,"m":[["R",1.97,2.72,2.75,1326,20674,[]],["U",0.0,0.69,0.69,3255,0,["R"]],["R",0.13,0.89,0.89,2675,0,[]],["R",3.41,4.36,4.29,1939,0,[]]],"i":"room-throne","f":0},"tilting_room":{"n":"Tilting Room","k":"The tilting floor","d":3,"m":[["D",3.77,4.49,4.46,1939,20187,[]],["U",0.89,1.54,1.57,2675,0,[]],["L",0.49,1.05,0.79,1939,0,[]]],"i":"","f":0,"t":"This room never came up in the run the pictures came from."},"mudmen":{"n":"Mudmen","k":"Stepping stones over the mud","d":5,"m":[["S",3.96,5.93,0.0,1326,0,[]],["U",2.72,3.67,3.7,1326,0,[]],["U",0.29,1.61,1.61,2191,0,["UL"]],["U",1.02,1.54,1.54,2675,0,["R","UR"]],["U",0.85,1.93,1.93,1326,0,[]],["U",0.66,1.61,1.64,1326,0,[]],["UL",1.93,2.62,2.65,1326,0,["U"]],["U",1.11,2.72,2.72,1326,0,[]],["U",2.82,4.69,4.39,1326,0,["R"]]],"i":"room-mudmen","f":0,"t":"On Hard, Up near the end pays more than Right, which ends the scene early."},"falling_platform_long":{"n":"Elevator Floor, long","k":"Nine levels down","d":3,"m":[["L",5.01,5.34,6.82,3255,14847,[]]],"i":"room-elevator-long","f":0,"t":"Nine stops. Waiting for later stops pays bonus points on Hard."},"falling_platform_long_reversed":{"n":"Elevator Floor, long, mirrored","k":"Nine levels down, flipped","d":3,"m":[["R",5.01,5.34,0.0,3255,0,[]]],"i":"room-elevator-long","f":1,"t":"Nine stops, exit on the other side."},"the_dragons_lair":{"n":"Dragon's Lair","k":"Singe, the finale","d":6,"m":[["L",3.93,4.85,0.0,1326,0,[]],["L",10.58,11.14,11.21,1939,0,[]],["L",6.98,8.59,8.62,1326,0,[]],["DL",22.02,22.81,22.87,2191,0,["D","L"]],["D",6.55,7.37,7.41,2191,0,["DL","L"]],["R",4.65,5.31,5.34,3255,0,[]],["R",2.65,3.67,3.67,2191,0,["U","UR"]],["S",0.39,1.48,1.48,3551,0,["R"]],["S",2.69,3.77,3.77,4026,0,[]],["L",2.42,3.9,3.9,4750,0,["U","UL"]],["S",1.11,2.23,2.23,5000,0,[]]],"i":"room-lair","f":0,"t":"The last Sword is the kill. Die here and you replay the lair until you win."}},"rows":[["flaming_ropes","flaming_ropes_reversed","bower"],["flying_horse","flying_horse_reversed","alice_room"],["crypt_creeps","crypt_creeps_reversed","underground_river"],["falling_platform_short","falling_platform_short","vestibule"],["rolling_balls","electric_cage_and_geyser","black_knight"],["grim_reaper","grim_reaper_reversed","lizard_king"],["smithee","smithee_reversed","wind_room"],["tentacle_room","snake_room","bubbling_cauldron"],["flattening_staircase","giddy_goons","fire_room"],["yellow_brick_road","yellow_brick_road_reversed","catwalk_bats"],["robot_knight","robot_knight_reversed","giant_bat"],["throne_room","tilting_room","mudmen"],["falling_platform_long","falling_platform_long_reversed","the_dragons_lair"]]};
 (function(){
+  /* LEDs */
   var SEG={a:"M4,1 L24,1 L20,5 L8,5 Z",b:"M26,3 L26,23 L22,20.5 L22,7 Z",c:"M26,25 L26,45 L22,41 L22,27.5 Z",d:"M8,43 L20,43 L24,47 L4,47 Z",e:"M2,25 L6,27.5 L6,41 L2,45 Z",f:"M2,3 L6,7 L6,20.5 L2,23 Z",g:"M6,24 L9,21.6 L19,21.6 L22,24 L19,26.4 L9,26.4 Z"};
   var DIG={"0":"abcdef","1":"bc","2":"abged","3":"abgcd","4":"fgbc","5":"afgcd","6":"afgedc","7":"abc","8":"abcdefg","9":"abcdfg"};
-  function setSeg(el,str){if(!el)return;var h="";for(var i=0;i<str.length;i++){var on=DIG[str[i]]||"";h+='<svg viewBox="0 0 28 48" aria-hidden="true"><g transform="skewX(-6) translate(3,0)">';for(var k in SEG)h+='<path class="'+(on.indexOf(k)>-1?"on":"off")+'" d="'+SEG[k]+'"/>';h+="</g></svg>";}el.innerHTML=h;}
-  setSeg(document.getElementById("maxscore"),"326248");
-  setSeg(document.getElementById("free49"),"49");
+  function seg(str){var h='<span class="seg" aria-label="'+str+'">';for(var i=0;i<str.length;i++){var on=DIG[str[i]]||"";h+='<svg viewBox="0 0 28 48" aria-hidden="true"><g transform="skewX(-6) translate(3,0)">';for(var k in SEG)h+='<path class="'+(on.indexOf(k)>-1?"on":"off")+'" d="'+SEG[k]+'"/>';h+="</g></svg>";}return h+"</span>";}
 
-  var ROOMS=[
-    {n:"Drawbridge",k:"Tentacles from the moat",m:["S"],note:"US boards added this opener at ROM revision E. Europe had it from the start."},
-    {n:"Vestibule",k:"Small crumbling room",m:["R","R"],p:[551]},
-    {n:"Flying Barding",k:"Horse ride through fire",m:["L","R","L","R","R","R"],mirror:"all",p:[3850,5303]},
-    {n:"Mausoleum",k:"Crypt Creeps, skulls, grabbing hand",m:["U","S","U","S",["L","R"],"S"],p:[3859,6411]},
-    {n:"Three Caves",k:"Cage, lava geyser, jagged door",m:["U","U","L"],p:[4481],note:"Jump when the geyser is at zero height. Three chances."},
-    {n:"Socker Boppers",k:"The Grim Reaper",m:["U","S",["D","U"],"U"],p:[8507,9231]},
-    {n:"Breathing Door",k:"Wind room",m:["R"],p:[428]},
-    {n:"Mist Room",k:"Snakes and the skull",m:["S","S","S","U"],p:[5207]},
-    {n:"Fire Pit",k:"Burning ropes",m:["R","R","R","R"],mirror:"all",p:[2089,923]},
-    {n:"Fire Room",k:"Lightning from the corner",m:["R","L","D","L"],p:[4531]},
-    {n:"Catwalk",k:"Collapsing walkway, bats",m:["U","U","S","R","R"],p:[9020]},
-    {n:"Chapel",k:"Robot Knight, electric checkered floor",m:[["L","R"],"U",["L","R"],["R","L"],["L","R"],["R","L"],"S"],p:[18152,21104]},
-    {n:"Mudmen",k:"Lava people and stepping stones",m:["S","U","U","U","U","U","U","U","U"],p:[14692],note:"Near the end, Up pays more than Right, which ends the scene early."},
-    {n:"Elevator Floor",k:"Falling platforms",m:[["L","R"]],p:[3304,5619],note:"Jump toward the exit when it lines up. Three of the four rides exit left. On the nine floor rides, waiting for later stops pays bonus points."},
-    {n:"Pirates of the Caribbean",k:"Underground river: boulders, rapids, whirlpools",m:["L","R","L","R","U","U","U","U","R","L","R","L","R"],p:[4673],note:"Boulders, rapids, whirlpools, exit. On Hard the first whirlpool is skipped but still scores."},
-    {n:"Boulder Trench",k:"Colored balls ramp",m:["D","D","D","D","D","D","U"],p:[2574]},
-    {n:"Pot of Gold",k:"The Lizard King",m:["L","R","R","R","R","R","U","S","S","S","S","S"],p:[12738]},
-    {n:"Forge",k:"Smithee and the flying weapons",m:["S","S",["L","R"],"S","S"],p:[6470,7133]},
-    {n:"Wizard's Chamber",k:"The Cauldron Wizard",m:["U","S","D","S","R"],p:[12267]},
-    {n:"Spiral Staircase",k:"Giddy Goons",m:["S","R","S","U"],p:[5009],note:"Shortcut: Sword, Right, Up skips the second wave."},
-    {n:"Yellow Brick Road",k:"Crumbling floor, pool, spider",m:[["L","R"],"U",["R","L"],"U",["L","R"],"U","S",["R","L"],"U"],p:[28762,31462]},
-    {n:"Giant Bat",k:"Bat staircase",m:["S","L","U","S","L"],p:[8492]},
-    {n:"Throne Room",k:"The magnet ball steals your sword",m:["R","R","R","R"],hard:{at:1,add:"U"},p:[9244]},
-    {n:"Bower",k:"Bedroom, closing wall",m:["U"],p:[428],note:"Left or Right here and Dirk chokes."},
-    {n:"Wizard's Kitchen",k:"“Drink Me”",m:["R"],p:[428],note:"Ignore the bottle."},
-    {n:"Knight and Light",k:"Black Knight on horseback",m:["L","L","R"],hard:{at:0,add:"U"},p:[6981]},
-    {n:"Tentacles and Halberd",k:"Tentacle room",m:["S","U","R","D","L","U"],p:[5152]},
-    {n:"YMCA Room",k:"Flattening stairs",m:["L","S","L","L"],p:[4724]},
-    {n:"Tilting Room",k:"Tilting checkered floor",m:["D","U","L"],p:[6602]},
-    {n:"Dragon's Lair",k:"Singe, the finale",m:["L","L","L","L","L","R","U","S","S","U","S"],p:[37251],note:"Hard adds an extra Up and Right after the second pillar falls. The last Sword is the kill."}
-  ];
-  var mirrored=false,hard=false,swap={L:"R",R:"L"};
-  function seq(r){
-    var out=r.m.map(function(x){
-      if(Array.isArray(x))return{k:mirrored?x[1]:x[0],flip:true};
-      if(r.mirror==="all"&&(x==="L"||x==="R"))return{k:mirrored?swap[x]:x,flip:true};
-      return{k:x,flip:false};
-    });
-    if(hard&&r.hard)out.splice(r.hard.at,0,{k:r.hard.add,add:true});
-    return out;
-  }
-  var ARROW={U:'<svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',D:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>',L:'<svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>',R:'<svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'};
-  var NAME={U:"Up",D:"Down",L:"Left",R:"Right",S:"Sword"};
-  function chip(c,extra){var cls="chip"+(c.k==="S"?" s":"")+(c.flip?" flip":"")+(c.add?" add":"")+(extra||"");return '<span class="'+cls+'" title="'+NAME[c.k]+'" aria-label="'+NAME[c.k]+'">'+(c.k==="S"?"SWORD":ARROW[c.k])+"</span>";}
+  var R=DATA.rooms, ROWS=DATA.rows;
+  var ARROW={U:"M12 19V5M5 12l7-7 7 7",D:"M12 5v14M5 12l7 7 7-7",L:"M19 12H5M12 5l-7 7 7 7",R:"M5 12h14M12 5l7 7-7 7",UL:"M18 18L6 6M6 15V6h9",UR:"M6 18L18 6M9 6h9v9",DL:"M18 6L6 18M6 9v9h9",DR:"M6 6l12 12M18 9v9H9"};
+  var NAME={U:"Up",D:"Down",L:"Left",R:"Right",S:"Sword",UL:"Up left",UR:"Up right",DL:"Down left",DR:"Down right"};
+  function chip(k,extra){return '<span class="chip'+(k==="S"?" s":"")+(extra||"")+'" title="'+NAME[k]+'" aria-label="'+NAME[k]+'">'+(k==="S"?"SWORD":'<svg viewBox="0 0 24 24"><path d="'+ARROW[k]+'"/></svg>')+"</span>";}
   function fmt(n){return n.toLocaleString("en-US");}
-  function renderMap(){
-    document.getElementById("map").innerHTML=ROOMS.map(function(r){
-      var pts=r.p?fmt(r.p[0])+(r.p[1]?"<small>mirrored "+fmt(r.p[1])+"</small>":""):"<small>opener</small>";
-      return '<div class="mrow"><div><span class="nm">'+r.n+'</span><span class="nk">'+r.k+'</span></div><div class="chips">'+seq(r).map(function(c){return chip(c);}).join("")+'</div><div class="pts">'+pts+"</div>"+(r.note?'<div class="note">'+r.note+"</div>":"")+"</div>";
-    }).join("");
-  }
-  function bind(id,set){var b=document.getElementById(id);b.addEventListener("click",function(){var v=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",String(v));set(v);renderMap();resetDrill();});}
-  bind("t-mirror",function(v){mirrored=v;});
-  bind("t-hard",function(v){hard=v;});
-  renderMap();
+  function total(r){return 49+r.m.reduce(function(a,m){return a+m[4];},0);}
+  function slug(k){return "room-"+k.replace(/_/g,"-");}
+  function rowOf(k){for(var i=0;i<ROWS.length;i++)if(ROWS[i].indexOf(k)>-1)return i+1;return 0;}
 
+  /* scene table */
+  var t=document.getElementById("table13"), th="";
+  ROWS.forEach(function(row,i){
+    th+='<div class="rn">'+(i+1)+'</div>';
+    row.forEach(function(k){var r=R[k];
+      th+='<a href="#'+slug(k)+'" class="'+(r.f?"flip ":"")+(i===12?"lock":"")+'">'+(r.i?'<img src="img/'+r.i+'.webp" alt="" loading="lazy">':'<span class="noimg"></span>')+'<span>'+r.n+'</span></a>';});
+  });
+  t.innerHTML=th;
+
+  /* rooms in table order, no duplicates */
+  var order=[];ROWS.forEach(function(row){row.forEach(function(k){if(order.indexOf(k)<0)order.push(k);});});
+  var html="";
+  order.forEach(function(k){
+    var r=R[k], tot=total(r);
+    var mv=r.m.map(function(m,j){
+      var len=Math.max(m[3],m[2],0.5), a=Math.min(m[1]/len,1)*100, b=Math.max(Math.min(m[2]/len,1)*100-a,2);
+      var alts=m[6]&&m[6].length?m[6].map(function(x){return NAME[x];}).join(", "):"";
+      return '<li class="mv" title="'+(alts?"Also accepted: "+alts:"")+'"><span class="ix">'+(j+1)+'</span>'+chip(m[0])+'<span class="track" aria-hidden="true"><i class="'+(m[4]===0?"zero":"")+'" style="left:'+a.toFixed(1)+'%;width:'+b.toFixed(1)+'%"></i></span><span class="win"><em>'+m[1].toFixed(2)+' to '+m[2].toFixed(2)+'s</em> · '+(m[4]?"+"+m[4]:"0 pts")+'</span></li>';
+    }).join("");
+    var altsAll=[];r.m.forEach(function(m,j){if(m[6]&&m[6].length)altsAll.push("move "+(j+1)+": "+m[6].map(function(x){return NAME[x];}).join(" or "));});
+    html+='<article class="room'+(r.f?" flip":"")+'" id="'+slug(k)+'"><div class="ph">'+(r.i?'<img src="img/'+r.i+'.webp" alt="'+r.n+'" loading="lazy" data-cap="'+r.n+'">':'<div class="noimg">No picture. '+(r.t||"")+'</div>')+'<span class="rowtag">Row '+rowOf(k)+'</span></div><div class="body"><h3>'+r.n+'</h3><p class="nk">'+r.k+'</p><div class="stats"><span><b>'+fmt(tot)+'</b> pts</span><span><b>'+r.m.length+'</b> moves</span><span><b>'+r.d+'</b> ways to die</span></div><ul class="moves">'+mv+'</ul>'+(altsAll.length?'<p class="also">Also accepted: '+altsAll.join("; ")+'.</p>':"")+(r.t&&r.i?'<p class="note">'+r.t+'</p>':"")+'</div></article>';
+  });
+  document.getElementById("roomlist").innerHTML=html;
+
+  /* drill */
   var sel=document.getElementById("drill-room"),track=document.getElementById("dtrack"),status=document.getElementById("dstatus"),box=document.getElementById("drill");
-  ROOMS.forEach(function(r,i){var o=document.createElement("option");o.value=i;o.textContent=r.n+" ("+r.k+")";sel.appendChild(o);});
-  sel.value="19";
+  order.forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=R[k].n;sel.appendChild(o);});
+  sel.value="giddy_goons";
   var pos=0,cur=[];
-  function drawTrack(){track.innerHTML=cur.map(function(c,i){return chip(c,(i<pos?" done":"")+(i===pos?" next":""));}).join("");}
-  function resetDrill(){cur=seq(ROOMS[+sel.value]);pos=0;drawTrack();status.className="dstatus";status.textContent="Ready. "+cur.length+" moves.";}
+  function ok(m,k){if(m[0]===k)return true;if(m[6]&&m[6].indexOf(k)>-1)return true;return m[0].length===2&&m[0].indexOf(k)>-1;}
+  function draw(){track.innerHTML=cur.map(function(m,i){return chip(m[0],(i<pos?" done":"")+(i===pos?" next":""));}).join("");}
+  function reset(){cur=R[sel.value].m;pos=0;draw();status.className="dstatus";status.textContent="Ready. "+cur.length+" moves.";}
   function press(k){
-    if(pos>=cur.length)resetDrill();
-    if(cur[pos].k===k){
-      pos++;drawTrack();
-      if(pos===cur.length){var r=ROOMS[+sel.value];status.className="dstatus win";status.textContent="Room clear"+(r.p?", "+fmt(mirrored&&r.p[1]?r.p[1]:r.p[0])+" points":"")+". Any move to go again.";}
+    if(!cur.length)return;
+    if(pos>=cur.length)reset();
+    if(ok(cur[pos],k)){pos++;draw();
+      if(pos===cur.length){status.className="dstatus win";status.textContent="Room clear, "+fmt(total(R[sel.value]))+" points. Any move to go again.";}
       else{status.className="dstatus";status.textContent="Good. "+(cur.length-pos)+" to go.";}
-    }else{
-      status.className="dstatus dead";status.textContent="Dirk dies. You hit "+NAME[k]+", the room wanted "+NAME[cur[pos].k]+".";
-      box.classList.remove("flash");void box.offsetWidth;box.classList.add("flash");pos=0;drawTrack();
-    }
+    }else{status.className="dstatus dead";status.textContent="Dirk dies. You hit "+NAME[k]+", the room wanted "+NAME[cur[pos][0]]+".";box.classList.remove("flash");void box.offsetWidth;box.classList.add("flash");pos=0;draw();}
   }
-  sel.addEventListener("change",resetDrill);
+  sel.addEventListener("change",reset);
   document.querySelectorAll(".pad button").forEach(function(b){b.addEventListener("click",function(){press(b.dataset.k);});});
   var KEYS={ArrowUp:"U",ArrowDown:"D",ArrowLeft:"L",ArrowRight:"R"," ":"S"};
   document.addEventListener("keydown",function(e){
+    if(!document.getElementById("lb").hidden)return;
     var r=box.getBoundingClientRect();
-    if(!(r.top<innerHeight&&r.bottom>0)||!(e.key in KEYS)||e.target===sel||e.target.tagName==="BUTTON"&&e.key===" ")return;
+    if(!(r.top<innerHeight&&r.bottom>0)||!(e.key in KEYS)||e.target===sel||(e.target.tagName==="BUTTON"&&e.key===" "))return;
     e.preventDefault();press(KEYS[e.key]);
   });
-  resetDrill();
+  reset();
+
+  /* lightbox */
+  var lb=document.getElementById("lb"),lbimg=document.getElementById("lbimg"),lbcap=document.getElementById("lbcap"),last=null;
+  function open(img){
+    var fig=img.closest("figure"),cap=fig?fig.querySelector("figcaption"):null;
+    lbimg.src=img.currentSrc||img.src;lbimg.alt=img.alt;
+    lbimg.classList.toggle("flip",!!img.closest(".flip"));
+    lbcap.innerHTML=cap?cap.innerHTML:(img.dataset.cap||img.alt);
+    last=document.activeElement;lb.hidden=false;document.body.style.overflow="hidden";document.getElementById("lbclose").focus();
+  }
+  function close(){lb.hidden=true;document.body.style.overflow="";lbimg.src="";if(last)last.focus();}
+  document.addEventListener("click",function(e){
+    var img=e.target.closest(".ph img");
+    if(img&&!e.target.closest(".lb")){open(img);return;}
+    if(e.target===lb)close();
+  });
+  document.getElementById("lbclose").addEventListener("click",close);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!lb.hidden)close();});
 })();
 </script>
 </body>
