@@ -343,7 +343,7 @@ const P=[
 ["launch1980","Alley Cat",3,"E","The original 1983 Atari Alley Cat, pulled off the disk and running in RetroArch.",[]],
 ["dragons-lair","Dragon's Lair Hardware Manual",3,"T","A technical manual for the Dragon's Lair arcade hardware.",[]],
 ["rusty","Rusty n Edie's Tribute",3,"R","The legendary Ohio BBS, rebuilt as a tribute site.",[["Visit","https://rusty-edies-bbs.vercel.app"]]],
-["nes-ai","Self Learning NES",3,"E","An AI that teaches itself to play NES games.",[]],
+["nes-ai","Self Learning NES",3,"E","An AI that teaches itself to play NES games.",[["Watch it lose to Glass Joe",YT("Akmo6OG7vz8")]]],
 ["demoscene","Demoscene Viz",3,"R","A demoscene style visualizer.",[]],
 ["gamebeater","Gamebeater",3,"E","A ROM archive deduped across three clouds and a NAS.",[]],
 
@@ -354,6 +354,7 @@ const P=[
 ["scanmoines","ScanMoines / DSMRadar",4,"","A Raspberry Pi with two radios listens to Des Moines public safety radio and turns it into readable stories, with the original audio.",[["Read the stories","https://dsmradar.com/"],["Listen live","https://scanner.jasonoconnell.com/"]]],
 
 ["tape","The Tape That Loaded Again",5,"Y","Recovering 40 year old Commodore 64 programs from cassette, with AI, and proving every byte.",[["Watch",YT("TLCCnDBVDiY")]]],
+["vid-punchout","AI Plays Punch-Out!! and Loses to Glass Joe",5,"Y","My self learning NES AI really fights Glass Joe, the guy who has won one fight in a hundred. It knocks him down, runs out of hearts, turns pink, and loses. The trash talk is an AI voice reacting to what actually happened in the fight.",[["Watch",YT("Akmo6OG7vz8")]]],
 ["vid-modem","Every Dial Up Modem Sound, Explained",5,"Y","Every screech and hiss of a dial up handshake, slowed down and explained step by step.",[["Watch",YT("syQejFP70wM")]]],
 ["denise","The Amiga I Built From Scratch",5,"Y","A brand new Amiga computer called a DeniseITX, built by hand from a bare circuit board and a parts list. One of every part, soldered under a magnifier for hundreds of hours. It worked the first time, and I still use it all the time.",[["Watch",YT("nQnLxcAOYGY")]]],
 
@@ -375,7 +376,7 @@ const APPKEY={"vid-modem":["modem-lab","Try Modem Lab"]};
 const SECBTN=new Set(["Listen live"]);
 const TRAILKEY={"hot-aisle":"vid-hotaisle","catbird":"vid-catbird","platter":"vid-platter"};
 // action clips: short real gameplay loops (trailer cuts for Catbird, Hot Aisle and Platter)
-const CLIPS=["catbird","hot-aisle","platter","clauderooms","life-simulator","choppricer","cascade","play-with-me","nice-truck","vine-runner","plumbing","going-down","uber-ride","w0725b","they-saw-us","little-tempest","ascii-cat","tape","modem-lab","vid-modem"];
+const CLIPS=["catbird","hot-aisle","platter","clauderooms","life-simulator","choppricer","cascade","play-with-me","nice-truck","vine-runner","plumbing","going-down","uber-ride","w0725b","they-saw-us","little-tempest","ascii-cat","tape","modem-lab","vid-modem","vid-punchout"];
 const CLIP=Object.fromEntries(CLIPS.map(k=>[k,`vid/clip-${k}.mp4`]));
 // player
 const player=$("#player"),pframe=$("#pframe");
