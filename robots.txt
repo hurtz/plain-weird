@@ -1,0 +1,7 @@
+# Everyone is welcome, including AI search and answer engines:
+# OAI-SearchBot and ChatGPT-User (ChatGPT), Claude-SearchBot and Claude-User (Claude),
+# PerplexityBot (Perplexity), Googlebot (Google, and Brave, which follows the same rules).
+User-agent: *
+Allow: /
+
+Sitemap: https://jasonoconnell.com/sitemap.xml
