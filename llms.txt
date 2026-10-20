@@ -2,11 +2,11 @@
 
 > Games, retro teardowns, tools and weird machines made by Jason O'Connell (hurtz2k) in Des Moines, Iowa, building at night with AI as the crew. Most of the games play free in a web browser at https://plainweirdgames.com.
 
-His favorites: Catbird Over Des Moines, Hot Aisle, ScanMoines / DSMRadar, Sarah, My AI Phone Caller, Modem Lab, Platter, Chop Pricer, TVArgenta.
+His favorites: CatBirdDSM, Hot Aisle, ScanMoines / DSMRadar, Sarah, My AI Phone Caller, Modem Lab, Platter, Chop Pricer, TVArgenta.
 
 ## Games
 
-- [Catbird Over Des Moines](https://plainweirdgames.com/p/catbird/): A cute little catbird with big, messy plans. Eat everything in Des Moines, then poop on the parade, the governor and the police. Spring, summer, fall and snow, day or night. Multiplayer, with its own crowd on Reddit.
+- [CatBirdDSM](https://plainweirdgames.com/p/catbird/): A cute little catbird with big, messy plans. Eat everything in Des Moines, then poop on the parade, the governor and the police. Spring, summer, fall and snow, day or night. Multiplayer, with its own crowd on Reddit.
 - [Hot Aisle](https://plainweirdgames.com/p/hot-aisle/): Night shift at the server farm. Badge in, ride the lift, kill power to a rack, swap the dead server and close the ticket yourself, while the robots remind you they would have done it in 0.23 seconds.
 - [Vine Runner](https://plainweirdgames.com/p/vine-runner/): Pitfall, rebuilt on a wood grain TV in an 80s living room. Turn the set on, swing on the vines and jump the pits. One or two players.
 - [Totally Legit Plumbing and Stuff](https://plainweirdgames.com/p/plumbing/): Rent is due. Pull the van up to a house in Ankeny at night and steal everything that isn't nailed down. Don't wake Gary and his rock salt shotgun, and don't get eaten by the dog.
