@@ -1,87 +1,87 @@
 # Plain Weird by Jason O'Connell
 
-> Games, retro teardowns, tools and weird machines made by Jason O'Connell (hurtz2k) in Des Moines, Iowa, building at night with AI as the crew. Most of the games play free in a web browser at https://jasonoconnell.com.
+> Games, retro teardowns, tools and weird machines made by Jason O'Connell (hurtz2k) in Des Moines, Iowa, building at night with AI as the crew. Most of the games play free in a web browser at https://plainweirdgames.com.
 
 His favorites: Catbird Over Des Moines, Hot Aisle, ScanMoines / DSMRadar, Sarah, My AI Phone Caller, Modem Lab, Platter, Chop Pricer, TVArgenta.
 
 ## Games
 
-- [Catbird Over Des Moines](https://jasonoconnell.com/p/catbird/): A cute little catbird with big, messy plans. Eat everything in Des Moines, then poop on the parade, the governor and the police. Spring, summer, fall and snow, day or night. Multiplayer, with its own crowd on Reddit.
-- [Hot Aisle](https://jasonoconnell.com/p/hot-aisle/): Night shift at the server farm. Badge in, ride the lift, kill power to a rack, swap the dead server and close the ticket yourself, while the robots remind you they would have done it in 0.23 seconds.
-- [Vine Runner](https://jasonoconnell.com/p/vine-runner/): Pitfall, rebuilt on a wood grain TV in an 80s living room. Turn the set on, swing on the vines and jump the pits. One or two players.
-- [Totally Legit Plumbing and Stuff](https://jasonoconnell.com/p/plumbing/): Rent is due. Pull the van up to a house in Ankeny at night and steal everything that isn't nailed down. Don't wake Gary and his rock salt shotgun, and don't get eaten by the dog.
-- [Going Down](https://jasonoconnell.com/p/going-down/): Elevator Action, rebuilt in 3D. Four spies drop onto the same rooftop, raid the red doors for secret files, and race each other down to the getaway car in the basement.
-- [Life Simulator](https://jasonoconnell.com/p/life-simulator/): Everyday life, played out in full. Twenty seven little episodes: board a packed flight to seat 27B, survive the DMV, sit on hold, hunt for parking on Black Friday, build flat pack furniture, get a toddler out the door. You talk your way through some of them out loud.
-- [Play With Me](https://jasonoconnell.com/p/play-with-me/): She just wants to play. Forever. A survivor brawler in a toy room after midnight: she fights on her own, broken toys drop buttons that level her up, and you have to last until 6 AM.
-- [They Saw Us](https://jasonoconnell.com/p/they-saw-us/): A young alien's first solo survey over New Mexico goes wrong when a tracking camera spots him. Thread the canyons, shake the F-15s off your tail and get home. An iPhone game.
-- [Chop Pricer](https://jasonoconnell.com/p/choppricer/): You're the out of shape security cop at a discount grocery store. Watch the monitors, figure out who is actually stealing, then waddle out and catch them before you gas out.
-- [Clauderooms](https://jasonoconnell.com/p/clauderooms/): The Backrooms, found on a worn out camcorder tape from 1987. Walk the endless yellow halls. Headphones recommended.
-- [Nice Truck](https://jasonoconnell.com/p/nice-truck/): Oversized trucks and the financing that comes with them. Roll coal, honk at every truck you pass to earn bro cred, and pick your poison at the gas station.
-- [UwU SkyStrike](https://jasonoconnell.com/p/w0725b/): A 1942 style arcade shooter, but catastrophically cute. Pink skies, heart bombs and a lot of I love you!!
-- [Uber Ride](https://jasonoconnell.com/p/uber-ride/): One fare, three lanes, zero patience. Get Trent to the hotel before the clock runs out, dodge traffic, and breathe when your nerves climb. Do not press the red button.
-- [Little Tempest](https://jasonoconnell.com/p/little-tempest/): You are the storm. Start as a pocket breeze over Des Moines, soak up the wind, grow into a twister and take out the landmarks.
-- [Cascade](https://jasonoconnell.com/p/cascade/): A Marble Madness style roller. Six courses of steep slopes and narrow ledges, with a synth soundtrack.
-- [ASCII Cat](https://jasonoconnell.com/p/ascii-cat/): A chaotic ASCII cat that bounces around your terminal. Bring friends and everyone's cats show up on everyone's screen.
+- [Catbird Over Des Moines](https://plainweirdgames.com/p/catbird/): A cute little catbird with big, messy plans. Eat everything in Des Moines, then poop on the parade, the governor and the police. Spring, summer, fall and snow, day or night. Multiplayer, with its own crowd on Reddit.
+- [Hot Aisle](https://plainweirdgames.com/p/hot-aisle/): Night shift at the server farm. Badge in, ride the lift, kill power to a rack, swap the dead server and close the ticket yourself, while the robots remind you they would have done it in 0.23 seconds.
+- [Vine Runner](https://plainweirdgames.com/p/vine-runner/): Pitfall, rebuilt on a wood grain TV in an 80s living room. Turn the set on, swing on the vines and jump the pits. One or two players.
+- [Totally Legit Plumbing and Stuff](https://plainweirdgames.com/p/plumbing/): Rent is due. Pull the van up to a house in Ankeny at night and steal everything that isn't nailed down. Don't wake Gary and his rock salt shotgun, and don't get eaten by the dog.
+- [Going Down](https://plainweirdgames.com/p/going-down/): Elevator Action, rebuilt in 3D. Four spies drop onto the same rooftop, raid the red doors for secret files, and race each other down to the getaway car in the basement.
+- [Life Simulator](https://plainweirdgames.com/p/life-simulator/): Everyday life, played out in full. Twenty seven little episodes: board a packed flight to seat 27B, survive the DMV, sit on hold, hunt for parking on Black Friday, build flat pack furniture, get a toddler out the door. You talk your way through some of them out loud.
+- [Play With Me](https://plainweirdgames.com/p/play-with-me/): She just wants to play. Forever. A survivor brawler in a toy room after midnight: she fights on her own, broken toys drop buttons that level her up, and you have to last until 6 AM.
+- [They Saw Us](https://plainweirdgames.com/p/they-saw-us/): A young alien's first solo survey over New Mexico goes wrong when a tracking camera spots him. Thread the canyons, shake the F-15s off your tail and get home. An iPhone game.
+- [Chop Pricer](https://plainweirdgames.com/p/choppricer/): You're the out of shape security cop at a discount grocery store. Watch the monitors, figure out who is actually stealing, then waddle out and catch them before you gas out.
+- [Clauderooms](https://plainweirdgames.com/p/clauderooms/): The Backrooms, found on a worn out camcorder tape from 1987. Walk the endless yellow halls. Headphones recommended.
+- [Nice Truck](https://plainweirdgames.com/p/nice-truck/): Oversized trucks and the financing that comes with them. Roll coal, honk at every truck you pass to earn bro cred, and pick your poison at the gas station.
+- [UwU SkyStrike](https://plainweirdgames.com/p/w0725b/): A 1942 style arcade shooter, but catastrophically cute. Pink skies, heart bombs and a lot of I love you!!
+- [Uber Ride](https://plainweirdgames.com/p/uber-ride/): One fare, three lanes, zero patience. Get Trent to the hotel before the clock runs out, dodge traffic, and breathe when your nerves climb. Do not press the red button.
+- [Little Tempest](https://plainweirdgames.com/p/little-tempest/): You are the storm. Start as a pocket breeze over Des Moines, soak up the wind, grow into a twister and take out the landmarks.
+- [Cascade](https://plainweirdgames.com/p/cascade/): A Marble Madness style roller. Six courses of steep slopes and narrow ledges, with a synth soundtrack.
+- [ASCII Cat](https://plainweirdgames.com/p/ascii-cat/): A chaotic ASCII cat that bounces around your terminal. Bring friends and everyone's cats show up on everyone's screen.
 
 ## Workshop
 
-- [Modem Lab](https://jasonoconnell.com/p/modem-lab/): Dial up, slowed down. Pick two real modems and a bad phone line, then hear every stage of the handshake explained. Mom picks up the phone included.
-- [Sarah, My AI Phone Caller](https://jasonoconnell.com/p/phone-caller/): I ask Claude a question. Sarah, my AI caller, phones the business, asks it, and reports back. Nineteen calls and counting.
-- [Platter](https://jasonoconnell.com/p/platter/): A menu bar app that makes your silent Mac sound like a 1990s hard drive again. Floppy, SCSI, IDE. Free and open source.
-- [TVArgenta](https://jasonoconnell.com/p/tvargenta/): A 3D printed retro TV. Swear at it and it puts Johnny Carson, cartoons, or the news on.
-- [ScanMoines / DSMRadar](https://jasonoconnell.com/p/scanmoines/): A Raspberry Pi with two radios listens to Des Moines public safety radio and turns it into readable stories, with the original audio.
+- [Modem Lab](https://plainweirdgames.com/p/modem-lab/): Dial up, slowed down. Pick two real modems and a bad phone line, then hear every stage of the handshake explained. Mom picks up the phone included.
+- [Sarah, My AI Phone Caller](https://plainweirdgames.com/p/phone-caller/): I ask Claude a question. Sarah, my AI caller, phones the business, asks it, and reports back. Nineteen calls and counting.
+- [Platter](https://plainweirdgames.com/p/platter/): A menu bar app that makes your silent Mac sound like a 1990s hard drive again. Floppy, SCSI, IDE. Free and open source.
+- [TVArgenta](https://plainweirdgames.com/p/tvargenta/): A 3D printed retro TV. Swear at it and it puts Johnny Carson, cartoons, or the news on.
+- [ScanMoines / DSMRadar](https://plainweirdgames.com/p/scanmoines/): A Raspberry Pi with two radios listens to Des Moines public safety radio and turns it into readable stories, with the original audio.
 
 ## Videos I made
 
-- [The Tape That Loaded Again](https://jasonoconnell.com/p/tape/): Recovering 40 year old Commodore 64 programs from cassette, with AI, and proving every byte.
-- [AI Plays Punch-Out!! and Loses to Glass Joe](https://jasonoconnell.com/p/vid-punchout/): My self learning NES AI really fights Glass Joe, the guy who has won one fight in a hundred. It knocks him down, runs out of hearts, turns pink, and loses. The trash talk is an AI voice reacting to what actually happened in the fight.
-- [Every Dial Up Modem Sound, Explained](https://jasonoconnell.com/p/vid-modem/): Every screech and hiss of a dial up handshake, slowed down and explained step by step.
-- [The Amiga I Built From Scratch](https://jasonoconnell.com/p/denise/): A brand new Amiga computer called a DeniseITX, built by hand from a bare circuit board and a parts list. One of every part, soldered under a magnifier for hundreds of hours. It worked the first time, and I still use it all the time.
+- [The Tape That Loaded Again](https://plainweirdgames.com/p/tape/): Recovering 40 year old Commodore 64 programs from cassette, with AI, and proving every byte.
+- [AI Plays Punch-Out!! and Loses to Glass Joe](https://plainweirdgames.com/p/vid-punchout/): My self learning NES AI really fights Glass Joe, the guy who has won one fight in a hundred. It knocks him down, runs out of hearts, turns pink, and loses. The trash talk is an AI voice reacting to what actually happened in the fight.
+- [Every Dial Up Modem Sound, Explained](https://plainweirdgames.com/p/vid-modem/): Every screech and hiss of a dial up handshake, slowed down and explained step by step.
+- [The Amiga I Built From Scratch](https://plainweirdgames.com/p/denise/): A brand new Amiga computer called a DeniseITX, built by hand from a bare circuit board and a parts list. One of every part, soldered under a magnifier for hundreds of hours. It worked the first time, and I still use it all the time.
 
 ## Retro lab
 
-- [Contra CRT](https://jasonoconnell.com/p/contra-crt/): A concept study: a Contra style jungle on a CRT, built to flip between flat 2D and full 3D.
-- [Raid Night at Rusty n Edie's](https://jasonoconnell.com/p/rusty-raid/): Dial into the biggest BBS in America on January 30, 1993, the day the FBI showed up.
-- [Raiders of the Lost Ark](https://jasonoconnell.com/p/raiders/): Atari 2600 ROM teardown. Every sprite pulled straight from the cartridge bytes.
-- [Inside Contra (NES, 1988)](https://jasonoconnell.com/p/contra/): Compressed graphics, sprite extraction, and 6502 code from an annotated disassembly.
-- [Inside King's Quest (1984)](https://jasonoconnell.com/p/kq1/): Sierra's AGI engine pulled apart: vector backgrounds, animation, and bytecode, straight off the floppy.
-- [Yars' Revenge](https://jasonoconnell.com/p/yars/): A disassembly of the Atari 2600 classic. That rainbow Neutral Zone is the game drawing its own code on screen.
-- [Skate or Die Music](https://jasonoconnell.com/p/skate-or-die/): How three square waves and a noise channel made the Tandy 1000 sing.
-- [Amiga MOD Player](https://jasonoconnell.com/p/amiga-mod/): Classic Amiga tracker music like Lotus 2, Chaos Engine and Agony, played from the original module files.
-- [Super Metroid Soundtrack](https://jasonoconnell.com/p/super-metroid/): A soundtrack player built from the original SNES SPC files.
-- [Faery Tale Adventure Soundtrack](https://jasonoconnell.com/p/faery-tale/): The Amiga soundtrack, rebuilt into MIDI and audio.
-- [The Floppy Disk Underground](https://jasonoconnell.com/p/amiga-scene/): The Amiga piracy and demo scene, told as an essay.
-- [Sierra Copy Protection](https://jasonoconnell.com/p/sierra-crack/): How Sierra copy protection worked, and how it got cracked.
-- [Amiga A1000 vs A500 Boot](https://jasonoconnell.com/p/amiga-boot/): The two boot sequences, side by side.
-- [Pod on Windows 98](https://jasonoconnell.com/p/pod/): My favorite Windows 98 racer, backed up and coming back to life in a VM.
-- [Alley Cat](https://jasonoconnell.com/p/launch1980/): The original 1983 Atari Alley Cat, pulled off the disk and running in RetroArch.
+- [Contra CRT](https://plainweirdgames.com/p/contra-crt/): A concept study: a Contra style jungle on a CRT, built to flip between flat 2D and full 3D.
+- [Raid Night at Rusty n Edie's](https://plainweirdgames.com/p/rusty-raid/): Dial into the biggest BBS in America on January 30, 1993, the day the FBI showed up.
+- [Raiders of the Lost Ark](https://plainweirdgames.com/p/raiders/): Atari 2600 ROM teardown. Every sprite pulled straight from the cartridge bytes.
+- [Inside Contra (NES, 1988)](https://plainweirdgames.com/p/contra/): Compressed graphics, sprite extraction, and 6502 code from an annotated disassembly.
+- [Inside King's Quest (1984)](https://plainweirdgames.com/p/kq1/): Sierra's AGI engine pulled apart: vector backgrounds, animation, and bytecode, straight off the floppy.
+- [Yars' Revenge](https://plainweirdgames.com/p/yars/): A disassembly of the Atari 2600 classic. That rainbow Neutral Zone is the game drawing its own code on screen.
+- [Skate or Die Music](https://plainweirdgames.com/p/skate-or-die/): How three square waves and a noise channel made the Tandy 1000 sing.
+- [Amiga MOD Player](https://plainweirdgames.com/p/amiga-mod/): Classic Amiga tracker music like Lotus 2, Chaos Engine and Agony, played from the original module files.
+- [Super Metroid Soundtrack](https://plainweirdgames.com/p/super-metroid/): A soundtrack player built from the original SNES SPC files.
+- [Faery Tale Adventure Soundtrack](https://plainweirdgames.com/p/faery-tale/): The Amiga soundtrack, rebuilt into MIDI and audio.
+- [The Floppy Disk Underground](https://plainweirdgames.com/p/amiga-scene/): The Amiga piracy and demo scene, told as an essay.
+- [Sierra Copy Protection](https://plainweirdgames.com/p/sierra-crack/): How Sierra copy protection worked, and how it got cracked.
+- [Amiga A1000 vs A500 Boot](https://plainweirdgames.com/p/amiga-boot/): The two boot sequences, side by side.
+- [Pod on Windows 98](https://plainweirdgames.com/p/pod/): My favorite Windows 98 racer, backed up and coming back to life in a VM.
+- [Alley Cat](https://plainweirdgames.com/p/launch1980/): The original 1983 Atari Alley Cat, pulled off the disk and running in RetroArch.
 - Dragon's Lair Hardware Manual: A technical manual for the Dragon's Lair arcade hardware.
-- [Rusty n Edie's Tribute](https://jasonoconnell.com/p/rusty/): The legendary Ohio BBS, rebuilt as a tribute site.
-- [Self Learning NES](https://jasonoconnell.com/p/nes-ai/): An AI that teaches itself to play NES games.
+- [Rusty n Edie's Tribute](https://plainweirdgames.com/p/rusty/): The legendary Ohio BBS, rebuilt as a tribute site.
+- [Self Learning NES](https://plainweirdgames.com/p/nes-ai/): An AI that teaches itself to play NES games.
 - Demoscene Viz: A demoscene style visualizer.
 - Gamebeater: A ROM archive deduped across three clouds and a NAS.
 
 ## Halloween beta
 
-- [Trick or Steal](https://jasonoconnell.com/p/trick-or-steal/): Fill your bag before midnight. Hit the porches, tackle other kids for their candy, and stay ahead of the monsters that come out at 11 for the biggest bags.
-- [Trick or Eaten](https://jasonoconnell.com/p/trick-or-eaten/): You are the candy. Stay out of his flashlight until midnight, hide in the shoe or under the bed, and don't let the hand find you.
-- [Take One](https://jasonoconnell.com/p/take-one/): The sign says take one. Nobody takes one. Grab as much as you can from the bowl and let go before the decoration jumps.
+- [Trick or Steal](https://plainweirdgames.com/p/trick-or-steal/): Fill your bag before midnight. Hit the porches, tackle other kids for their candy, and stay ahead of the monsters that come out at 11 for the biggest bags.
+- [Trick or Eaten](https://plainweirdgames.com/p/trick-or-eaten/): You are the candy. Stay out of his flashlight until midnight, hide in the shoe or under the bed, and don't let the hand find you.
+- [Take One](https://plainweirdgames.com/p/take-one/): The sign says take one. Nobody takes one. Grab as much as you can from the bowl and let go before the decoration jumps.
 
 ## File system lab
 
-- [Inode Rush](https://jasonoconnell.com/p/inode-rush/): Sort your real Google Drive mess against the clock. File each loose file, ask Claude when you're stuck, and nothing actually moves until you commit.
-- [Inode Bonsai](https://jasonoconnell.com/p/inode-bonsai/): Your loose Drive files fell off the tree. Graft each one onto the right branch, burn the junk and keep the tree balanced until it blooms.
-- [fsgolf](https://jasonoconnell.com/p/fsgolf/): Clean up the mess in the fewest strokes. A real shell on your real Drive files, where every mkdir, mv and rm counts as a stroke.
+- [Inode Rush](https://plainweirdgames.com/p/inode-rush/): Sort your real Google Drive mess against the clock. File each loose file, ask Claude when you're stuck, and nothing actually moves until you commit.
+- [Inode Bonsai](https://plainweirdgames.com/p/inode-bonsai/): Your loose Drive files fell off the tree. Graft each one onto the right branch, burn the junk and keep the tree balanced until it blooms.
+- [fsgolf](https://plainweirdgames.com/p/fsgolf/): Clean up the mess in the fewest strokes. A real shell on your real Drive files, where every mkdir, mv and rm counts as a stroke.
 
 ## Weird web and music
 
-- [Hourly Absurdity](https://jasonoconnell.com/p/hourly-absurdity/): An Instagram account that turns absurd ideas into pictures.
+- [Hourly Absurdity](https://plainweirdgames.com/p/hourly-absurdity/): An Instagram account that turns absurd ideas into pictures.
 - Absurd How-To: A how to site full of illustrated nonsense.
 - Billy Mays Nightmare: A nightmare infomercial.
 - Raunchy Newspaper: Straight faced local news with very bad headlines.
 - UwU: A horrific interactive UwU website.
 - Dead Air Live: An AI radio station for people who are still awake.
-- [Suno Originals](https://jasonoconnell.com/p/quick-thrills/): Quick Thrills, plus a three song glam metal trilogy.
+- [Suno Originals](https://plainweirdgames.com/p/quick-thrills/): Quick Thrills, plus a three song glam metal trilogy.
 
 ## Elsewhere
 

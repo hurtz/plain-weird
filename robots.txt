@@ -4,4 +4,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jasonoconnell.com/sitemap.xml
+Sitemap: https://plainweirdgames.com/sitemap.xml

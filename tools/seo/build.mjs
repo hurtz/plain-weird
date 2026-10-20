@@ -1,4 +1,4 @@
-// Makes jasonoconnell.com readable by search engines and AI answer engines
+// Makes plainweirdgames.com readable by search engines and AI answer engines
 // (Google, Brave, which Claude's web search uses, ChatGPT search, Perplexity).
 //
 // The home page builds its project list with JavaScript, so crawlers that do
@@ -18,7 +18,7 @@ import path from "node:path";
 import vm from "node:vm";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
-const SITE = "https://jasonoconnell.com";
+const SITE = "https://plainweirdgames.com";
 const AUTHOR = "Jason O'Connell";
 const HANDLE = "hurtz2k";
 const SAME_AS = [
